@@ -7,7 +7,7 @@ from typing import Optional
 
 from ..config import Config
 from ..state import ScanState, generate_scan_id
-from .models import Finding, ScanStats, Candidate
+from .models import Finding, ScanStats, Candidate, Severity
 from .graph import ContentGraph
 from ..correlate.dedup import Deduplicator
 from ..correlate.pairing import CredentialPairer
