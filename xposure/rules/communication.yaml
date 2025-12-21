@@ -1,0 +1,123 @@
+rules:
+  # Slack
+  - id: slack_bot_token
+    name: Slack Bot Token
+    type: slack_bot
+    severity: high
+    pattern: 'xoxb-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24}'
+    verifier: slack
+    metadata:
+      provider: slack
+      token_type: bot
+      docs: https://api.slack.com/authentication/token-types
+
+  - id: slack_user_token
+    name: Slack User Token
+    type: slack_user
+    severity: critical
+    pattern: 'xoxp-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24}'
+    verifier: slack
+    metadata:
+      provider: slack
+      token_type: user
+
+  - id: slack_app_token
+    name: Slack App Token
+    type: slack_app
+    severity: medium
+    pattern: 'xapp-[0-9]-[A-Z0-9]{10,13}-[0-9]{13}-[a-zA-Z0-9]{64}'
+    metadata:
+      provider: slack
+      token_type: app
+
+  - id: slack_webhook
+    name: Slack Webhook URL
+    type: slack_webhook
+    severity: medium
+    pattern: 'https://hooks\.slack\.com/services/T[A-Z0-9]{8,}/B[A-Z0-9]{8,}/[a-zA-Z0-9]{24}'
+    verifier: slack_webhook
+    metadata:
+      provider: slack
+
+  # Discord
+  - id: discord_bot_token
+    name: Discord Bot Token
+    type: discord_bot
+    severity: high
+    pattern: '[MN][A-Za-z0-9]{23,}\.[\w-]{6}\.[\w-]{27,}'
+    verifier: discord
+    metadata:
+      provider: discord
+      docs: https://discord.com/developers/docs/topics/oauth2
+
+  - id: discord_webhook
+    name: Discord Webhook URL
+    type: discord_webhook
+    severity: medium
+    pattern: 'https://discord(?:app)?\.com/api/webhooks/[0-9]+/[a-zA-Z0-9_-]+'
+    verifier: discord_webhook
+    metadata:
+      provider: discord
+
+  # Twilio
+  - id: twilio_api_key
+    name: Twilio API Key
+    type: twilio_key
+    severity: high
+    pattern: 'SK[a-f0-9]{32}'
+    pair_with: twilio_api_secret
+    verifier: twilio
+    metadata:
+      provider: twilio
+
+  - id: twilio_account_sid
+    name: Twilio Account SID
+    type: twilio_sid
+    severity: low
+    pattern: 'AC[a-f0-9]{32}'
+    pair_with: twilio_auth_token
+    metadata:
+      provider: twilio
+
+  # SendGrid
+  - id: sendgrid_api_key
+    name: SendGrid API Key
+    type: sendgrid_key
+    severity: high
+    pattern: 'SG\.[a-zA-Z0-9\-_]{22}\.[a-zA-Z0-9\-_]{43}'
+    verifier: sendgrid
+    metadata:
+      provider: sendgrid
+      docs: https://docs.sendgrid.com/ui/account-and-settings/api-keys
+
+  # Mailgun
+  - id: mailgun_api_key
+    name: Mailgun API Key
+    type: mailgun_key
+    severity: high
+    pattern: 'key-[a-f0-9]{32}'
+    verifier: mailgun
+    metadata:
+      provider: mailgun
+
+  # Telegram
+  - id: telegram_bot_token
+    name: Telegram Bot Token
+    type: telegram_bot
+    severity: medium
+    pattern: '[0-9]{8,10}:[a-zA-Z0-9_-]{35}'
+    metadata:
+      provider: telegram
+
+  # Zendesk
+  - id: zendesk_api_token
+    name: Zendesk API Token
+    type: zendesk_token
+    severity: medium
+    pattern: '[a-zA-Z0-9]{40}'
+    context_required: true
+    context_patterns:
+      - 'zendesk'
+      - 'ZENDESK'
+    metadata:
+      provider: zendesk

@@ -1,0 +1,105 @@
+rules:
+  # GitHub
+  - id: github_pat
+    name: GitHub Personal Access Token
+    type: github_pat
+    severity: critical
+    pattern: 'ghp_[a-zA-Z0-9]{36}'
+    verifier: github
+    metadata:
+      provider: github
+      token_type: pat
+      docs: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+    remediation: |
+      1. Go to GitHub Settings > Developer settings > Personal access tokens
+      2. Revoke the compromised token
+      3. Generate new token with minimal required scopes
+
+  - id: github_oauth
+    name: GitHub OAuth Token
+    type: github_oauth
+    severity: high
+    pattern: 'gho_[a-zA-Z0-9]{36}'
+    verifier: github
+    metadata:
+      provider: github
+      token_type: oauth
+
+  - id: github_app_token
+    name: GitHub App Token
+    type: github_app
+    severity: high
+    pattern: 'ghs_[a-zA-Z0-9]{36}'
+    verifier: github
+    metadata:
+      provider: github
+      token_type: app
+
+  - id: github_refresh_token
+    name: GitHub Refresh Token
+    type: github_refresh
+    severity: medium
+    pattern: 'ghr_[a-zA-Z0-9]{36}'
+    metadata:
+      provider: github
+      token_type: refresh
+
+  - id: github_fine_grained
+    name: GitHub Fine-Grained PAT
+    type: github_fine_grained
+    severity: critical
+    pattern: 'github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59}'
+    verifier: github
+    metadata:
+      provider: github
+      token_type: fine_grained
+
+  # GitLab
+  - id: gitlab_pat
+    name: GitLab Personal Access Token
+    type: gitlab_pat
+    severity: critical
+    pattern: 'glpat-[a-zA-Z0-9\-_]{20}'
+    verifier: gitlab
+    metadata:
+      provider: gitlab
+      docs: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html
+
+  - id: gitlab_pipeline_token
+    name: GitLab Pipeline Trigger Token
+    type: gitlab_pipeline
+    severity: medium
+    pattern: 'glptt-[a-zA-Z0-9]{40}'
+    metadata:
+      provider: gitlab
+
+  - id: gitlab_runner_token
+    name: GitLab Runner Token
+    type: gitlab_runner
+    severity: high
+    pattern: 'GR1348941[a-zA-Z0-9]{20}'
+    metadata:
+      provider: gitlab
+
+  # Bitbucket
+  - id: bitbucket_token
+    name: Bitbucket Access Token
+    type: bitbucket_token
+    severity: high
+    pattern: 'ATBB[a-zA-Z0-9]{32}'
+    verifier: bitbucket
+    metadata:
+      provider: bitbucket
+
+  # Azure DevOps
+  - id: azure_devops_pat
+    name: Azure DevOps PAT
+    type: azure_devops_pat
+    severity: high
+    pattern: '[a-z0-9]{52}'
+    context_required: true
+    context_patterns:
+      - 'azure.*devops'
+      - 'visualstudio'
+    metadata:
+      provider: azure_devops

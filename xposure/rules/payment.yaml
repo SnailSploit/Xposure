@@ -1,0 +1,67 @@
+rules:
+  # Stripe
+  - id: stripe_secret_key
+    name: Stripe Secret Key (Live)
+    type: stripe_secret
+    severity: critical
+    pattern: 'sk_live_[a-zA-Z0-9]{24,}'
+    verifier: stripe
+    metadata:
+      provider: stripe
+      mode: production
+      docs: https://stripe.com/docs/keys
+
+  - id: stripe_test_key
+    name: Stripe Test Key
+    type: stripe_test
+    severity: low
+    pattern: 'sk_test_[a-zA-Z0-9]{24,}'
+    metadata:
+      provider: stripe
+      mode: test
+
+  - id: stripe_restricted_key
+    name: Stripe Restricted Key
+    type: stripe_restricted
+    severity: high
+    pattern: 'rk_live_[a-zA-Z0-9]{24,}'
+    verifier: stripe
+    metadata:
+      provider: stripe
+
+  # PayPal
+  - id: paypal_access_token
+    name: PayPal Access Token
+    type: paypal_token
+    severity: critical
+    pattern: 'access_token\$production\$[a-z0-9]{16}\$[a-f0-9]{32}'
+    verifier: paypal
+    metadata:
+      provider: paypal
+
+  # Square
+  - id: square_access_token
+    name: Square Access Token
+    type: square_token
+    severity: high
+    pattern: 'sq0atp-[a-zA-Z0-9\-_]{22}'
+    verifier: square
+    metadata:
+      provider: square
+
+  - id: square_oauth_secret
+    name: Square OAuth Secret
+    type: square_oauth
+    severity: high
+    pattern: 'sq0csp-[a-zA-Z0-9\-_]{43}'
+    metadata:
+      provider: square
+
+  # Braintree
+  - id: braintree_access_token
+    name: Braintree Access Token
+    type: braintree_token
+    severity: high
+    pattern: 'access_token\$[a-z]{11}\$[a-z0-9]{16}\$[a-f0-9]{32}'
+    metadata:
+      provider: braintree

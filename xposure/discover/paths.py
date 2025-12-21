@@ -1,0 +1,229 @@
+"""Path and endpoint discovery for X-POSURE."""
+
+import re
+from typing import AsyncGenerator, Set
+from urllib.parse import urljoin, urlparse
+
+from .base import BaseDiscoverer
+
+
+class PathDiscoverer(BaseDiscoverer):
+    """Discover interesting paths and endpoints."""
+
+    def __init__(self, config):
+        """Initialize path discoverer."""
+        super().__init__(config)
+        self.seen: Set[str] = set()
+
+    async def discover(self) -> AsyncGenerator[dict, None]:
+        """
+        Discover paths and endpoints.
+
+        Yields:
+            dict: Result with type='path', url, metadata
+        """
+        target = self.config.target
+        base_url = f"https://{target}"
+
+        # Common interesting paths
+        interesting_paths = [
+            # Config/secrets
+            '/.env',
+            '/.env.local',
+            '/.env.production',
+            '/.env.development',
+            '/config.json',
+            '/config.yml',
+            '/config.yaml',
+            '/secrets.json',
+            '/credentials.json',
+
+            # Version control
+            '/.git/config',
+            '/.git/HEAD',
+            '/.gitignore',
+            '/.gitlab-ci.yml',
+            '/.github/workflows',
+
+            # Documentation
+            '/robots.txt',
+            '/sitemap.xml',
+            '/sitemap_index.xml',
+            '/humans.txt',
+            '/.well-known/security.txt',
+
+            # API endpoints
+            '/api',
+            '/api/v1',
+            '/api/v2',
+            '/graphql',
+            '/swagger.json',
+            '/swagger.yml',
+            '/openapi.json',
+            '/api-docs',
+            '/docs',
+
+            # Admin/debug
+            '/admin',
+            '/dashboard',
+            '/debug',
+            '/phpinfo.php',
+            '/status',
+            '/health',
+            '/metrics',
+
+            # Package managers
+            '/package.json',
+            '/composer.json',
+            '/requirements.txt',
+            '/Gemfile',
+            '/yarn.lock',
+            '/package-lock.json',
+
+            # Backups
+            '/backup',
+            '/backup.sql',
+            '/dump.sql',
+            '/database.sql',
+            '/.bak',
+
+            # Cloud configs
+            '/.aws/credentials',
+            '/.azure/credentials',
+            '/gcp-key.json',
+        ]
+
+        for path in interesting_paths:
+            url = urljoin(base_url, path)
+
+            if url in self.seen:
+                continue
+
+            # Check if path exists
+            if await self._path_exists(url):
+                self.seen.add(url)
+
+                yield {
+                    'type': 'path',
+                    'url': url,
+                    'path': path,
+                    'metadata': {
+                        'source': 'common_paths',
+                    }
+                }
+
+            await self.rate_limit()
+
+        # Parse robots.txt for additional paths
+        async for result in self._parse_robots(base_url):
+            yield result
+
+        # Parse sitemap for URLs
+        async for result in self._parse_sitemap(base_url):
+            yield result
+
+    async def _path_exists(self, url: str) -> bool:
+        """
+        Check if a path exists.
+
+        Args:
+            url: URL to check
+
+        Returns:
+            True if path exists (200 or 403)
+        """
+        if not self.session:
+            return False
+
+        try:
+            async with self.session.head(
+                url,
+                allow_redirects=False,
+                timeout=self.session.timeout
+            ) as response:
+                # 200 = exists, 403 = exists but forbidden
+                return response.status in (200, 403)
+        except Exception:
+            return False
+
+    async def _parse_robots(self, base_url: str) -> AsyncGenerator[dict, None]:
+        """
+        Parse robots.txt for disallowed paths.
+
+        Args:
+            base_url: Base URL of target
+
+        Yields:
+            Path results from robots.txt
+        """
+        robots_url = urljoin(base_url, '/robots.txt')
+        content = await self.fetch(robots_url)
+
+        if not content:
+            return
+
+        # Extract Disallow and Allow paths
+        pattern = r'^(?:Disallow|Allow):\s*(.+)$'
+
+        for line in content.split('\n'):
+            match = re.match(pattern, line.strip(), re.IGNORECASE)
+            if match:
+                path = match.group(1).strip()
+
+                # Skip wildcards and empty
+                if not path or path == '/' or '*' in path:
+                    continue
+
+                url = urljoin(base_url, path)
+
+                if url in self.seen:
+                    continue
+
+                self.seen.add(url)
+
+                yield {
+                    'type': 'path',
+                    'url': url,
+                    'path': path,
+                    'metadata': {
+                        'source': 'robots.txt',
+                    }
+                }
+
+    async def _parse_sitemap(self, base_url: str) -> AsyncGenerator[dict, None]:
+        """
+        Parse sitemap.xml for URLs.
+
+        Args:
+            base_url: Base URL of target
+
+        Yields:
+            URL results from sitemap
+        """
+        sitemap_url = urljoin(base_url, '/sitemap.xml')
+        content = await self.fetch(sitemap_url)
+
+        if not content:
+            return
+
+        # Extract <loc> tags
+        pattern = r'<loc>([^<]+)</loc>'
+
+        for match in re.finditer(pattern, content):
+            url = match.group(1).strip()
+
+            if url in self.seen:
+                continue
+
+            self.seen.add(url)
+
+            yield {
+                'type': 'path',
+                'url': url,
+                'path': urlparse(url).path,
+                'metadata': {
+                    'source': 'sitemap.xml',
+                }
+            }
+
+            await self.rate_limit()

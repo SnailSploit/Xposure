@@ -1,0 +1,177 @@
+rules:
+  # OpenAI
+  - id: openai_api_key
+    name: OpenAI API Key
+    type: openai_key
+    severity: high
+    pattern: 'sk-[a-zA-Z0-9]{20,}'
+    verifier: openai
+    metadata:
+      provider: openai
+      docs: https://platform.openai.com/docs/api-reference/authentication
+    remediation: |
+      1. Go to https://platform.openai.com/api-keys
+      2. Revoke the compromised key
+      3. Generate a new key
+      4. Update your applications
+
+  - id: openai_project_key
+    name: OpenAI Project API Key
+    type: openai_project_key
+    severity: high
+    pattern: 'sk-proj-[a-zA-Z0-9\-_]{20,}'
+    verifier: openai
+    metadata:
+      provider: openai
+
+  - id: openai_svc_key
+    name: OpenAI Service Account Key
+    type: openai_svc_key
+    severity: high
+    pattern: 'sk-svcacct-[a-zA-Z0-9\-_]{20,}'
+    verifier: openai
+    metadata:
+      provider: openai
+
+  - id: openai_org_key
+    name: OpenAI Organization API Key
+    type: openai_org_key
+    severity: high
+    pattern: 'sk-org-[a-zA-Z0-9]{20,}'
+    verifier: openai
+    metadata:
+      provider: openai
+
+  # Anthropic
+  - id: anthropic_api_key
+    name: Anthropic API Key
+    type: anthropic_key
+    severity: high
+    pattern: 'sk-ant-[a-zA-Z0-9\-_]{90,}'
+    verifier: anthropic
+    metadata:
+      provider: anthropic
+      docs: https://docs.anthropic.com/claude/reference/getting-started-with-the-api
+
+  # Cohere
+  - id: cohere_api_key
+    name: Cohere API Key
+    type: cohere_key
+    severity: medium
+    pattern: '[a-zA-Z0-9]{40}'
+    context_required: true
+    context_patterns:
+      - 'cohere'
+      - 'COHERE'
+    verifier: cohere
+    metadata:
+      provider: cohere
+
+  # Hugging Face
+  - id: huggingface_token
+    name: HuggingFace Access Token
+    type: huggingface_token
+    severity: medium
+    pattern: 'hf_[a-zA-Z0-9]{34}'
+    verifier: huggingface
+    metadata:
+      provider: huggingface
+      docs: https://huggingface.co/docs/hub/security-tokens
+
+  # Replicate
+  - id: replicate_token
+    name: Replicate API Token
+    type: replicate_token
+    severity: medium
+    pattern: 'r8_[a-zA-Z0-9]{36}'
+    verifier: replicate
+    metadata:
+      provider: replicate
+
+  # Stability AI
+  - id: stability_api_key
+    name: Stability AI API Key
+    type: stability_key
+    severity: medium
+    pattern: 'sk-[a-zA-Z0-9]{48}'
+    context_required: true
+    context_patterns:
+      - 'stability'
+      - 'stable.*diffusion'
+    metadata:
+      provider: stability_ai
+
+  # Google AI (Gemini, PaLM)
+  - id: google_ai_api_key
+    name: Google AI API Key
+    type: google_ai_key
+    severity: high
+    pattern: 'AIza[0-9A-Za-z\-_]{35}'
+    context_required: true
+    context_patterns:
+      - 'gemini'
+      - 'palm'
+      - 'google.*ai'
+    metadata:
+      provider: google_ai
+
+  # Mistral AI
+  - id: mistral_api_key
+    name: Mistral AI API Key
+    type: mistral_key
+    severity: medium
+    pattern: '[a-zA-Z0-9]{32}'
+    context_required: true
+    context_patterns:
+      - 'mistral'
+      - 'MISTRAL'
+    metadata:
+      provider: mistral_ai
+
+  # Pinecone
+  - id: pinecone_api_key
+    name: Pinecone API Key
+    type: pinecone_key
+    severity: medium
+    pattern: '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
+    context_required: true
+    context_patterns:
+      - 'pinecone'
+      - 'PINECONE'
+    metadata:
+      provider: pinecone
+
+  # Weaviate
+  - id: weaviate_api_key
+    name: Weaviate API Key
+    type: weaviate_key
+    severity: medium
+    pattern: '[a-zA-Z0-9\-_]{36,}'
+    context_required: true
+    context_patterns:
+      - 'weaviate'
+      - 'WEAVIATE'
+    metadata:
+      provider: weaviate
+
+  # LangChain/LangSmith
+  - id: langsmith_api_key
+    name: LangSmith API Key
+    type: langsmith_key
+    severity: medium
+    pattern: 'ls__[a-f0-9]{32}'
+    metadata:
+      provider: langsmith
+
+  # Weights & Biases
+  - id: wandb_api_key
+    name: Weights & Biases API Key
+    type: wandb_key
+    severity: medium
+    pattern: '[a-f0-9]{40}'
+    context_required: true
+    context_patterns:
+      - 'wandb'
+      - 'weights.*biases'
+    metadata:
+      provider: wandb

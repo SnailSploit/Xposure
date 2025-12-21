@@ -1,0 +1,85 @@
+"""X-POSURE configuration and settings."""
+
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Optional
+
+
+@dataclass
+class Config:
+    """Global configuration for X-POSURE."""
+
+    # Target
+    target: str
+
+    # Authentication tokens
+    github_token: Optional[str] = None
+
+    # Behavior
+    verify: bool = True
+    follow_redirects: bool = True
+    user_agent: str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+    # Rate limiting
+    max_concurrent_requests: int = 50
+    rate_limit_delay: float = 0.1  # seconds between requests
+
+    # Timeouts
+    request_timeout: int = 30
+    dns_timeout: int = 5
+
+    # Discovery
+    discover_subdomains: bool = True
+    discover_js: bool = True
+    discover_github: bool = True
+    discover_buckets: bool = True
+    discover_wayback: bool = True
+    discover_configs: bool = True      # Config file discovery
+    discover_sourcemaps: bool = True   # Source map mining
+
+    # Extraction
+    max_decode_depth: int = 5  # recursive decode limit
+    min_entropy: float = 3.0   # minimum entropy for candidate
+    ast_parse_timeout: int = 10  # seconds
+
+    # Verification
+    verify_timeout: int = 10
+    verify_retries: int = 2
+
+    # Output
+    output_file: Optional[str] = None
+    quiet: bool = False
+    verbose: bool = False
+
+    # Paths
+    state_dir: Path = field(default_factory=lambda: Path.home() / ".xposure")
+    cache_dir: Path = field(default_factory=lambda: Path.home() / ".xposure" / "cache")
+    rules_dir: Optional[Path] = None
+
+    def __post_init__(self):
+        """Ensure directories exist."""
+        self.state_dir.mkdir(parents=True, exist_ok=True)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+
+        # Set rules directory if not specified
+        if self.rules_dir is None:
+            # Use package rules directory
+            self.rules_dir = Path(__file__).parent / "rules"
+
+        # Override with environment variables
+        self.github_token = self.github_token or os.getenv("GITHUB_TOKEN")
+
+    def get_state_file(self, scan_id: str) -> Path:
+        """Get state file path for a scan."""
+        return self.state_dir / f"{scan_id}.json"
+
+    def get_cache_file(self, key: str) -> Path:
+        """Get cache file path."""
+        # Simple cache key to filename
+        safe_key = "".join(c if c.isalnum() else "_" for c in key)
+        return self.cache_dir / f"{safe_key}.cache"
+
+
+# Default configuration
+DEFAULT_CONFIG = Config(target="example.com")

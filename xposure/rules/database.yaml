@@ -1,0 +1,64 @@
+rules:
+  # MongoDB
+  - id: mongodb_uri
+    name: MongoDB Connection URI
+    type: mongodb_uri
+    severity: critical
+    pattern: 'mongodb(?:\+srv)?://[^:]+:[^@]+@[^\s"'']+(?:/[^\s"'']*)?'
+    verifier: mongodb
+    metadata:
+      provider: mongodb
+      docs: https://www.mongodb.com/docs/manual/reference/connection-string/
+
+  # PostgreSQL
+  - id: postgres_uri
+    name: PostgreSQL Connection URI
+    type: postgres_uri
+    severity: critical
+    pattern: 'postgres(?:ql)?://[^:]+:[^@]+@[^\s"'']+(?:/[^\s"'']*)?'
+    verifier: postgres
+    metadata:
+      provider: postgresql
+
+  # MySQL
+  - id: mysql_uri
+    name: MySQL Connection URI
+    type: mysql_uri
+    severity: critical
+    pattern: 'mysql://[^:]+:[^@]+@[^\s"'']+(?:/[^\s"'']*)?'
+    verifier: mysql
+    metadata:
+      provider: mysql
+
+  # Redis
+  - id: redis_uri
+    name: Redis Connection URI
+    type: redis_uri
+    severity: high
+    pattern: 'redis://[^:]*:[^@]+@[^\s"'']+(?:/[0-9]*)?'
+    verifier: redis
+    metadata:
+      provider: redis
+
+  # Firebase
+  - id: firebase_fcm_key
+    name: Firebase Cloud Messaging Key
+    type: firebase_fcm
+    severity: high
+    pattern: 'AAAA[a-zA-Z0-9_-]{7}:[a-zA-Z0-9_-]{140}'
+    verifier: firebase
+    metadata:
+      provider: firebase
+
+  # Supabase
+  - id: supabase_service_key
+    name: Supabase Service Role Key
+    type: supabase_service_key
+    severity: critical
+    pattern: 'eyJ[a-zA-Z0-9\-_]+\.eyJ[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+'
+    context_required: true
+    context_patterns:
+      - 'supabase'
+      - 'service.*role'
+    metadata:
+      provider: supabase
