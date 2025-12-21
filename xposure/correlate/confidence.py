@@ -223,6 +223,46 @@ class ConfidenceScorer:
 
         return max(0.0, min(1.0, score))
 
+    def analyze_snippet_context(self, context: str) -> float:
+        """
+        Score a small snippet of context without requiring exact positions.
+
+        This is useful when only a trimmed context window is available (e.g. regex
+        matches). The scoring uses the same keyword heuristics as analyze_context_quality
+        but is resilient to missing positional information.
+        """
+        if not context:
+            return 0.0
+
+        lowered = context.lower()
+        score = 0.4  # baseline for having any context
+
+        positive_keywords = [
+            'key', 'token', 'secret', 'password', 'credential',
+            'auth', 'api', 'access', 'private', 'config',
+            'env', 'production', 'prod', 'live', 'client_id',
+            'client_secret', 'aws', 'gcp', 'azure', 'slack',
+            'stripe', 'github', 'gitlab'
+        ]
+        negative_keywords = [
+            'example', 'test', 'demo', 'sample', 'placeholder',
+            'fake', 'mock', 'dummy', 'xxx', 'todo', 'spec'
+        ]
+
+        positive_hits = sum(1 for kw in positive_keywords if kw in lowered)
+        negative_hits = sum(1 for kw in negative_keywords if kw in lowered)
+
+        score += min(0.35, positive_hits * 0.05)
+        score -= min(0.35, negative_hits * 0.08)
+
+        if any(token in lowered for token in ['=', ':', '->', '"', "'"]):
+            score += 0.1
+
+        if any(fragment.isupper() and len(fragment) > 3 for fragment in lowered.split()):
+            score += 0.05
+
+        return max(0.0, min(1.0, score))
+
     def get_confidence_level(self, score: float) -> str:
         """
         Get human-readable confidence level.

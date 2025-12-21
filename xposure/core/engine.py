@@ -65,6 +65,7 @@ class XPosureEngine:
         # Store all candidates for correlation
         self.all_candidates = []
         self.findings = []
+        self.dashboard = None
 
     async def run_quiet(self):
         """Run scan in quiet mode (no live dashboard)."""
@@ -90,12 +91,13 @@ class XPosureEngine:
         dashboard = LiveDashboard(self.config, self.state, self.stats)
 
         try:
+            self.dashboard = dashboard
             await dashboard.start()
             await self._run_scan()
         except KeyboardInterrupt:
             print("\n[x-posure] scan interrupted")
         finally:
-            dashboard.stop()
+            await dashboard.stop()
             self._finalize()
 
     async def _run_scan(self):
@@ -104,20 +106,27 @@ class XPosureEngine:
         print(f"[x-posure] scan_id: {self.scan_id}")
 
         # 1. Discovery Phase
+        self._update_dashboard("discovery", "Mapping the surface")
         discovered_content = await self._discovery_phase()
 
         # 2. Extraction Phase
+        self._update_dashboard("extraction", "Harvesting signals")
         await self._extraction_phase(discovered_content)
 
         # 3. Correlation Phase
+        self._update_dashboard("correlation", "Linking intel")
         await self._correlation_phase()
 
         # 4. Verification Phase
         if self.config.verify:
+            self._update_dashboard("verification", "Trust but verify")
             await self._verification_phase()
+        else:
+            self._update_dashboard("complete", "Verification skipped (user choice)")
 
         # Update stats
         self.stats.end_time = datetime.now()
+        self._update_dashboard("complete", "Scan finished")
 
     async def _discovery_phase(self) -> dict:
         """Run discovery modules to find attack surface."""
@@ -555,6 +564,7 @@ class XPosureEngine:
 
         # 1. Deduplicate candidates into findings
         unique_findings = []
+        context_scores: dict[str, float] = {}
         for candidate in self.all_candidates:
             finding, is_new = self.deduplicator.add_or_merge(candidate)
 
@@ -563,6 +573,13 @@ class XPosureEngine:
 
                 # Track in graph
                 self.graph.track_finding(finding)
+
+            # Track strongest context signal for this finding
+            context_score = self.scorer.analyze_snippet_context(candidate.context)
+            if finding.id not in context_scores:
+                context_scores[finding.id] = context_score
+            else:
+                context_scores[finding.id] = max(context_scores[finding.id], context_score)
 
         if not self.config.quiet:
             print(f"[dedup] {len(self.all_candidates)} candidates -> {len(unique_findings)} unique findings")
@@ -608,7 +625,7 @@ class XPosureEngine:
             final_score = self.scorer.calculate_score(
                 finding=finding,
                 is_paired=is_paired,
-                context_quality=0.7,  # Default context quality
+                context_quality=context_scores.get(finding.id, 0.7),
             )
 
             # Update finding confidence
@@ -745,3 +762,12 @@ class XPosureEngine:
             output_file: Path to output file
         """
         self.state.export(Path(output_file))
+
+    def _update_dashboard(self, phase: str, detail: str = ""):
+        """Send phase updates to the live dashboard if enabled."""
+        if self.dashboard:
+            try:
+                self.dashboard.set_phase(phase, detail)
+            except Exception:
+                # Dashboard issues shouldn't break the scan
+                pass

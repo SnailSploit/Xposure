@@ -24,6 +24,12 @@ class QuickScanner:
         'github_token': r'(?:ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]{36,}',
         'github_fine': r'github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59}',
 
+        # Cloud & providers
+        'gcp_api_key': r'AIza[0-9A-Za-z\-_]{35}',
+        'digitalocean_pat': r'dop_v1_[a-f0-9]{64}',
+        'cloudflare_token': r'(?:CFP|CFU|cfp|cfu)[a-zA-Z0-9_-]{30,}',
+        'supabase_service_key': r'sb[a-z]{2}_[a-zA-Z0-9]{40,}',
+
         # Slack
         'slack_token': r'xox[baprs]-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24,}',
         'slack_webhook': r'https://hooks\.slack\.com/services/T[A-Z0-9]{8,}/B[A-Z0-9]{8,}/[a-zA-Z0-9]{24}',
@@ -119,7 +125,8 @@ class QuickScanner:
                     high_confidence_patterns = {
                         'github_token', 'github_fine', 'slack_token',
                         'stripe_key', 'openai_key', 'anthropic_key',
-                        'aws_access_key'
+                        'aws_access_key', 'gcp_api_key', 'digitalocean_pat',
+                        'cloudflare_token', 'supabase_service_key'
                     }
 
                     if entropy < self.min_entropy and pattern_name not in high_confidence_patterns:
@@ -180,7 +187,9 @@ class QuickScanner:
         high_confidence = {
             'github_token', 'github_fine', 'slack_token',
             'stripe_key', 'openai_key', 'anthropic_key',
-            'aws_access_key', 'slack_webhook'
+            'aws_access_key', 'slack_webhook',
+            'gcp_api_key', 'digitalocean_pat', 'cloudflare_token',
+            'supabase_service_key'
         }
 
         medium_confidence = {

@@ -59,6 +59,13 @@ class Candidate:
     entropy: float
     context: str                 # surrounding code
     confidence: float = 0.0
+    severity: Optional[Severity] = None
+    rule_id: Optional[str] = None
+    rule_name: Optional[str] = None
+    metadata: dict = field(default_factory=dict)
+    verifier: Optional[str] = None
+    remediation: Optional[str] = None
+    position: Optional[int] = None
     paired_with: Optional['Candidate'] = None
 
     def to_dict(self) -> dict:
@@ -70,6 +77,13 @@ class Candidate:
             "entropy": self.entropy,
             "context": self.context,
             "confidence": self.confidence,
+            "severity": self.severity.value if isinstance(self.severity, Severity) else self.severity,
+            "rule_id": self.rule_id,
+            "rule_name": self.rule_name,
+            "metadata": self.metadata,
+            "verifier": self.verifier,
+            "remediation": self.remediation,
+            "position": self.position,
             "paired_with": self.paired_with.type if self.paired_with else None,
         }
 

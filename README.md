@@ -58,12 +58,25 @@ pip install -r requirements.txt
 # Option 2: Install as package (recommended)
 pip install -e .
 
+# Explore flags
+python -m xposure --help
+
 # Run a scan
 python -m xposure example.com
 
 # Save results to JSON
 python -m xposure example.com -o results.json
 ```
+
+### 🎛️ Live Dashboard (Mr. Robot mode)
+
+The default run launches a neon console dashboard inspired by *Mr. Robot*:
+
+- Glitchy banner + status ticker
+- Live telemetry (recon counts, candidate totals, verification results)
+- Phase-aware updates as the engine moves from discovery → extraction → correlation → verification
+
+Prefer silent mode? Add `-q/--quiet` to stream minimal output, or `--no-verify` if you only want passive checks.
 
 ---
 

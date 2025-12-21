@@ -112,12 +112,16 @@ def test_verifier_routing():
     print(f"\nAll supported types: {coordinator.get_supported_types()}")
 
 
-async def test_verification_structure():
+def test_verification_structure():
     """Test verification structure with sample findings."""
     print("\n" + "=" * 70)
     print("TEST: Verification Structure")
     print("=" * 70)
 
+    asyncio.run(_verify_structure())
+
+
+async def _verify_structure():
     # Create sample findings
     findings = [
         Finding(
@@ -188,12 +192,16 @@ async def test_verification_structure():
     print(f"  Unverified: {stats['unverified']}")
 
 
-async def test_aws_signature():
+def test_aws_signature():
     """Test AWS signature generation (structure only)."""
     print("\n" + "=" * 70)
     print("TEST: AWS Signature Structure")
     print("=" * 70)
 
+    asyncio.run(_aws_signature())
+
+
+async def _aws_signature():
     from xposure.verify.aws import AWSVerifier
 
     verifier = AWSVerifier()
@@ -246,8 +254,8 @@ async def main():
     """Run all tests."""
     test_passive_verification()
     test_verifier_routing()
-    await test_verification_structure()
-    await test_aws_signature()
+    await _verify_structure()
+    await _aws_signature()
     test_github_token_types()
 
     print("\n" + "=" * 70)

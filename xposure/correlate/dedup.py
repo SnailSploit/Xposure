@@ -82,7 +82,24 @@ class Deduplicator:
             confidence=candidate.confidence,
             confidence_factors=[],
             entropy=candidate.entropy,
+            severity=candidate.severity,
+            metadata=candidate.metadata.copy() if candidate.metadata else {},
         )
+
+        # Preserve rule metadata and remediation guidance
+        if candidate.rule_id or candidate.rule_name:
+            finding.metadata.setdefault("rule", {})
+            if candidate.rule_id:
+                finding.metadata["rule"]["id"] = candidate.rule_id
+            if candidate.rule_name:
+                finding.metadata["rule"]["name"] = candidate.rule_name
+
+        if candidate.remediation:
+            finding.remediation = candidate.remediation
+
+        if candidate.verifier:
+            finding.metadata.setdefault("verification", {})
+            finding.metadata["verification"].setdefault("suggested_verifier", candidate.verifier)
 
         return finding
 
@@ -104,6 +121,24 @@ class Deduplicator:
                 min(confidence_boost, 0.3),
                 f"seen in {len(finding.sources)} sources"
             )
+
+        # Merge severity if existing finding lacks it
+        if not finding.severity and candidate.severity:
+            finding.severity = candidate.severity
+
+        # Merge metadata (rule/provider info)
+        if candidate.metadata:
+            finding.metadata.update({k: v for k, v in candidate.metadata.items() if k not in finding.metadata})
+
+        if candidate.rule_id or candidate.rule_name:
+            finding.metadata.setdefault("rule", {})
+            if candidate.rule_id:
+                finding.metadata["rule"].setdefault("id", candidate.rule_id)
+            if candidate.rule_name:
+                finding.metadata["rule"].setdefault("name", candidate.rule_name)
+
+        if candidate.remediation and not finding.remediation:
+            finding.remediation = candidate.remediation
 
     def _mask_value(self, value: str, visible: int = 8) -> str:
         """

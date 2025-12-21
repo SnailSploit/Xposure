@@ -103,6 +103,7 @@ class Rule:
                 'verifier': self.verifier,
                 'remediation': self.remediation,
                 'pair_with': self.pair_with,
+                'capture_group': self.capture_group,
             })
 
         return matches

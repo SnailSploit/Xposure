@@ -2,7 +2,7 @@
 
 from typing import Generator, Optional
 
-from ..core.models import Candidate, Source
+from ..core.models import Candidate, Source, Severity
 from .loader import Rule, RuleLoader
 
 
@@ -44,6 +44,13 @@ class RuleEngine:
                 entropy=entropy,
                 context=match['context'],
                 confidence=self._calculate_confidence(match, entropy),
+                severity=self._parse_severity(match.get('severity')),
+                rule_id=match.get('rule_id'),
+                rule_name=match.get('rule_name'),
+                metadata=match.get('metadata', {}),
+                verifier=match.get('verifier'),
+                remediation=match.get('remediation'),
+                position=match.get('start'),
             )
 
             # Store additional metadata
@@ -76,9 +83,25 @@ class RuleEngine:
                 entropy=entropy,
                 context=match['context'],
                 confidence=self._calculate_confidence(match, entropy),
+                severity=self._parse_severity(match.get('severity')),
+                rule_id=match.get('rule_id'),
+                rule_name=match.get('rule_name'),
+                metadata=match.get('metadata', {}),
+                verifier=match.get('verifier'),
+                remediation=match.get('remediation'),
+                position=match.get('start'),
             )
 
             yield candidate
+
+    def _parse_severity(self, severity: Optional[str]) -> Optional[Severity]:
+        """Convert severity string to enum when possible."""
+        if not severity:
+            return None
+        try:
+            return Severity(severity)
+        except ValueError:
+            return None
 
     def get_paired_rules(self, rule_id: str) -> list[Rule]:
         """
@@ -140,7 +163,10 @@ class RuleEngine:
             'info': 0.2,
         }
 
-        base = severity_scores.get(match['severity'], 0.5)
+        severity_key = match.get('severity')
+        if isinstance(severity_key, Severity):
+            severity_key = severity_key.value
+        base = severity_scores.get(severity_key, 0.5)
 
         # Adjust for entropy
         if entropy > 4.5:

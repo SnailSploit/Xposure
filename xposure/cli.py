@@ -18,7 +18,7 @@ def print_banner(compact: bool = False):
     print(banner)
 
 
-@click.command()
+@click.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.argument('target', required=False)
 @click.option('--github-token', '-g', envvar='GITHUB_TOKEN', help='GitHub token for dorking')
 @click.option('--output', '-o', type=click.Path(), help='Output file (JSON)')
