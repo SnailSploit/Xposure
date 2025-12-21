@@ -112,8 +112,8 @@ def test_verifier_routing():
     print(f"\nAll supported types: {coordinator.get_supported_types()}")
 
 
-async def test_verification_structure():
-    """Test verification structure with sample findings."""
+async def _async_verification_structure():
+    """Async portion of verification structure test."""
     print("\n" + "=" * 70)
     print("TEST: Verification Structure")
     print("=" * 70)
@@ -188,8 +188,8 @@ async def test_verification_structure():
     print(f"  Unverified: {stats['unverified']}")
 
 
-async def test_aws_signature():
-    """Test AWS signature generation (structure only)."""
+async def _async_aws_signature():
+    """Async portion of AWS signature generation test."""
     print("\n" + "=" * 70)
     print("TEST: AWS Signature Structure")
     print("=" * 70)
@@ -242,12 +242,22 @@ def test_github_token_types():
         print(f"  {match} {prefix}... -> {token_type}")
 
 
-async def main():
+def test_verification_structure():
+    """Test verification structure with sample findings."""
+    asyncio.run(_async_verification_structure())
+
+
+def test_aws_signature():
+    """Test AWS signature generation (structure only)."""
+    asyncio.run(_async_aws_signature())
+
+
+def main():
     """Run all tests."""
     test_passive_verification()
     test_verifier_routing()
-    await test_verification_structure()
-    await test_aws_signature()
+    test_verification_structure()
+    test_aws_signature()
     test_github_token_types()
 
     print("\n" + "=" * 70)
@@ -258,4 +268,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
