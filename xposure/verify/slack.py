@@ -109,6 +109,44 @@ class SlackVerifier(BaseVerifier):
                 error=error or 'Webhook is invalid',
             )
 
+    async def _get_scopes(self, token: str) -> tuple[list, bool]:
+        """
+        Attempt to get token scopes from Slack API.
+
+        Note: Slack API doesn't expose scopes directly for most token types.
+        We attempt to infer from auth.test response and API behavior.
+
+        Args:
+            token: Slack token
+
+        Returns:
+            Tuple of (list of scopes, bool indicating if scopes are confirmed)
+        """
+        # Try to get scopes from apps.permissions.info (only works for some token types)
+        headers = {
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json',
+        }
+
+        try:
+            success, data, error = await self.safe_request(
+                method='GET',
+                url='https://slack.com/api/apps.permissions.info',
+                headers=headers,
+            )
+
+            if success and data and data.get('ok'):
+                # If we got permissions info, extract scopes
+                scopes = data.get('info', {}).get('app_home', {}).get('scopes', [])
+                if scopes:
+                    return scopes, True
+        except Exception:
+            pass
+
+        # Scopes not available via API - return empty with flag indicating uncertainty
+        # DO NOT fabricate scopes as that misleads the user
+        return [], False
+
     async def _process_auth_data(self, auth_data: dict, token: str) -> VerificationResult:
         """
         Process auth.test response.
@@ -144,41 +182,52 @@ class SlackVerifier(BaseVerifier):
             identity = f'{user_name} in {team_name}'
 
         # Get scopes if available
-        scopes = await self._get_scopes(token)
+        scopes, scopes_confirmed = await self._get_scopes(token)
 
-        # Determine permissions
-        permissions = scopes if scopes else ['Unknown scopes']
-
-        # Assess blast radius
-        has_admin = any('admin' in s for s in scopes)
-        has_files = any('files:' in s for s in scopes)
-        has_channels = any('channels:' in s for s in scopes)
-        has_users = any('users:' in s for s in scopes)
-
-        if has_admin or is_enterprise:
-            blast_radius = Severity.CRITICAL
-        elif has_files or has_channels or has_users:
-            blast_radius = Severity.HIGH
+        # Determine permissions - be honest about uncertainty
+        if scopes_confirmed and scopes:
+            permissions = scopes
         else:
-            blast_radius = Severity.MEDIUM
+            # Cannot determine scopes - indicate uncertainty
+            token_type = 'bot' if is_bot else ('user' if is_user else ('app' if is_app else 'unknown'))
+            permissions = [f'Unable to enumerate scopes (token type: {token_type})']
+
+        # Assess blast radius - be conservative when scopes are unknown
+        if scopes_confirmed:
+            has_admin = any('admin' in s for s in scopes)
+            has_files = any('files:' in s for s in scopes)
+            has_channels = any('channels:' in s for s in scopes)
+            has_users = any('users:' in s for s in scopes)
+
+            if has_admin or is_enterprise:
+                blast_radius = Severity.CRITICAL
+            elif has_files or has_channels or has_users:
+                blast_radius = Severity.HIGH
+            else:
+                blast_radius = Severity.MEDIUM
+        else:
+            # Unknown scopes - assume high risk to be safe
+            if is_enterprise:
+                blast_radius = Severity.CRITICAL
+            else:
+                blast_radius = Severity.HIGH  # Conservative when uncertain
 
         # Pivot opportunities
         can_pivot_to = []
 
-        if has_admin:
-            can_pivot_to.append('Workspace administration')
-
-        if has_files:
-            can_pivot_to.append('All shared files and documents')
-
-        if has_channels:
-            can_pivot_to.append('All channels and messages')
-
-        if has_users:
-            can_pivot_to.append('User information and profiles')
-
-        if 'chat:write' in scopes:
-            can_pivot_to.append('Send messages as bot/user')
+        if scopes_confirmed:
+            if any('admin' in s for s in scopes):
+                can_pivot_to.append('Workspace administration')
+            if any('files:' in s for s in scopes):
+                can_pivot_to.append('All shared files and documents')
+            if any('channels:' in s for s in scopes):
+                can_pivot_to.append('All channels and messages')
+            if any('users:' in s for s in scopes):
+                can_pivot_to.append('User information and profiles')
+            if 'chat:write' in scopes:
+                can_pivot_to.append('Send messages as bot/user')
+        else:
+            can_pivot_to.append('Scope-dependent access (unable to enumerate)')
 
         return VerificationResult(
             status=VerificationStatus.VERIFIED,
@@ -197,30 +246,6 @@ class SlackVerifier(BaseVerifier):
                 'is_bot': is_bot,
                 'is_enterprise': is_enterprise,
                 'scopes': scopes,
+                'scopes_confirmed': scopes_confirmed,
             },
         )
-
-    async def _get_scopes(self, token: str) -> list:
-        """
-        Get token scopes from auth.test response.
-
-        Args:
-            token: Slack token
-
-        Returns:
-            List of scopes
-        """
-        # Try to get scopes from auth.revoke endpoint (doesn't actually revoke, just shows info)
-        # This is a hack - in reality, scopes aren't easily accessible from the API
-        # We'll infer from token type instead
-
-        scopes = []
-
-        if token.startswith('xoxb-'):
-            scopes = ['bot', 'chat:write', 'channels:read']  # Common bot scopes
-        elif token.startswith('xoxp-'):
-            scopes = ['identify', 'chat:write:user']  # Common user scopes
-        elif token.startswith('xapp-'):
-            scopes = ['app_mentions:read', 'chat:write']  # App-level token
-
-        return scopes

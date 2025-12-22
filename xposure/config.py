@@ -56,6 +56,11 @@ class Config:
     state_dir: Path = field(default_factory=lambda: Path.home() / ".xposure")
     cache_dir: Path = field(default_factory=lambda: Path.home() / ".xposure" / "cache")
     rules_dir: Optional[Path] = None
+    wordlists_dir: Optional[Path] = None
+
+    # Custom wordlist files (optional overrides)
+    subdomains_wordlist: Optional[Path] = None
+    paths_wordlist: Optional[Path] = None
 
     def __post_init__(self):
         """Ensure directories exist."""
@@ -67,8 +72,46 @@ class Config:
             # Use package rules directory
             self.rules_dir = Path(__file__).parent / "rules"
 
+        # Set wordlists directory if not specified
+        if self.wordlists_dir is None:
+            self.wordlists_dir = Path(__file__).parent / "wordlists"
+
         # Override with environment variables
         self.github_token = self.github_token or os.getenv("GITHUB_TOKEN")
+
+    def get_wordlist(self, name: str) -> list[str]:
+        """
+        Load wordlist from file.
+
+        Args:
+            name: Wordlist name (e.g., 'subdomains', 'paths')
+
+        Returns:
+            List of wordlist entries
+        """
+        # Check for custom wordlist first
+        custom_wordlist = getattr(self, f'{name}_wordlist', None)
+        if custom_wordlist and custom_wordlist.exists():
+            return self._load_wordlist_file(custom_wordlist)
+
+        # Fall back to default wordlist
+        default_path = self.wordlists_dir / f'{name}.txt'
+        if default_path.exists():
+            return self._load_wordlist_file(default_path)
+
+        return []
+
+    def _load_wordlist_file(self, path: Path) -> list[str]:
+        """Load wordlist from file, one entry per line."""
+        try:
+            with open(path, 'r') as f:
+                return [
+                    line.strip()
+                    for line in f
+                    if line.strip() and not line.startswith('#')
+                ]
+        except Exception:
+            return []
 
     def get_state_file(self, scan_id: str) -> Path:
         """Get state file path for a scan."""

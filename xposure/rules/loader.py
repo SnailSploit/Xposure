@@ -68,9 +68,13 @@ class Rule:
 
         for match in self.compiled_pattern.finditer(content):
             # Extract value (use capture group if specified)
-            if self.capture_group and match.lastindex and match.lastindex >= self.capture_group:
-                value = match.group(self.capture_group)
-            else:
+            try:
+                if self.capture_group and self.capture_group > 0:
+                    value = match.group(self.capture_group)
+                else:
+                    value = match.group(0)
+            except IndexError:
+                # Capture group doesn't exist in this match, fall back to full match
                 value = match.group(0)
 
             # Clean value

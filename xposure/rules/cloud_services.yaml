@@ -1,0 +1,465 @@
+# Cloud Services and SaaS Credential Detection Rules
+# X-POSURE v4.0
+
+rules:
+  # Cloudflare
+  - id: cloudflare_api_key
+    name: Cloudflare API Key
+    type: cloudflare_api_key
+    pattern: '[a-f0-9]{37}'
+    context_patterns:
+      - 'cloudflare'
+      - 'cf_api'
+      - 'CF_API_KEY'
+    severity: high
+    description: Cloudflare Global API Key
+
+  - id: cloudflare_api_token
+    name: Cloudflare API Token
+    type: cloudflare_api_token
+    pattern: '[A-Za-z0-9_-]{40}'
+    context_patterns:
+      - 'cloudflare'
+      - 'CF_API_TOKEN'
+      - 'CLOUDFLARE_API_TOKEN'
+    severity: high
+    description: Cloudflare scoped API Token
+
+  - id: cloudflare_origin_ca_key
+    name: Cloudflare Origin CA Key
+    type: cloudflare_origin_ca
+    pattern: 'v1\.0-[a-f0-9]{24}-[a-f0-9]{146}'
+    severity: high
+    description: Cloudflare Origin CA private key
+
+  # DigitalOcean
+  - id: digitalocean_pat
+    name: DigitalOcean Personal Access Token
+    type: digitalocean_token
+    pattern: 'dop_v1_[a-f0-9]{64}'
+    severity: high
+    description: DigitalOcean personal access token
+
+  - id: digitalocean_oauth
+    name: DigitalOcean OAuth Token
+    type: digitalocean_oauth
+    pattern: 'doo_v1_[a-f0-9]{64}'
+    severity: high
+    description: DigitalOcean OAuth access token
+
+  - id: digitalocean_refresh
+    name: DigitalOcean Refresh Token
+    type: digitalocean_refresh
+    pattern: 'dor_v1_[a-f0-9]{64}'
+    severity: medium
+    description: DigitalOcean OAuth refresh token
+
+  - id: digitalocean_spaces_key
+    name: DigitalOcean Spaces Access Key
+    type: digitalocean_spaces
+    pattern: 'DO[0-9A-Z]{18}'
+    severity: high
+    description: DigitalOcean Spaces access key (S3-compatible)
+
+  # Heroku
+  - id: heroku_api_key
+    name: Heroku API Key
+    type: heroku_api_key
+    pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    context_patterns:
+      - 'heroku'
+      - 'HEROKU_API_KEY'
+    severity: high
+    description: Heroku API key (UUID format)
+
+  - id: heroku_oauth_token
+    name: Heroku OAuth Token
+    type: heroku_oauth
+    pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    context_patterns:
+      - 'heroku.*oauth'
+      - 'HEROKU_OAUTH_TOKEN'
+    severity: high
+    description: Heroku OAuth access token
+
+  # Twilio
+  - id: twilio_account_sid
+    name: Twilio Account SID
+    type: twilio_account_sid
+    pattern: 'AC[a-f0-9]{32}'
+    severity: medium
+    description: Twilio Account SID (needed with auth token)
+
+  - id: twilio_auth_token
+    name: Twilio Auth Token
+    type: twilio_auth_token
+    pattern: '[a-f0-9]{32}'
+    context_patterns:
+      - 'twilio'
+      - 'TWILIO_AUTH_TOKEN'
+      - 'auth_token'
+    severity: high
+    description: Twilio authentication token
+
+  - id: twilio_api_key
+    name: Twilio API Key
+    type: twilio_api_key
+    pattern: 'SK[a-f0-9]{32}'
+    severity: high
+    description: Twilio API key
+
+  # SendGrid
+  - id: sendgrid_api_key
+    name: SendGrid API Key
+    type: sendgrid_api_key
+    pattern: 'SG\.[a-zA-Z0-9_-]{22}\.[a-zA-Z0-9_-]{43}'
+    severity: high
+    description: SendGrid API key for email sending
+
+  # Mailgun
+  - id: mailgun_api_key
+    name: Mailgun API Key
+    type: mailgun_api_key
+    pattern: 'key-[a-f0-9]{32}'
+    severity: high
+    description: Mailgun private API key
+
+  - id: mailgun_public_key
+    name: Mailgun Public Validation Key
+    type: mailgun_public_key
+    pattern: 'pubkey-[a-f0-9]{32}'
+    severity: low
+    description: Mailgun public validation key
+
+  # Mailchimp
+  - id: mailchimp_api_key
+    name: Mailchimp API Key
+    type: mailchimp_api_key
+    pattern: '[a-f0-9]{32}-us[0-9]{1,2}'
+    severity: high
+    description: Mailchimp API key with datacenter suffix
+
+  # MongoDB
+  - id: mongodb_connection_string
+    name: MongoDB Connection String
+    type: mongodb_connection_string
+    pattern: 'mongodb(?:\+srv)?://[^:]+:[^@]+@[^/]+(?:/[^\s]*)?'
+    severity: critical
+    description: MongoDB connection string with credentials
+
+  - id: mongodb_atlas_api_key
+    name: MongoDB Atlas API Key
+    type: mongodb_atlas_key
+    pattern: '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
+    context_patterns:
+      - 'mongodb'
+      - 'atlas'
+      - 'MONGODB_ATLAS'
+    severity: high
+    description: MongoDB Atlas programmatic API key
+
+  # Redis
+  - id: redis_connection_string
+    name: Redis Connection URL
+    type: redis_connection_string
+    pattern: 'redis(?:s)?://(?:[^:]+:[^@]+@)?[^/]+(?::[0-9]+)?(?:/[0-9]+)?'
+    severity: high
+    description: Redis connection URL (may include password)
+
+  - id: redis_password
+    name: Redis Password
+    type: redis_password
+    pattern: '[a-zA-Z0-9!@#$%^&*()_+=-]{16,64}'
+    context_patterns:
+      - 'redis.*password'
+      - 'REDIS_PASSWORD'
+      - 'redis.*auth'
+    severity: high
+    description: Redis authentication password
+
+  # Elasticsearch
+  - id: elasticsearch_url
+    name: Elasticsearch URL with Auth
+    type: elasticsearch_auth
+    pattern: 'https?://[^:]+:[^@]+@[^/]*(?:elastic|es)[^/]*(?::[0-9]+)?'
+    severity: high
+    description: Elasticsearch URL with embedded credentials
+
+  - id: elastic_cloud_id
+    name: Elastic Cloud ID
+    type: elastic_cloud_id
+    pattern: '[a-zA-Z0-9_-]+:[a-zA-Z0-9+/=]+'
+    context_patterns:
+      - 'elastic.*cloud'
+      - 'ELASTIC_CLOUD_ID'
+    severity: medium
+    description: Elastic Cloud deployment ID
+
+  - id: elastic_api_key
+    name: Elasticsearch API Key
+    type: elastic_api_key
+    pattern: '[a-zA-Z0-9_-]{20}:[a-zA-Z0-9_-]{20,}'
+    context_patterns:
+      - 'elastic'
+      - 'ELASTIC_API_KEY'
+    severity: high
+    description: Elasticsearch API key
+
+  # Supabase
+  - id: supabase_key
+    name: Supabase API Key
+    type: supabase_key
+    pattern: 'eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*'
+    context_patterns:
+      - 'supabase'
+      - 'SUPABASE_KEY'
+      - 'SUPABASE_ANON_KEY'
+    severity: high
+    description: Supabase JWT API key
+
+  - id: supabase_service_key
+    name: Supabase Service Role Key
+    type: supabase_service_key
+    pattern: 'eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*'
+    context_patterns:
+      - 'supabase.*service'
+      - 'SUPABASE_SERVICE_ROLE_KEY'
+    severity: critical
+    description: Supabase service role key (full database access)
+
+  # Firebase
+  - id: firebase_api_key
+    name: Firebase API Key
+    type: firebase_api_key
+    pattern: 'AIza[a-zA-Z0-9_-]{35}'
+    severity: medium
+    description: Firebase/Google Cloud API key
+
+  - id: firebase_database_url
+    name: Firebase Database URL
+    type: firebase_database_url
+    pattern: 'https://[a-z0-9-]+\.firebaseio\.com'
+    severity: low
+    description: Firebase Realtime Database URL
+
+  # Algolia
+  - id: algolia_api_key
+    name: Algolia API Key
+    type: algolia_api_key
+    pattern: '[a-f0-9]{32}'
+    context_patterns:
+      - 'algolia'
+      - 'ALGOLIA_API_KEY'
+      - 'ALGOLIA_ADMIN_KEY'
+    severity: high
+    description: Algolia search API key
+
+  - id: algolia_app_id
+    name: Algolia Application ID
+    type: algolia_app_id
+    pattern: '[A-Z0-9]{10}'
+    context_patterns:
+      - 'algolia'
+      - 'ALGOLIA_APP_ID'
+    severity: low
+    description: Algolia application identifier
+
+  # Pusher
+  - id: pusher_app_key
+    name: Pusher App Key
+    type: pusher_key
+    pattern: '[a-f0-9]{20}'
+    context_patterns:
+      - 'pusher'
+      - 'PUSHER_APP_KEY'
+    severity: medium
+    description: Pusher application key
+
+  - id: pusher_app_secret
+    name: Pusher App Secret
+    type: pusher_secret
+    pattern: '[a-f0-9]{20}'
+    context_patterns:
+      - 'pusher.*secret'
+      - 'PUSHER_APP_SECRET'
+    severity: high
+    description: Pusher application secret
+
+  # PlanetScale
+  - id: planetscale_password
+    name: PlanetScale Database Password
+    type: planetscale_password
+    pattern: 'pscale_pw_[a-zA-Z0-9_-]{32,}'
+    severity: critical
+    description: PlanetScale database connection password
+
+  - id: planetscale_token
+    name: PlanetScale Service Token
+    type: planetscale_token
+    pattern: 'pscale_tkn_[a-zA-Z0-9_-]{32,}'
+    severity: high
+    description: PlanetScale service token
+
+  # Vercel
+  - id: vercel_token
+    name: Vercel Access Token
+    type: vercel_token
+    pattern: '[a-zA-Z0-9]{24}'
+    context_patterns:
+      - 'vercel'
+      - 'VERCEL_TOKEN'
+      - 'VERCEL_ACCESS_TOKEN'
+    severity: high
+    description: Vercel deployment and API access token
+
+  # Netlify
+  - id: netlify_token
+    name: Netlify Personal Access Token
+    type: netlify_token
+    pattern: '[a-zA-Z0-9_-]{40,50}'
+    context_patterns:
+      - 'netlify'
+      - 'NETLIFY_AUTH_TOKEN'
+    severity: high
+    description: Netlify personal access token
+
+  # Linear
+  - id: linear_api_key
+    name: Linear API Key
+    type: linear_api_key
+    pattern: 'lin_api_[a-zA-Z0-9]{40}'
+    severity: medium
+    description: Linear issue tracker API key
+
+  # Notion
+  - id: notion_integration_token
+    name: Notion Integration Token
+    type: notion_token
+    pattern: 'secret_[a-zA-Z0-9]{43}'
+    severity: medium
+    description: Notion integration/internal token
+
+  # Airtable
+  - id: airtable_api_key
+    name: Airtable API Key
+    type: airtable_api_key
+    pattern: 'key[a-zA-Z0-9]{14}'
+    severity: medium
+    description: Airtable personal API key
+
+  - id: airtable_pat
+    name: Airtable Personal Access Token
+    type: airtable_pat
+    pattern: 'pat[a-zA-Z0-9.]{50,}'
+    severity: medium
+    description: Airtable personal access token
+
+  # Contentful
+  - id: contentful_delivery_token
+    name: Contentful Delivery Token
+    type: contentful_delivery
+    pattern: '[a-zA-Z0-9_-]{43}'
+    context_patterns:
+      - 'contentful'
+      - 'CONTENTFUL_DELIVERY_TOKEN'
+    severity: medium
+    description: Contentful Content Delivery API token
+
+  - id: contentful_management_token
+    name: Contentful Management Token
+    type: contentful_management
+    pattern: 'CFPAT-[a-zA-Z0-9_-]{43}'
+    severity: high
+    description: Contentful Content Management API token
+
+  # Postmark
+  - id: postmark_server_token
+    name: Postmark Server Token
+    type: postmark_token
+    pattern: '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
+    context_patterns:
+      - 'postmark'
+      - 'POSTMARK_SERVER_TOKEN'
+    severity: high
+    description: Postmark email server API token
+
+  # Plaid
+  - id: plaid_client_id
+    name: Plaid Client ID
+    type: plaid_client_id
+    pattern: '[a-f0-9]{24}'
+    context_patterns:
+      - 'plaid.*client'
+      - 'PLAID_CLIENT_ID'
+    severity: medium
+    description: Plaid financial services client ID
+
+  - id: plaid_secret
+    name: Plaid Secret Key
+    type: plaid_secret
+    pattern: '[a-f0-9]{30}'
+    context_patterns:
+      - 'plaid.*secret'
+      - 'PLAID_SECRET'
+    severity: critical
+    description: Plaid API secret key
+
+  # Shopify
+  - id: shopify_access_token
+    name: Shopify Access Token
+    type: shopify_token
+    pattern: 'shpat_[a-f0-9]{32}'
+    severity: high
+    description: Shopify Admin API access token
+
+  - id: shopify_private_app_password
+    name: Shopify Private App Password
+    type: shopify_private_password
+    pattern: 'shppa_[a-f0-9]{32}'
+    severity: high
+    description: Shopify private app password
+
+  - id: shopify_shared_secret
+    name: Shopify Shared Secret
+    type: shopify_shared_secret
+    pattern: 'shpss_[a-f0-9]{32}'
+    severity: high
+    description: Shopify app shared secret
+
+  # Mapbox
+  - id: mapbox_access_token
+    name: Mapbox Access Token
+    type: mapbox_token
+    pattern: 'pk\.[a-zA-Z0-9]{60,}'
+    severity: medium
+    description: Mapbox public access token
+
+  - id: mapbox_secret_token
+    name: Mapbox Secret Token
+    type: mapbox_secret
+    pattern: 'sk\.[a-zA-Z0-9]{60,}'
+    severity: high
+    description: Mapbox secret access token
+
+  # CircleCI
+  - id: circleci_token
+    name: CircleCI Personal Token
+    type: circleci_token
+    pattern: '[a-f0-9]{40}'
+    context_patterns:
+      - 'circleci'
+      - 'CIRCLECI_TOKEN'
+      - 'CIRCLE_TOKEN'
+    severity: high
+    description: CircleCI personal API token
+
+  # Travis CI
+  - id: travis_token
+    name: Travis CI Token
+    type: travis_token
+    pattern: '[a-zA-Z0-9_-]{22}'
+    context_patterns:
+      - 'travis'
+      - 'TRAVIS_TOKEN'
+    severity: high
+    description: Travis CI API token

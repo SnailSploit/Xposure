@@ -7,6 +7,9 @@ from .github import GitHubVerifier
 from .slack import SlackVerifier
 from .stripe import StripeVerifier
 from .openai import OpenAIVerifier
+from .gcp import GCPVerifier
+from .azure import AzureVerifier
+from .jwt import JWTVerifier
 
 __all__ = [
     'BaseVerifier',
@@ -19,4 +22,7 @@ __all__ = [
     'SlackVerifier',
     'StripeVerifier',
     'OpenAIVerifier',
+    'GCPVerifier',
+    'AzureVerifier',
+    'JWTVerifier',
 ]

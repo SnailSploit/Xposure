@@ -1,372 +1,135 @@
-# X-POSURE v1.0
+# X-POSURE v4.0
 
 ```
- ██╗  ██╗       ██████╗  ██████╗ ███████╗██╗   ██╗██████╗ ███████╗
- ╚██╗██╔╝       ██╔══██╗██╔═══██╗██╔════╝██║   ██║██╔══██╗██╔════╝
-  ╚███╔╝  █████╗██████╔╝██║   ██║███████╗██║   ██║██████╔╝█████╗  
-  ██╔██╗  ╚════╝██╔═══╝ ██║   ██║╚════██║██║   ██║██╔══██╗██╔══╝  
- ██╔╝ ██╗       ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗
- ╚═╝  ╚═╝       ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
 
- V.1.0.0 // For Shit Your DevOps Forgot.
- by SnailSploit <3
+    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+    █                                                                        █
+    █  ██╗  ██╗      ██████╗  ██████╗ ███████╗██╗   ██╗██████╗ ███████╗      █
+    █  ╚██╗██╔╝      ██╔══██╗██╔═══██╗██╔════╝██║   ██║██╔══██╗██╔════╝      █
+    █   ╚███╔╝ █████╗██████╔╝██║   ██║███████╗██║   ██║██████╔╝█████╗        █
+    █   ██╔██╗ ╚════╝██╔═══╝ ██║   ██║╚════██║██║   ██║██╔══██╗██╔══╝        █
+    █  ██╔╝ ██╗      ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗      █
+    █  ╚═╝  ╚═╝      ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝      █
+    █                                                                        █
+    █  [ v4.0.0 ]  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  [ ENTERPRISE ]       █
+    █                                                                        █
+    █  "Control is an illusion. But credentials? Those are real."            █
+    █                                                    - Mr. Robot, maybe  █
+    █                                                                        █
+    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+                    [ The shit your DevOps forgot. ]
+                              by SnailSploit
 ```
 
 <p align="center">
-  <strong>💀 The shit your DevOps forgot. 💀</strong>
+  <img src="https://img.shields.io/badge/version-4.0.0-ff0040?style=for-the-badge&labelColor=1a1a2e" alt="Version">
+  <img src="https://img.shields.io/badge/python-3.10+-00d4ff?style=for-the-badge&labelColor=1a1a2e" alt="Python">
+  <img src="https://img.shields.io/badge/status-OPERATIONAL-00ff41?style=for-the-badge&labelColor=1a1a2e" alt="Status">
+  <img src="https://img.shields.io/badge/license-MIT-9d4edd?style=for-the-badge&labelColor=1a1a2e" alt="License">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-red?style=for-the-badge" alt="Version">
-  <img src="https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge" alt="Python">
-  <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/status-active-success?style=for-the-badge" alt="Status">
-</p>
-
-<p align="center">
-  <strong>Domain-based credential harvester for red team operations and bug bounty hunting</strong>
+  <code>[ AUTONOMOUS CREDENTIAL HARVESTING SYSTEM ]</code>
 </p>
 
 ---
 
-## 🎯 What is X-POSURE?
+## `> whoami`
 
-**X-POSURE** is a next-generation credential harvester that discovers, extracts, correlates, and verifies exposed secrets across your target's attack surface. Built for offensive security professionals who need **accurate intelligence, not noise**.
-
-### Why X-POSURE?
-
-- 🔍 **Comprehensive Discovery**: Subdomains, paths, JavaScript files - finds the attack surface
-- 🧠 **Intelligent Extraction**: AST parsing, decode chains, entropy filtering - not just regex
-- 🔗 **Smart Correlation**: Pairs credentials, deduplicates across sources, scores confidence
-- ✅ **Active Verification**: Actually checks if credentials work and who they belong to
-- 📊 **Actionable Intelligence**: Identity, permissions, blast radius, pivot opportunities
-
-**Stop collecting garbage. Start finding gold.**
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│  X-POSURE is not just another scanner.                                      │
+│                                                                              │
+│  It's a fully autonomous credential intelligence platform that discovers,   │
+│  extracts, correlates, verifies, and reports exposed secrets across your    │
+│  target's entire attack surface.                                            │
+│                                                                              │
+│  Built for those who understand that the real vulnerability                 │
+│  isn't in the code — it's in what the code exposes.                        │
+│                                                                              │
+│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+│                                                                              │
+│  [+] 100+ Detection Rules     [+] 8 Active Verifiers                        │
+│  [+] AST-based Extraction     [+] Enterprise API                            │
+│  [+] JWT Decoding             [+] Webhook Alerts                            │
+│  [+] SARIF CI/CD Output       [+] Scheduled Scans                           │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🚀 Quick Start
+## `> ./install.sh`
+
+### Requirements
+
+```
+┌─────────────────────────────────────┐
+│  Python 3.10+                       │
+│  pip (latest)                       │
+│  ~50MB disk space                   │
+│  Internet connection                │
+└─────────────────────────────────────┘
+```
+
+### Quick Install
 
 ```bash
 # Clone the repository
 git clone https://github.com/SnailSploit/X-Posure.git
 cd X-Posure
 
-# Option 1: Install dependencies with requirements.txt
+# Install dependencies
 pip install -r requirements.txt
 
-# Option 2: Install as package (recommended)
+# Or install as a package (recommended)
 pip install -e .
 
+# Verify installation
+python -m xposure --version
+```
+
+### Docker Install
+
+```bash
+# Build the image
+docker build -t xposure .
+
 # Run a scan
-python -m xposure example.com
+docker run -it xposure example.com
+```
 
-# Save results to JSON
-python -m xposure example.com -o results.json
+### Manual Dependencies
+
+```bash
+# Core dependencies
+pip install aiohttp>=3.8.0      # Async HTTP client
+pip install aiodns>=3.0.0       # Async DNS resolver
+pip install click>=8.0.0        # CLI framework
+pip install pyyaml>=6.0.0       # YAML parsing
+pip install pyjsparser>=2.7.0   # JavaScript AST (optional)
+```
+
+### Verify Everything Works
+
+```bash
+# Run the self-test
+python -c "
+from xposure.storage import get_database
+from xposure.api import APIServer
+from xposure.verify import AWSVerifier, GitHubVerifier, JWTVerifier
+from xposure.output import format_sarif
+print('[+] All systems operational')
+"
 ```
 
 ---
 
-## ✨ Features
+## `> ./run.sh --help`
 
-### 🔭 Discovery Engine
-- **Certificate Transparency**: Query crt.sh for subdomain discovery
-- **DNS Bruteforce**: Common subdomain wordlist with async verification
-- **Path Discovery**: robots.txt, sitemap.xml, common sensitive paths, API endpoints
-- **JavaScript Harvesting**: External scripts, inline code, ES6 imports, webpack bundles
-- **Streaming Architecture**: Results as they're found, no batch processing
-
-### 🎣 Extraction Pipeline
-- **Quick Scanner**: 20+ regex patterns with Shannon entropy filtering
-- **Decode Chain**: Recursive base64/hex/URL/unicode/ROT13 decoding (configurable depth)
-- **JavaScript AST Parser**: pyjsparser with intelligent fallback for obfuscated code
-- **Object Extractor**: JSON objects, key-value pairs, connection strings, credential pairing
-- **Multi-layered**: Scans original content + all decoded variants
-
-### 🎯 Rules Engine
-**64+ Detection Rules** across 6 categories:
-
-| Category | Rules | Examples |
-|----------|-------|----------|
-| ☁️ **Cloud** | 15 | AWS (keys, secrets, tokens), GCP, Azure, DigitalOcean, Terraform |
-| 🤖 **AI/ML** | 16 | OpenAI, Anthropic, Cohere, HuggingFace, Stability AI, Pinecone |
-| 📦 **Version Control** | 10 | GitHub (PATs, OAuth, Apps), GitLab, Bitbucket, Azure DevOps |
-| 💬 **Communication** | 13 | Slack, Discord, Twilio, SendGrid, Mailgun, Telegram, Zendesk |
-| 💳 **Payment** | 7 | Stripe, PayPal, Square, Braintree |
-| 🗄️ **Database** | 6 | MongoDB, PostgreSQL, MySQL, Redis, Firebase, Supabase |
-
-**Features:**
-- Context-aware matching (requires surrounding keywords)
-- Severity levels (CRITICAL to INFO)
-- Exclusion patterns for false positives
-- Metadata: provider docs, remediation steps
-
-### 🧩 Correlation Module
-- **Deduplication**: SHA256 hash-based with multi-source evidence tracking
-- **Credential Pairing**: Automatically pairs AWS key+secret, Azure client_id+secret, etc.
-- **Confidence Scoring**: 6-factor algorithm
-  - Entropy analysis (Shannon entropy thresholds)
-  - Multi-source evidence (same cred from multiple locations = higher confidence)
-  - Context quality (surrounding keywords and patterns)
-  - Credential pairing (+15% boost for paired creds)
-  - Severity weighting (CRITICAL findings weighted higher)
-  - Provider trust (AWS/GitHub/Stripe rated higher than Telegram)
-- **Content Graph**: Tracks discovery chains (domain → subdomain → JS file → finding)
-
-### ✅ Verification Engine
-**Passive Verification** (format checks):
-- AWS access key structure validation
-- GitHub token prefix detection (ghp_, gho_, ghu_, ghs_, ghr_)
-- Stripe key environment detection (live vs test)
-- OpenAI key type identification (project vs user)
-
-**Active Verification** (5 providers):
-
-#### 🔶 AWS Verifier
-- **Method**: STS GetCallerIdentity API
-- **Auth**: AWS Signature V4 (implemented from scratch)
-- **Discovers**: IAM user, role, root account, assumed role
-- **Blast Radius**: root=CRITICAL, admin=HIGH, user=MEDIUM/LOW
-- **Requires**: Paired access key + secret key
-
-#### 🐙 GitHub Verifier
-- **Method**: /user API endpoint
-- **Discovers**: Username, email, account type, OAuth scopes
-- **Permissions**: Extracted from X-OAuth-Scopes header
-- **Blast Radius**: Based on repo/org access level
-- **Pivot**: Webhooks (RCE potential), Actions secrets, org settings
-
-#### 💬 Slack Verifier
-- **Method**: auth.test API
-- **Discovers**: Workspace, team, bot vs user token
-- **Blast Radius**: Admin/enterprise=CRITICAL, files/channels=HIGH
-- **Supports**: Bot tokens, user tokens, webhooks
-
-#### 💳 Stripe Verifier
-- **Method**: /v1/account API
-- **Discovers**: Business name, account ID, charges enabled
-- **Environment**: Live vs test mode detection
-- **Blast Radius**: live+charges=CRITICAL
-
-#### 🤖 OpenAI Verifier
-- **Method**: /v1/models API
-- **Discovers**: Available models (GPT-4, DALL-E, etc.)
-- **Key Type**: Project vs user key detection
-- **Blast Radius**: Cost-based (GPT-4/DALL-E=HIGH)
-
-**Verification Results Include:**
-- ✓ Status (verified, likely_valid, invalid, error)
-- ✓ Identity (who owns the credential)
-- ✓ Permissions (what it can do)
-- ✓ Blast Radius (CRITICAL → INFO)
-- ✓ Environment (production, staging, test)
-- ✓ Pivot Opportunities (where attackers can go)
-
----
-
-## 📊 Example Output
-
-```
- ██╗  ██╗       ██████╗  ██████╗ ███████╗██╗   ██╗██████╗ ███████╗
- ╚██╗██╔╝       ██╔══██╗██╔═══██╗██╔════╝██║   ██║██╔══██╗██╔════╝
-  ╚███╔╝  █████╗██████╔╝██║   ██║███████╗██║   ██║██████╔╝█████╗  
-  ██╔██╗  ╚════╝██╔═══╝ ██║   ██║╚════██║██║   ██║██╔══██╗██╔══╝  
- ██╔╝ ██╗       ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗
- ╚═╝  ╚═╝       ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
-
- V.1.0.0 // For Shit Your DevOps Forgot.
- by SnailSploit <3
-
-[x-posure] scanning example.com...
-[x-posure] target: example.com
-[x-posure] scan_id: example_com_20251220_184530
-
-[discovery] starting reconnaissance...
-[subdomain] api.example.com
-[subdomain] cdn.example.com
-[subdomain] staging.example.com
-[path] https://example.com/robots.txt
-[path] https://example.com/.env
-[js] https://cdn.example.com/bundle.js
-[discovery] found 12 subdomains
-[discovery] found 8 js files
-
-[extraction] analyzing content...
-[extract] found 15 candidates in https://example.com/.env
-[candidate] aws_access_key: AKIAIOSFODNN7EXAM...
-[candidate] aws_secret_key: wJalrXUtnFEMI/K7M...
-[decoded] found 3 in base64
-[extraction] found 47 total candidates
-[extraction] decoded 12 encoded blobs
-
-[correlation] analyzing relationships...
-[dedup] 47 candidates -> 12 unique findings
-[pairing] found 3 credential pairs
-[correlation] 12 unique findings
-[correlation] 4 from multiple sources
-[correlation] avg confidence: 0.78
-[correlation] graph nodes: 25, edges: 38
-
-[verification] validating credentials...
-[verification] verified 12 findings
-[verification] 8 valid credentials
-[verification] 2 invalid credentials
-[verification] 2 verification errors
-
-[!] 5 HIGH-VALUE credentials found:
-  [aws_access_key] IAM User: admin-deploy (critical)
-  [github_token] SnailSploit (admin) (high)
-  [stripe_secret_key] Acme Corp (sk_live_...) (critical)
-  [openai_key] OpenAI Project Key (high)
-  [slack_token] Bot: deploy-bot in Acme Workspace (high)
-
-======================================================================
-SCAN COMPLETE
-======================================================================
-Duration: 43.2s
-
-Findings:
-  Verified:    8
-  Unverified:  2
-  Invalid:     2
-  Errors:      0
-  Total:       12
-```
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         X-POSURE                            │
-│                         Pipeline                            │
-└─────────────────────────────────────────────────────────────┘
-
-Input: example.com
-    │
-    ▼
-┌───────────────┐
-│  DISCOVERY    │  → Subdomains (crt.sh, DNS)
-│               │  → Paths (robots.txt, sitemap, common)
-│               │  → JavaScript Files (script tags, inline, imports)
-└───────┬───────┘
-        │  [12 subdomains, 8 JS files, 25 paths]
-        ▼
-┌───────────────┐
-│  EXTRACTION   │  → Quick Scanner (regex + entropy)
-│               │  → Decode Chain (base64, hex, URL, etc.)
-│               │  → AST Parser (JavaScript object extraction)
-│               │  → Object Extractor (JSON, key-value, connections)
-└───────┬───────┘
-        │  [47 credential candidates]
-        ▼
-┌───────────────┐
-│  RULES        │  → 64+ YAML rules
-│  ENGINE       │  → Context-aware matching
-│               │  → Severity classification
-│               │  → Metadata enrichment
-└───────┬───────┘
-        │  [47 matched candidates]
-        ▼
-┌───────────────┐
-│  CORRELATION  │  → Deduplication (SHA256 hash)
-│               │  → Credential Pairing (AWS key+secret)
-│               │  → Confidence Scoring (6 factors)
-│               │  → Content Graph (evidence chains)
-└───────┬───────┘
-        │  [12 unique findings, 3 pairs, avg confidence 0.78]
-        ▼
-┌───────────────┐
-│  VERIFICATION │  → Passive (format checks)
-│               │  → Active (AWS, GitHub, Slack, Stripe, OpenAI)
-│               │  → Identity Discovery
-│               │  → Blast Radius Assessment
-└───────┬───────┘
-        │  [8 verified, 2 invalid, 2 errors]
-        ▼
-┌───────────────┐
-│    OUTPUT     │  → JSON Export
-│               │  → Stats Summary
-│               │  → High-Value Alerts
-└───────────────┘
-```
-
----
-
-## 📂 Project Structure
-
-```
-X-Posure/
-├── xposure/
-│   ├── __init__.py
-│   ├── __version__.py         # Version info
-│   ├── cli.py                  # Click CLI interface
-│   ├── config.py               # Configuration management
-│   ├── state.py                # Scan state persistence
-│   │
-│   ├── core/
-│   │   ├── engine.py           # Main scanning engine
-│   │   ├── models.py           # Data models (Finding, Candidate, Source)
-│   │   └── graph.py            # Content relationship graph
-│   │
-│   ├── discover/
-│   │   ├── base.py             # Base discoverer class
-│   │   ├── subdomains.py       # Subdomain discovery (crt.sh, DNS)
-│   │   ├── paths.py            # Path discovery (robots, sitemap)
-│   │   └── js.py               # JavaScript file harvesting
-│   │
-│   ├── extract/
-│   │   ├── quick.py            # Quick regex scanner
-│   │   ├── decode.py           # Recursive decode chain
-│   │   ├── ast.py              # JavaScript AST parser
-│   │   └── objects.py          # Object extraction
-│   │
-│   ├── rules/
-│   │   ├── loader.py           # YAML rule loader
-│   │   ├── engine.py           # Rule matching engine
-│   │   ├── cloud.yaml          # Cloud provider rules (15)
-│   │   ├── ai.yaml             # AI/ML service rules (16)
-│   │   ├── vcs.yaml            # Version control rules (10)
-│   │   ├── communication.yaml  # Communication rules (13)
-│   │   ├── payment.yaml        # Payment processor rules (7)
-│   │   └── database.yaml       # Database rules (6)
-│   │
-│   ├── correlate/
-│   │   ├── dedup.py            # Deduplication engine
-│   │   ├── pairing.py          # Credential pairing
-│   │   ├── confidence.py       # Confidence scoring
-│   │   └── __init__.py
-│   │
-│   ├── verify/
-│   │   ├── base.py             # Base verifier + passive checks
-│   │   ├── coordinator.py      # Verification coordinator
-│   │   ├── aws.py              # AWS STS verifier
-│   │   ├── github.py           # GitHub API verifier
-│   │   ├── slack.py            # Slack API verifier
-│   │   ├── stripe.py           # Stripe API verifier
-│   │   ├── openai.py           # OpenAI API verifier
-│   │   └── __init__.py
-│   │
-│   └── ui/
-│       ├── banners.py          # ASCII art banners
-│       └── colors.py           # Terminal colors
-│
-├── test_correlation.py         # Correlation module tests
-├── test_extraction.py          # Extraction pipeline tests
-├── test_rules.py               # Rules engine tests
-├── test_verification.py        # Verification module tests
-├── README.md                   # This file
-├── LICENSE                     # MIT License
-├── requirements.txt            # Dependencies
-└── pyproject.toml              # Package configuration
-```
-
----
-
-## 🎮 Usage
-
-### Basic Commands
+### Basic Usage
 
 ```bash
 # Scan a domain
@@ -375,157 +138,422 @@ python -m xposure example.com
 # Save results to JSON
 python -m xposure example.com -o results.json
 
-# Quiet mode (no live output)
+# Export as SARIF (for GitHub/GitLab CI)
+python -m xposure example.com --format sarif -o results.sarif
+
+# Quiet mode (minimal output)
 python -m xposure example.com --quiet
 
-# Skip verification (faster, passive only)
+# Skip active verification (passive only)
 python -m xposure example.com --no-verify
 
-# Show version
-python -m xposure --version
+# Verbose mode (debug output)
+python -m xposure example.com -v
 ```
 
-### Advanced Usage
+### API Server Mode
 
 ```bash
-# With GitHub token for dorking (future feature)
-python -m xposure example.com -g ghp_YOUR_TOKEN_HERE
+# Start the REST API server
+python -m xposure.api --host 0.0.0.0 --port 8080
 
-# Combine options
-python -m xposure target.com -o findings.json --quiet
+# With API key authentication
+python -m xposure.api --api-key "your-secret-key"
+
+# Custom database location
+python -m xposure.api --db-path /var/lib/xposure/data.db
 ```
 
-### Environment Variables
+### Scheduled Scanning
+
+```python
+from xposure.scheduler import Scheduler, CRON_DAILY
+
+scheduler = Scheduler()
+
+# Add a daily scan
+scheduler.add_schedule(
+    name="Daily Prod Scan",
+    target="https://api.example.com",
+    cron_expression=CRON_DAILY,  # "0 0 * * *"
+    options={"verify": True}
+)
+
+# Start the scheduler
+await scheduler.start()
+```
+
+---
+
+## `> cat /etc/xposure/features`
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│  ███████╗███████╗ █████╗ ████████╗██╗   ██╗██████╗ ███████╗███████╗         │
+│  ██╔════╝██╔════╝██╔══██╗╚══██╔══╝██║   ██║██╔══██╗██╔════╝██╔════╝         │
+│  █████╗  █████╗  ███████║   ██║   ██║   ██║██████╔╝█████╗  ███████╗         │
+│  ██╔══╝  ██╔══╝  ██╔══██║   ██║   ██║   ██║██╔══██╗██╔══╝  ╚════██║         │
+│  ██║     ███████╗██║  ██║   ██║   ╚██████╔╝██║  ██║███████╗███████║         │
+│  ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝         │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Detection Engine (100+ Rules)
+
+| Category | Count | Examples |
+|----------|-------|----------|
+| ☁️ **Cloud** | 25+ | AWS, GCP, Azure, DigitalOcean, Heroku, Vercel |
+| 🤖 **AI/ML** | 16+ | OpenAI, Anthropic, Cohere, HuggingFace, Replicate |
+| 📦 **DevOps** | 20+ | GitHub, GitLab, Docker, NPM, PyPI, CircleCI |
+| 💬 **Communication** | 15+ | Slack, Discord, Twilio, SendGrid, Mailgun |
+| 💳 **Payment** | 10+ | Stripe, PayPal, Square, Plaid, Shopify |
+| 🗄️ **Database** | 15+ | MongoDB, PostgreSQL, Redis, Supabase, PlanetScale |
+
+### Active Verifiers (8 Providers)
+
+```
+┌─────────────┬────────────────────────────────────────────────────────────────┐
+│ Provider    │ Capabilities                                                   │
+├─────────────┼────────────────────────────────────────────────────────────────┤
+│ AWS         │ STS identity, IAM user/role detection, blast radius           │
+│ GitHub      │ User info, OAuth scopes, repo access, org membership          │
+│ Slack       │ Workspace, bot/user detection, permission enumeration         │
+│ Stripe      │ Account info, live/test detection, charges enabled            │
+│ OpenAI      │ Model access, key type, usage capabilities                    │
+│ GCP         │ API key validation, service account, OAuth tokens             │
+│ Azure       │ Client secrets, SAS tokens, connection strings                │
+│ JWT         │ Decode, validate claims, extract identity & permissions       │
+└─────────────┴────────────────────────────────────────────────────────────────┘
+```
+
+### Enterprise Features
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  [DATABASE]     SQLite persistence for findings, scans, audit logs         │
+│  [API]          Full REST API with auth, CRUD for all entities             │
+│  [WEBHOOKS]     Slack, generic HTTP with HMAC signing                      │
+│  [SCHEDULING]   Cron-based recurring scans with history                    │
+│  [METRICS]      Prometheus-compatible counters, gauges, histograms         │
+│  [LOGGING]      Structured JSON logging for SIEM integration               │
+│  [SARIF]        Static Analysis Results for GitHub/GitLab CI               │
+│  [FP MGMT]      False positive suppression with rules                      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## `> curl localhost:8080/api/v1`
+
+### REST API Endpoints
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              API REFERENCE                                   │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  HEALTH                                                                      │
+│  ───────────────────────────────────────────────────                         │
+│  GET  /health                    Health check                                │
+│  GET  /api/v1/stats              Overall statistics                          │
+│  GET  /metrics                   Prometheus metrics                          │
+│                                                                              │
+│  SCANS                                                                       │
+│  ───────────────────────────────────────────────────                         │
+│  POST /api/v1/scans              Create new scan                             │
+│  GET  /api/v1/scans              List all scans                              │
+│  GET  /api/v1/scans/:id          Get scan details                            │
+│  DEL  /api/v1/scans/:id          Cancel running scan                         │
+│                                                                              │
+│  FINDINGS                                                                    │
+│  ───────────────────────────────────────────────────                         │
+│  GET  /api/v1/findings           List findings (filterable)                  │
+│  GET  /api/v1/findings/:id       Get finding details                         │
+│  POST /api/v1/findings/:id/suppress   Mark as false positive                 │
+│  DEL  /api/v1/findings/:id/suppress   Remove suppression                     │
+│                                                                              │
+│  SUPPRESSIONS                                                                │
+│  ───────────────────────────────────────────────────                         │
+│  GET  /api/v1/suppressions       List suppression rules                      │
+│  POST /api/v1/suppressions       Create suppression rule                     │
+│  DEL  /api/v1/suppressions/:id   Delete suppression rule                     │
+│                                                                              │
+│  WEBHOOKS                                                                    │
+│  ───────────────────────────────────────────────────                         │
+│  GET  /api/v1/webhooks           List webhooks                               │
+│  POST /api/v1/webhooks           Create webhook                              │
+│  DEL  /api/v1/webhooks/:id       Delete webhook                              │
+│                                                                              │
+│  AUDIT                                                                       │
+│  ───────────────────────────────────────────────────                         │
+│  GET  /api/v1/audit              View audit log                              │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Example: Create a Scan
 
 ```bash
-export GITHUB_TOKEN=ghp_your_token_here
-export XPOSURE_OUTPUT=/path/to/output
-export XPOSURE_QUIET=true
+curl -X POST http://localhost:8080/api/v1/scans \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-api-key" \
+  -d '{
+    "target": "https://example.com",
+    "options": {
+      "verify": true,
+      "discover_subdomains": true
+    }
+  }'
 ```
 
----
-
-## 🧪 Testing
-
-Run the test suites:
+### Example: Setup Slack Alerts
 
 ```bash
-# Test correlation module
-python test_correlation.py
-
-# Test verification module
-python test_verification.py
-
-# Test rules engine
-python test_rules.py
-
-# Test extraction pipeline
-python test_extraction.py
-```
-
-**Test Coverage:**
-- ✅ Deduplication with multi-source evidence
-- ✅ Credential pairing (AWS key+secret)
-- ✅ Confidence scoring (6 factors)
-- ✅ Content relationship graph
-- ✅ Passive verification (format checks)
-- ✅ Verifier routing logic
-- ✅ AWS Signature V4 generation
-- ✅ GitHub token type detection
-- ✅ Quick regex scanner
-- ✅ Decode chain (base64, hex, URL, unicode)
-- ✅ JavaScript AST parsing
-- ✅ Object extraction (JSON, connection strings)
-- ✅ Rules loading and matching (64 rules)
-
----
-
-## 📈 Development Roadmap
-
-### ✅ Completed (v1.0)
-- [x] **Session 1**: Core scaffolding, CLI, state persistence
-- [x] **Session 2**: Discovery modules (subdomains, paths, JS)
-- [x] **Session 3**: Extraction pipeline (regex, decode, AST, objects)
-- [x] **Session 4**: Rules engine (YAML loader, matcher, 64+ rules)
-- [x] **Session 5**: Correlation (pairing, dedup, confidence scoring, graph)
-- [x] **Session 6**: Verification (AWS, GitHub, Slack, Stripe, OpenAI)
-
-### 🚧 Planned
-- [ ] **Session 7**: Live dashboard with Rich
-- [ ] **Session 8**: GitHub dorking + S3 bucket enumeration
-- [ ] **Session 9**: Additional verifiers (GCP, Azure, Anthropic)
-- [ ] **Session 10**: Polish, comprehensive tests, packaging
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit pull requests.
-
-### Development Setup
-
-```bash
-# Clone and install in dev mode
-git clone https://github.com/SnailSploit/X-Posure.git
-cd X-Posure
-pip install -e .
-
-# Run tests
-python test_correlation.py
-python test_verification.py
+curl -X POST http://localhost:8080/api/v1/webhooks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Slack Critical Alerts",
+    "url": "https://hooks.slack.com/services/XXX/YYY/ZZZ",
+    "events": ["finding.critical", "finding.verified"],
+    "secret": "optional-hmac-secret"
+  }'
 ```
 
 ---
 
-## ⚖️ Legal Disclaimer
+## `> cat /var/log/xposure/scan.log`
 
-**X-POSURE is designed for authorized security testing and bug bounty hunting only.**
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              SAMPLE OUTPUT                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-- ✅ **LEGAL**: Testing your own systems
-- ✅ **LEGAL**: Bug bounty programs with permission
-- ✅ **LEGAL**: Authorized penetration testing engagements
-- ❌ **ILLEGAL**: Unauthorized access to systems you don't own
-- ❌ **ILLEGAL**: Credential harvesting without permission
+    ██╗  ██╗      ██████╗  ██████╗ ███████╗██╗   ██╗██████╗ ███████╗
+    ╚██╗██╔╝      ██╔══██╗██╔═══██╗██╔════╝██║   ██║██╔══██╗██╔════╝
+     ╚███╔╝ █████╗██████╔╝██║   ██║███████╗██║   ██║██████╔╝█████╗
+     ██╔██╗ ╚════╝██╔═══╝ ██║   ██║╚════██║██║   ██║██╔══██╗██╔══╝
+    ██╔╝ ██╗      ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗
+    ╚═╝  ╚═╝      ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
 
-**You are responsible for ensuring you have permission before using this tool.**
+    v4.0.0 // ENTERPRISE EDITION
+    ─────────────────────────────────────────────────────────────────
 
-The authors assume no liability and are not responsible for any misuse or damage caused by this tool.
+[*] Target: evil-corp.com
+[*] Scan ID: evil-corp_20251222_031337
+[*] Mode: FULL (discovery + extraction + verification)
+
+[DISCOVERY] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Querying crt.sh for subdomains...
+[+] Found: api.evil-corp.com
+[+] Found: staging.evil-corp.com
+[+] Found: dev.evil-corp.com
+[+] Found: jenkins.evil-corp.com
+[+] Discovered 47 subdomains
+[+] Discovered 23 JavaScript files
+[+] Discovered 156 paths
+
+[EXTRACTION] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Analyzing https://dev.evil-corp.com/.env
+    └─ AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+    └─ AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG...
+[+] Analyzing https://jenkins.evil-corp.com/config.js
+    └─ GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+[+] Decoded 12 base64 blobs
+[+] Found 89 credential candidates
+
+[CORRELATION] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Deduplicated: 89 → 24 unique
+[+] Paired credentials: 3 pairs found
+[+] Average confidence: 0.82
+
+[VERIFICATION] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Verifying AWS credentials...
+    └─ VERIFIED: IAM User 'deploy-bot' (AdministratorAccess)
+    └─ BLAST RADIUS: CRITICAL
+[+] Verifying GitHub token...
+    └─ VERIFIED: User 'evil-corp-bot' (repo, admin:org)
+    └─ BLAST RADIUS: HIGH
+[+] Verifying Slack token...
+    └─ VERIFIED: Bot 'Jenkins CI' in 'Evil Corp' workspace
+    └─ BLAST RADIUS: MEDIUM
+
+════════════════════════════════════════════════════════════════════
+                         SCAN COMPLETE
+════════════════════════════════════════════════════════════════════
+
+    ┌─────────────────────────────────────────────────────────────┐
+    │  CRITICAL: 2   HIGH: 5   MEDIUM: 8   LOW: 9                │
+    │  ─────────────────────────────────────────────────────────  │
+    │  Verified: 15   Invalid: 4   Errors: 0   Suppressed: 5     │
+    │  ─────────────────────────────────────────────────────────  │
+    │  Duration: 47.3s   Requests: 1,247   Rate Limited: 0       │
+    └─────────────────────────────────────────────────────────────┘
+
+[!] HIGH-VALUE TARGETS IDENTIFIED:
+
+    ╔═══════════════════════════════════════════════════════════════╗
+    ║  #1  AWS IAM Credentials (CRITICAL)                          ║
+    ║      Identity: arn:aws:iam::123456789:user/deploy-bot        ║
+    ║      Access: AdministratorAccess                              ║
+    ║      Source: https://dev.evil-corp.com/.env:12               ║
+    ╠═══════════════════════════════════════════════════════════════╣
+    ║  #2  GitHub Personal Access Token (HIGH)                      ║
+    ║      Identity: evil-corp-bot                                  ║
+    ║      Scopes: repo, admin:org, write:packages                 ║
+    ║      Source: https://jenkins.evil-corp.com/config.js:847    ║
+    ╚═══════════════════════════════════════════════════════════════╝
+
+[*] Results saved to: evil-corp_findings.json
+[*] SARIF report: evil-corp_findings.sarif
+```
 
 ---
 
-## 📜 License
+## `> tree /opt/xposure`
 
-MIT License - see [LICENSE](LICENSE) file for details.
+```
+X-Posure/
+├── xposure/
+│   ├── __init__.py
+│   ├── cli.py                    # CLI interface
+│   ├── config.py                 # Configuration
+│   │
+│   ├── core/                     # Core engine
+│   │   ├── engine.py             # Main scanning engine
+│   │   ├── models.py             # Data models
+│   │   └── graph.py              # Evidence graph
+│   │
+│   ├── discover/                 # Discovery modules
+│   │   ├── subdomains.py         # Subdomain enumeration
+│   │   ├── paths.py              # Path discovery
+│   │   ├── js.py                 # JavaScript harvesting
+│   │   └── github.py             # GitHub dorking
+│   │
+│   ├── extract/                  # Extraction pipeline
+│   │   ├── quick.py              # Regex scanner
+│   │   ├── decode.py             # Decode chain
+│   │   ├── ast.py                # JavaScript AST parser
+│   │   └── objects.py            # Object extraction
+│   │
+│   ├── rules/                    # Detection rules
+│   │   ├── cloud.yaml            # Cloud providers
+│   │   ├── ai.yaml               # AI/ML services
+│   │   ├── devtools.yaml         # DevOps tools
+│   │   └── cloud_services.yaml   # SaaS platforms
+│   │
+│   ├── verify/                   # Verification engines
+│   │   ├── aws.py                # AWS STS
+│   │   ├── github.py             # GitHub API
+│   │   ├── gcp.py                # Google Cloud
+│   │   ├── azure.py              # Microsoft Azure
+│   │   ├── jwt.py                # JWT decoder
+│   │   └── ...                   # Slack, Stripe, OpenAI
+│   │
+│   ├── api/                      # REST API [ENTERPRISE]
+│   │   ├── server.py             # aiohttp server
+│   │   └── webhooks.py           # Webhook notifications
+│   │
+│   ├── storage/                  # Persistence [ENTERPRISE]
+│   │   └── database.py           # SQLite backend
+│   │
+│   ├── scheduler/                # Scheduling [ENTERPRISE]
+│   │   └── scheduler.py          # Cron-based scheduler
+│   │
+│   ├── observability/            # Monitoring [ENTERPRISE]
+│   │   ├── logging.py            # Structured logging
+│   │   └── metrics.py            # Prometheus metrics
+│   │
+│   ├── output/                   # Output formats
+│   │   ├── console.py            # Terminal output
+│   │   └── sarif.py              # SARIF format
+│   │
+│   └── wordlists/                # Discovery wordlists
+│       ├── subdomains.txt        # 150+ prefixes
+│       └── paths.txt             # 200+ paths
+│
+├── requirements.txt
+├── pyproject.toml
+└── README.md
+```
 
 ---
 
-## 🙏 Credits
+## `> cat /etc/xposure/legal.txt`
 
-**Created by SnailSploit**
-
-Built with:
-- Python 3.10+
-- aiohttp (async HTTP)
-- Click (CLI framework)
-- PyYAML (rule parsing)
-- aiodns (async DNS)
-- pyjsparser (JavaScript AST)
-
-**Special thanks to the security community for inspiration and feedback.**
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│                         ⚠️  LEGAL DISCLAIMER  ⚠️                             │
+│                                                                              │
+│  This tool is designed for AUTHORIZED security testing only.                │
+│                                                                              │
+│  ✅ LEGAL:                                                                   │
+│     • Testing systems you own                                                │
+│     • Bug bounty programs with explicit permission                          │
+│     • Authorized penetration testing engagements                            │
+│     • Security research with proper authorization                           │
+│                                                                              │
+│  ❌ ILLEGAL:                                                                 │
+│     • Unauthorized access to systems                                         │
+│     • Credential harvesting without permission                              │
+│     • Using discovered credentials maliciously                              │
+│     • Any activity violating computer crime laws                            │
+│                                                                              │
+│  YOU are responsible for ensuring you have permission.                       │
+│  The authors assume NO liability for misuse.                                │
+│                                                                              │
+│  "With great power comes great responsibility."                              │
+│     - Uncle Ben (and every security researcher ever)                        │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 📞 Contact
+## `> echo $CREDITS`
 
-- **GitHub**: [@SnailSploit](https://github.com/SnailSploit)
-- **Project**: [X-Posure](https://github.com/SnailSploit/X-Posure)
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│     ███████╗███╗   ██╗ █████╗ ██╗██╗     ███████╗██████╗ ██╗      ██████╗   │
+│     ██╔════╝████╗  ██║██╔══██╗██║██║     ██╔════╝██╔══██╗██║     ██╔═══██╗  │
+│     ███████╗██╔██╗ ██║███████║██║██║     ███████╗██████╔╝██║     ██║   ██║  │
+│     ╚════██║██║╚██╗██║██╔══██║██║██║     ╚════██║██╔═══╝ ██║     ██║   ██║  │
+│     ███████║██║ ╚████║██║  ██║██║███████╗███████║██║     ███████╗╚██████╔╝  │
+│     ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝ ╚═════╝   │
+│                                                                              │
+│                        https://github.com/SnailSploit                       │
+│                                                                              │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│                                                                              │
+│  Built with:                                                                 │
+│    • Python 3.10+      • aiohttp           • PyYAML                         │
+│    • Click             • aiodns            • pyjsparser                     │
+│                                                                              │
+│  Inspired by:                                                                │
+│    • The security community                                                  │
+│    • Late night CTFs                                                         │
+│    • That one .env file in production                                       │
+│                                                                              │
+│  ─────────────────────────────────────────────────────────────────────────  │
+│                                                                              │
+│                    "Hello, friend." - Mr. Robot                              │
+│                                                                              │
+│                   [ Made with ☕ and existential dread ]                     │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 <p align="center">
-  <strong>💀 Find the shit your DevOps forgot. 💀</strong>
+  <code>[ EOF ]</code>
 </p>
 
 <p align="center">
-  Made with ☕ and 🔥 by SnailSploit
+  <sub>You didn't see anything. This README will self-destruct in 5... 4... just kidding.</sub>
 </p>

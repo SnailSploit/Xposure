@@ -1,6 +1,6 @@
 """Content relationship graph for X-POSURE."""
 
-from collections import defaultdict
+from collections import defaultdict, deque
 from typing import Optional, Set, List
 from dataclasses import dataclass, field
 
@@ -253,12 +253,12 @@ class ContentGraph:
         related = set()
         current_id = f"finding:{finding_id}"
 
-        # BFS to find related findings
+        # BFS to find related findings (using deque for O(1) popleft)
         visited = set()
-        queue = [(current_id, 0)]
+        queue = deque([(current_id, 0)])
 
         while queue:
-            node_id, depth = queue.pop(0)
+            node_id, depth = queue.popleft()  # O(1) instead of O(n) with list.pop(0)
 
             if node_id in visited or depth > max_depth:
                 continue
@@ -326,17 +326,17 @@ class ContentGraph:
 
     def _create_node_id(self, url: str) -> str:
         """
-        Create consistent node ID from URL.
+        Create consistent, collision-resistant node ID from URL.
 
         Args:
             url: URL string
 
         Returns:
-            Node ID
+            Node ID (full SHA256 hash to avoid birthday paradox collisions)
         """
-        # Simple hash-based ID
         import hashlib
-        return hashlib.md5(url.encode()).hexdigest()[:12]
+        # Use full SHA256 to prevent collisions (12-char MD5 has ~50% collision at 6500 URLs)
+        return hashlib.sha256(url.encode()).hexdigest()
 
     def get_stats(self) -> dict:
         """
