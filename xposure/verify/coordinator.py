@@ -11,6 +11,7 @@ from .stripe import StripeVerifier
 from .openai import OpenAIVerifier
 from .gcp import GCPVerifier
 from .azure import AzureVerifier
+from .jwt import JWTVerifier
 from ..core.models import Finding, VerificationStatus
 
 
@@ -47,6 +48,7 @@ class VerifierCoordinator:
             OpenAIVerifier(timeout=timeout),
             GCPVerifier(timeout=timeout),
             AzureVerifier(timeout=timeout),
+            JWTVerifier(timeout=timeout),
         ]
 
         # Statistics

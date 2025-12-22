@@ -113,6 +113,25 @@ class JSASTParser:
                     'type': 'assignment',
                 }
 
+        # Object destructuring: const { apiKey, secret } = config
+        elif node_type == 'VariableDeclaration':
+            for declarator in node.get('declarations', []):
+                id_node = declarator.get('id')
+                init_node = declarator.get('init')
+
+                # Check for ObjectPattern (destructuring)
+                if id_node and id_node.get('type') == 'ObjectPattern':
+                    source_name = self._get_identifier(init_node)
+                    for prop in id_node.get('properties', []):
+                        key = self._get_identifier(prop.get('key'))
+                        if key:
+                            yield {
+                                'name': key,
+                                'value': f"${{{source_name}.{key}}}" if source_name else f"${{...{key}}}",
+                                'type': 'destructuring',
+                                'source': source_name,
+                            }
+
         # Object property: {key: "value"}
         elif node_type == 'Property':
             key = self._get_identifier(node.get('key'))
@@ -144,11 +163,20 @@ class JSASTParser:
         if not node:
             return None
 
-        if node.get('type') == 'Identifier':
+        node_type = node.get('type')
+
+        if node_type == 'Identifier':
             return node.get('name')
 
-        if node.get('type') == 'Literal':
+        if node_type == 'Literal':
             return str(node.get('value'))
+
+        # Handle member expressions: obj.prop or obj["prop"]
+        if node_type == 'MemberExpression':
+            obj = self._get_identifier(node.get('object'))
+            prop = self._get_identifier(node.get('property'))
+            if obj and prop:
+                return f"{obj}.{prop}"
 
         return None
 
@@ -165,13 +193,74 @@ class JSASTParser:
             if isinstance(value, str):
                 return value
 
-        # Template literal
+        # Template literal: `string ${expr} more`
         if node_type == 'TemplateLiteral':
-            quasis = node.get('quasis', [])
-            if len(quasis) == 1:  # Simple template without expressions
-                return quasis[0].get('value', {}).get('cooked', '')
+            return self._extract_template_literal(node)
+
+        # Binary expression (string concatenation): "a" + "b"
+        if node_type == 'BinaryExpression' and node.get('operator') == '+':
+            left = self._get_literal_value(node.get('left'))
+            right = self._get_literal_value(node.get('right'))
+            if left is not None and right is not None:
+                return left + right
+            # Return partial if one side is a string
+            if left is not None:
+                return left + "${...}"
+            if right is not None:
+                return "${...}" + right
+
+        # Member expression for process.env.VAR
+        if node_type == 'MemberExpression':
+            obj = self._get_identifier(node.get('object'))
+            if obj and obj.startswith('process.env'):
+                prop = self._get_identifier(node.get('property'))
+                if prop:
+                    return f"${{process.env.{prop}}}"
 
         return None
+
+    def _extract_template_literal(self, node: dict) -> Optional[str]:
+        """
+        Extract template literal value, handling expressions.
+
+        Args:
+            node: TemplateLiteral AST node
+
+        Returns:
+            Reconstructed template string with ${...} for expressions
+        """
+        quasis = node.get('quasis', [])
+        expressions = node.get('expressions', [])
+
+        if not quasis:
+            return None
+
+        # Simple template without expressions
+        if len(quasis) == 1 and not expressions:
+            return quasis[0].get('value', {}).get('cooked', '')
+
+        # Template with expressions - reconstruct
+        parts = []
+        for i, quasi in enumerate(quasis):
+            cooked = quasi.get('value', {}).get('cooked', '')
+            parts.append(cooked)
+
+            # Add expression placeholder if there's a corresponding expression
+            if i < len(expressions):
+                expr = expressions[i]
+                # Try to extract the expression value
+                expr_val = self._get_literal_value(expr)
+                if expr_val is not None:
+                    parts.append(expr_val)
+                else:
+                    # Use identifier name if available
+                    expr_name = self._get_identifier(expr)
+                    if expr_name:
+                        parts.append(f"${{{expr_name}}}")
+                    else:
+                        parts.append("${...}")
+
+        return ''.join(parts)
 
     def _extract_via_regex(self, js_code: str) -> Generator[dict, None, None]:
         """
@@ -183,36 +272,123 @@ class JSASTParser:
         Yields:
             Assignment dictionaries
         """
+        seen_values = set()  # Avoid duplicates
+
         # Variable declarations: const/let/var NAME = "value"
         var_pattern = r'(?:const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*["\']([^"\']+)["\']'
 
         for match in re.finditer(var_pattern, js_code):
-            yield {
-                'name': match.group(1),
-                'value': match.group(2),
-                'type': 'var',
-            }
+            value = match.group(2)
+            if value not in seen_values:
+                seen_values.add(value)
+                yield {
+                    'name': match.group(1),
+                    'value': value,
+                    'type': 'var',
+                }
+
+        # Template literal declarations: const NAME = `value`
+        template_pattern = r'(?:const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*`([^`]+)`'
+
+        for match in re.finditer(template_pattern, js_code):
+            value = match.group(2)
+            if value not in seen_values:
+                seen_values.add(value)
+                yield {
+                    'name': match.group(1),
+                    'value': value,
+                    'type': 'template',
+                }
 
         # Object properties: key: "value"
         prop_pattern = r'([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*["\']([^"\']+)["\']'
 
         for match in re.finditer(prop_pattern, js_code):
+            value = match.group(2)
+            if value not in seen_values:
+                seen_values.add(value)
+                yield {
+                    'name': match.group(1),
+                    'value': value,
+                    'type': 'property',
+                }
+
+        # Object properties with template literals: key: `value`
+        prop_template_pattern = r'([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*`([^`]+)`'
+
+        for match in re.finditer(prop_template_pattern, js_code):
+            value = match.group(2)
+            if value not in seen_values:
+                seen_values.add(value)
+                yield {
+                    'name': match.group(1),
+                    'value': value,
+                    'type': 'property_template',
+                }
+
+        # process.env patterns: process.env.VAR_NAME or process.env["VAR_NAME"]
+        env_pattern = r'process\.env\.([A-Z_][A-Z0-9_]*)'
+        for match in re.finditer(env_pattern, js_code):
             yield {
-                'name': match.group(1),
-                'value': match.group(2),
-                'type': 'property',
+                'name': f'process.env.{match.group(1)}',
+                'value': f'${{process.env.{match.group(1)}}}',
+                'type': 'env_reference',
             }
 
-        # Assignments: NAME = "value"
+        env_bracket_pattern = r'process\.env\[["\']([A-Z_][A-Z0-9_]*)["\']\]'
+        for match in re.finditer(env_bracket_pattern, js_code):
+            yield {
+                'name': f'process.env.{match.group(1)}',
+                'value': f'${{process.env.{match.group(1)}}}',
+                'type': 'env_reference',
+            }
+
+        # Destructuring patterns: const { apiKey, secret } = obj
+        destructure_pattern = r'(?:const|let|var)\s*\{\s*([^}]+)\s*\}\s*=\s*([a-zA-Z_$][a-zA-Z0-9_$.]*)'
+        for match in re.finditer(destructure_pattern, js_code):
+            source = match.group(2)
+            props = match.group(1)
+            for prop in props.split(','):
+                prop = prop.strip()
+                # Handle rename: originalName: newName
+                if ':' in prop:
+                    original, _ = prop.split(':', 1)
+                    prop = original.strip()
+                if prop and re.match(r'^[a-zA-Z_$][a-zA-Z0-9_$]*$', prop):
+                    yield {
+                        'name': prop,
+                        'value': f'${{{source}.{prop}}}',
+                        'type': 'destructuring',
+                        'source': source,
+                    }
+
+        # Assignments: NAME = "value" (not part of declaration)
         assign_pattern = r'([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*["\']([^"\']+)["\']'
 
         for match in re.finditer(assign_pattern, js_code):
-            # Skip if it's a var declaration (already caught)
-            if not re.search(r'(?:const|let|var)\s+' + re.escape(match.group(1)), js_code[:match.start()]):
+            value = match.group(2)
+            if value not in seen_values:
+                # Skip if it's a var declaration (already caught)
+                preceding = js_code[max(0, match.start()-20):match.start()]
+                if not re.search(r'(?:const|let|var)\s*$', preceding):
+                    seen_values.add(value)
+                    yield {
+                        'name': match.group(1),
+                        'value': value,
+                        'type': 'assignment',
+                    }
+
+        # Member assignments: obj.prop = "value"
+        member_assign_pattern = r'([a-zA-Z_$][a-zA-Z0-9_$]*(?:\.[a-zA-Z_$][a-zA-Z0-9_$]*)+)\s*=\s*["\']([^"\']+)["\']'
+
+        for match in re.finditer(member_assign_pattern, js_code):
+            value = match.group(2)
+            if value not in seen_values:
+                seen_values.add(value)
                 yield {
                     'name': match.group(1),
-                    'value': match.group(2),
-                    'type': 'assignment',
+                    'value': value,
+                    'type': 'member_assignment',
                 }
 
 
