@@ -42,52 +42,71 @@ class SubdomainDiscoverer(BaseDiscoverer):
         Yields:
             Subdomain results
         """
-        try:
-            url = f"https://crt.sh/?q=%.{domain}&output=json"
-            data = await self.fetch_json(url)
+        url = f"https://crt.sh/?q=%.{domain}&output=json"
 
-            if not data:
-                return
+        if not self.config.quiet:
+            print(f"[discover] Querying crt.sh for {domain}...")
 
-            # Extract unique subdomains
-            for entry in data:
-                name_value = entry.get('name_value', '')
-                # Handle multiple names (newline separated)
-                for subdomain in name_value.split('\n'):
-                    subdomain = subdomain.strip().lower()
+        data = await self.fetch_json(url)
 
-                    # Remove wildcards
-                    subdomain = subdomain.replace('*.', '')
+        if data is None:
+            # Error already recorded by fetch_json
+            if not self.config.quiet:
+                print(f"[discover] crt.sh query failed or returned no data")
+            return
 
-                    # Skip if already seen or invalid
-                    if not subdomain or subdomain in self.seen:
-                        continue
-
-                    # Must end with target domain
-                    if not subdomain.endswith(domain):
-                        continue
-
-                    self.seen.add(subdomain)
-
-                    yield {
-                        'type': 'subdomain',
-                        'url': f"https://{subdomain}",
-                        'subdomain': subdomain,
-                        'metadata': {
-                            'source': 'crt.sh',
-                            'issuer': entry.get('issuer_name', ''),
-                        }
-                    }
-
-                    await self.rate_limit()
-
-        except Exception as e:
+        if not isinstance(data, list):
             if self.config.verbose:
-                print(f"[discover] crt.sh error: {e}")
+                print(f"[discover] crt.sh returned unexpected format: {type(data)}")
+            return
+
+        subdomain_count = 0
+
+        # Extract unique subdomains
+        for entry in data:
+            if not isinstance(entry, dict):
+                continue
+
+            name_value = entry.get('name_value', '')
+            if not isinstance(name_value, str):
+                continue
+
+            # Handle multiple names (newline separated)
+            for subdomain in name_value.split('\n'):
+                subdomain = subdomain.strip().lower()
+
+                # Remove wildcards
+                subdomain = subdomain.replace('*.', '')
+
+                # Skip if already seen or invalid
+                if not subdomain or subdomain in self.seen:
+                    continue
+
+                # Must end with target domain
+                if not subdomain.endswith(domain):
+                    continue
+
+                self.seen.add(subdomain)
+                subdomain_count += 1
+
+                yield {
+                    'type': 'subdomain',
+                    'url': f"https://{subdomain}",
+                    'subdomain': subdomain,
+                    'metadata': {
+                        'source': 'crt.sh',
+                        'issuer': entry.get('issuer_name', ''),
+                    }
+                }
+
+                await self.rate_limit()
+
+        if not self.config.quiet:
+            print(f"[discover] Found {subdomain_count} subdomains from crt.sh")
 
     async def _discover_common(self, domain: str) -> AsyncGenerator[dict, None]:
         """
-        Try common subdomain names.
+        Try common subdomain names from wordlist.
 
         Args:
             domain: Target domain
@@ -95,17 +114,25 @@ class SubdomainDiscoverer(BaseDiscoverer):
         Yields:
             Subdomain results
         """
-        common_subdomains = [
-            'www', 'mail', 'ftp', 'localhost', 'webmail', 'smtp', 'pop', 'ns1',
-            'webdisk', 'ns2', 'cpanel', 'whm', 'autodiscover', 'autoconfig',
-            'dev', 'staging', 'test', 'demo', 'beta', 'admin', 'api', 'app',
-            'mobile', 'static', 'cdn', 'assets', 'media', 'img', 'images',
-            'vpn', 'portal', 'ssh', 'git', 'gitlab', 'github', 'bitbucket',
-            'jenkins', 'ci', 'dashboard', 'monitoring', 'metrics', 'grafana',
-            'kibana', 'elastic', 'logs', 'sentry', 'status', 'support',
-        ]
+        # Load subdomain wordlist (falls back to hardcoded if no file)
+        subdomain_prefixes = self.config.get_wordlist('subdomains')
 
-        for subdomain_prefix in common_subdomains:
+        # Fallback to basic list if wordlist not available
+        if not subdomain_prefixes:
+            subdomain_prefixes = [
+                'www', 'mail', 'ftp', 'localhost', 'webmail', 'smtp', 'pop', 'ns1',
+                'webdisk', 'ns2', 'cpanel', 'whm', 'autodiscover', 'autoconfig',
+                'dev', 'staging', 'test', 'demo', 'beta', 'admin', 'api', 'app',
+                'mobile', 'static', 'cdn', 'assets', 'media', 'img', 'images',
+                'vpn', 'portal', 'ssh', 'git', 'gitlab', 'github', 'bitbucket',
+                'jenkins', 'ci', 'dashboard', 'monitoring', 'metrics', 'grafana',
+                'kibana', 'elastic', 'logs', 'sentry', 'status', 'support',
+            ]
+
+        if not self.config.quiet:
+            print(f"[discover] Testing {len(subdomain_prefixes)} subdomain prefixes...")
+
+        for subdomain_prefix in subdomain_prefixes:
             subdomain = f"{subdomain_prefix}.{domain}"
 
             if subdomain in self.seen:

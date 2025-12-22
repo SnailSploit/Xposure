@@ -9,6 +9,8 @@ from .github import GitHubVerifier
 from .slack import SlackVerifier
 from .stripe import StripeVerifier
 from .openai import OpenAIVerifier
+from .gcp import GCPVerifier
+from .azure import AzureVerifier
 from ..core.models import Finding, VerificationStatus
 
 
@@ -43,6 +45,8 @@ class VerifierCoordinator:
             SlackVerifier(timeout=timeout),
             StripeVerifier(timeout=timeout),
             OpenAIVerifier(timeout=timeout),
+            GCPVerifier(timeout=timeout),
+            AzureVerifier(timeout=timeout),
         ]
 
         # Statistics

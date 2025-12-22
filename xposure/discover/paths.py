@@ -1,8 +1,11 @@
 """Path and endpoint discovery for X-POSURE."""
 
+import asyncio
 import re
 from typing import AsyncGenerator, Set
 from urllib.parse import urljoin, urlparse
+
+import aiohttp
 
 from .base import BaseDiscoverer
 
@@ -25,73 +28,80 @@ class PathDiscoverer(BaseDiscoverer):
         target = self.config.target
         base_url = f"https://{target}"
 
-        # Common interesting paths
-        interesting_paths = [
-            # Config/secrets
-            '/.env',
-            '/.env.local',
-            '/.env.production',
-            '/.env.development',
-            '/config.json',
-            '/config.yml',
-            '/config.yaml',
-            '/secrets.json',
-            '/credentials.json',
+        # Load paths wordlist (falls back to hardcoded if no file)
+        interesting_paths = self.config.get_wordlist('paths')
 
-            # Version control
-            '/.git/config',
-            '/.git/HEAD',
-            '/.gitignore',
-            '/.gitlab-ci.yml',
-            '/.github/workflows',
+        # Fallback to basic list if wordlist not available
+        if not interesting_paths:
+            interesting_paths = [
+                # Config/secrets
+                '/.env',
+                '/.env.local',
+                '/.env.production',
+                '/.env.development',
+                '/config.json',
+                '/config.yml',
+                '/config.yaml',
+                '/secrets.json',
+                '/credentials.json',
 
-            # Documentation
-            '/robots.txt',
-            '/sitemap.xml',
-            '/sitemap_index.xml',
-            '/humans.txt',
-            '/.well-known/security.txt',
+                # Version control
+                '/.git/config',
+                '/.git/HEAD',
+                '/.gitignore',
+                '/.gitlab-ci.yml',
+                '/.github/workflows',
 
-            # API endpoints
-            '/api',
-            '/api/v1',
-            '/api/v2',
-            '/graphql',
-            '/swagger.json',
-            '/swagger.yml',
-            '/openapi.json',
-            '/api-docs',
-            '/docs',
+                # Documentation
+                '/robots.txt',
+                '/sitemap.xml',
+                '/sitemap_index.xml',
+                '/humans.txt',
+                '/.well-known/security.txt',
 
-            # Admin/debug
-            '/admin',
-            '/dashboard',
-            '/debug',
-            '/phpinfo.php',
-            '/status',
-            '/health',
-            '/metrics',
+                # API endpoints
+                '/api',
+                '/api/v1',
+                '/api/v2',
+                '/graphql',
+                '/swagger.json',
+                '/swagger.yml',
+                '/openapi.json',
+                '/api-docs',
+                '/docs',
 
-            # Package managers
-            '/package.json',
-            '/composer.json',
-            '/requirements.txt',
-            '/Gemfile',
-            '/yarn.lock',
-            '/package-lock.json',
+                # Admin/debug
+                '/admin',
+                '/dashboard',
+                '/debug',
+                '/phpinfo.php',
+                '/status',
+                '/health',
+                '/metrics',
 
-            # Backups
-            '/backup',
-            '/backup.sql',
-            '/dump.sql',
-            '/database.sql',
-            '/.bak',
+                # Package managers
+                '/package.json',
+                '/composer.json',
+                '/requirements.txt',
+                '/Gemfile',
+                '/yarn.lock',
+                '/package-lock.json',
 
-            # Cloud configs
-            '/.aws/credentials',
-            '/.azure/credentials',
-            '/gcp-key.json',
-        ]
+                # Backups
+                '/backup',
+                '/backup.sql',
+                '/dump.sql',
+                '/database.sql',
+                '/.bak',
+
+                # Cloud configs
+                '/.aws/credentials',
+                '/.azure/credentials',
+                '/gcp-key.json',
+            ]
+
+        if not self.config.quiet:
+            print(f"[discover] Testing {len(interesting_paths)} paths...")
 
         for path in interesting_paths:
             url = urljoin(base_url, path)
@@ -135,6 +145,8 @@ class PathDiscoverer(BaseDiscoverer):
         if not self.session:
             return False
 
+        self.stats.requests_made += 1
+
         try:
             async with self.session.head(
                 url,
@@ -142,8 +154,26 @@ class PathDiscoverer(BaseDiscoverer):
                 timeout=self.session.timeout
             ) as response:
                 # 200 = exists, 403 = exists but forbidden
-                return response.status in (200, 403)
-        except Exception:
+                if response.status in (200, 403):
+                    self.stats.requests_successful += 1
+                    return True
+                return False
+
+        except asyncio.TimeoutError:
+            self.stats.timeouts += 1
+            self.stats.requests_failed += 1
+            return False
+
+        except aiohttp.ClientConnectorError as e:
+            error_type = self._classify_error(e)
+            self._record_error(error_type, url, e)
+            return False
+
+        except Exception as e:
+            self.stats.other_errors += 1
+            self.stats.requests_failed += 1
+            if self.config.verbose:
+                print(f"[discover] Error checking path {url}: {e}")
             return False
 
     async def _parse_robots(self, base_url: str) -> AsyncGenerator[dict, None]:
