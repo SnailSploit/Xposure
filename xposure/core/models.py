@@ -36,6 +36,25 @@ class Source:
     timestamp: Optional[datetime] = None
     raw_context: Optional[str] = None  # surrounding code
 
+    def __eq__(self, other) -> bool:
+        """Compare sources by value, not identity."""
+        if not isinstance(other, Source):
+            return False
+        return (
+            self.type == other.type and
+            self.url == other.url and
+            self.path == other.path and
+            self.line == other.line and
+            self.commit == other.commit and
+            self.author == other.author
+            # Exclude timestamp from comparison (changes between runs)
+        )
+
+    def __hash__(self) -> int:
+        """Make Source hashable for use in sets."""
+        return hash((self.type, self.url, self.path, self.line,
+                    self.commit, self.author))
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         return {
@@ -146,9 +165,14 @@ class Finding:
                 self.first_seen = source.timestamp or datetime.now()
 
     def update_confidence(self, delta: float, reason: str):
-        """Update confidence score with reason."""
-        self.confidence += delta
-        self.confidence_factors.append(f"{delta:+.1f} {reason}")
+        """Update confidence score with reason and bounds checking."""
+        old_confidence = self.confidence
+        self.confidence = max(0.0, min(1.0, self.confidence + delta))
+        actual_delta = self.confidence - old_confidence
+        if abs(actual_delta - delta) > 0.001:  # Was clamped
+            self.confidence_factors.append(f"{actual_delta:+.2f} {reason} (clamped from {delta:+.2f})")
+        else:
+            self.confidence_factors.append(f"{delta:+.2f} {reason}")
 
 
 @dataclass

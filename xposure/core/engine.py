@@ -604,11 +604,29 @@ class XPosureEngine:
         for finding in unique_findings:
             is_paired = finding.id in paired_finding_ids
 
+            # Analyze context quality from sources (instead of hardcoding 0.7)
+            context_quality = 0.5  # Default if no context available
+            context_qualities = []
+            for source in finding.sources:
+                if source.raw_context and finding.value:
+                    # Find position of value in context
+                    position = source.raw_context.find(finding.value)
+                    if position >= 0:
+                        qual = self.scorer.analyze_context_quality(
+                            content=source.raw_context,
+                            position=position,
+                            value=finding.value,
+                        )
+                        context_qualities.append(qual)
+
+            if context_qualities:
+                context_quality = sum(context_qualities) / len(context_qualities)
+
             # Calculate final confidence score
             final_score = self.scorer.calculate_score(
                 finding=finding,
                 is_paired=is_paired,
-                context_quality=0.7,  # Default context quality
+                context_quality=context_quality,
             )
 
             # Update finding confidence

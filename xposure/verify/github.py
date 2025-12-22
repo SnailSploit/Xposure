@@ -40,11 +40,15 @@ class GitHubVerifier(BaseVerifier):
                 error='Token is invalid or expired',
             )
 
-        # Get token scopes
-        scopes = await self._get_token_scopes(token)
+        # Get token scopes (returns tuple: scopes, confirmed, error)
+        scopes, scopes_confirmed, scope_error = await self._get_token_scopes(token)
 
-        # Process the results
-        return await self._process_user_data(user_data, scopes, token)
+        # Process the results with scope information
+        return await self._process_user_data(
+            user_data, scopes, token,
+            scopes_confirmed=scopes_confirmed,
+            scope_error=scope_error
+        )
 
     async def _get_user_info(self, token: str) -> dict:
         """
@@ -70,18 +74,21 @@ class GitHubVerifier(BaseVerifier):
 
         return data if success else None
 
-    async def _get_token_scopes(self, token: str) -> list:
+    async def _get_token_scopes(self, token: str) -> tuple[list, bool, str]:
         """
         Get token scopes from response headers.
+
+        Note: X-OAuth-Scopes header is only returned for OAuth tokens.
+        Personal Access Tokens (ghp_) may not return scope information.
 
         Args:
             token: GitHub token
 
         Returns:
-            List of scopes
+            Tuple of (list of scopes, bool indicating success, error message if any)
         """
         if not self.session:
-            return []
+            return [], False, 'No session available'
 
         try:
             headers = {
@@ -92,18 +99,36 @@ class GitHubVerifier(BaseVerifier):
 
             # Make a lightweight request to get headers
             async with self.session.get('https://api.github.com/user', headers=headers) as response:
-                # GitHub returns scopes in X-OAuth-Scopes header
+                # GitHub returns scopes in X-OAuth-Scopes header (OAuth tokens only)
                 scopes_header = response.headers.get('X-OAuth-Scopes', '')
 
                 if scopes_header:
-                    return [s.strip() for s in scopes_header.split(',') if s.strip()]
+                    scopes = [s.strip() for s in scopes_header.split(',') if s.strip()]
+                    return scopes, True, None
 
-        except Exception:
-            pass
+                # For fine-grained PATs (github_pat_), check X-Accepted-GitHub-Permissions
+                permissions_header = response.headers.get('X-Accepted-GitHub-Permissions', '')
+                if permissions_header:
+                    # Fine-grained permissions format
+                    perms = [p.strip() for p in permissions_header.split(',') if p.strip()]
+                    return perms, True, None
 
-        return []
+                # No scope header found - this is expected for some token types
+                # Determine token type from prefix
+                if token.startswith('ghp_'):
+                    return [], False, 'Classic PAT - scopes not exposed via API'
+                elif token.startswith('github_pat_'):
+                    return [], False, 'Fine-grained PAT - check permissions header'
+                elif token.startswith('gho_'):
+                    return [], False, 'OAuth token - no scopes header returned'
+                else:
+                    return [], False, 'Unknown token type - scope detection unavailable'
 
-    async def _process_user_data(self, user_data: dict, scopes: list, token: str) -> VerificationResult:
+        except Exception as e:
+            return [], False, f'Error fetching scopes: {str(e)}'
+
+    async def _process_user_data(self, user_data: dict, scopes: list, token: str,
+                                  scopes_confirmed: bool = True, scope_error: str = None) -> VerificationResult:
         """
         Process user data and scopes into verification result.
 
@@ -111,6 +136,8 @@ class GitHubVerifier(BaseVerifier):
             user_data: User data from API
             scopes: Token scopes
             token: GitHub token
+            scopes_confirmed: Whether scopes were successfully retrieved
+            scope_error: Error message if scope detection failed
 
         Returns:
             Verification result
@@ -127,24 +154,40 @@ class GitHubVerifier(BaseVerifier):
         if name and name != username:
             identity += f' ({name})'
 
-        # Determine permissions from scopes
-        permissions = scopes if scopes else ['Unknown scopes']
+        # Determine permissions from scopes - be honest about uncertainty
+        if scopes_confirmed and scopes:
+            permissions = scopes
+        elif scope_error:
+            permissions = [f'Unable to enumerate scopes: {scope_error}']
+        else:
+            permissions = ['Scope enumeration not available for this token type']
 
         # Assess blast radius based on scopes and user type
         is_admin = is_site_admin
-        has_write = any('write' in s or 'delete' in s or 'admin' in s for s in scopes)
-        has_repo_access = any('repo' in s for s in scopes)
 
-        if is_site_admin:
-            blast_radius = Severity.CRITICAL
-        elif has_repo_access and has_write:
-            blast_radius = Severity.HIGH
-        elif has_repo_access:
-            blast_radius = Severity.MEDIUM
-        elif scopes:
-            blast_radius = Severity.LOW
+        if scopes_confirmed and scopes:
+            has_write = any('write' in s or 'delete' in s or 'admin' in s for s in scopes)
+            has_repo_access = any('repo' in s for s in scopes)
+
+            if is_site_admin:
+                blast_radius = Severity.CRITICAL
+            elif has_repo_access and has_write:
+                blast_radius = Severity.HIGH
+            elif has_repo_access:
+                blast_radius = Severity.MEDIUM
+            elif scopes:
+                blast_radius = Severity.LOW
+            else:
+                blast_radius = Severity.INFO
         else:
-            blast_radius = Severity.INFO
+            # When scopes are unknown, assess based on token type and user info
+            if is_site_admin:
+                blast_radius = Severity.CRITICAL
+            elif token.startswith('ghp_') or token.startswith('github_pat_'):
+                # PATs typically have significant access - be conservative
+                blast_radius = Severity.HIGH
+            else:
+                blast_radius = Severity.MEDIUM
 
         # Determine pivot opportunities
         can_pivot_to = []
@@ -152,17 +195,17 @@ class GitHubVerifier(BaseVerifier):
         if is_site_admin:
             can_pivot_to.append('All GitHub organizations and repositories')
 
-        if has_repo_access:
-            can_pivot_to.append('Private repositories')
-
-        if 'workflow' in scopes:
-            can_pivot_to.append('GitHub Actions secrets')
-
-        if 'admin:org' in scopes:
-            can_pivot_to.append('Organization settings and members')
-
-        if 'admin:repo_hook' in scopes:
-            can_pivot_to.append('Repository webhooks (potential RCE)')
+        if scopes_confirmed:
+            if any('repo' in s for s in scopes):
+                can_pivot_to.append('Private repositories')
+            if 'workflow' in ' '.join(scopes):
+                can_pivot_to.append('GitHub Actions secrets')
+            if 'admin:org' in scopes:
+                can_pivot_to.append('Organization settings and members')
+            if 'admin:repo_hook' in scopes:
+                can_pivot_to.append('Repository webhooks (potential RCE)')
+        else:
+            can_pivot_to.append('Access level uncertain - manual verification recommended')
 
         # Determine environment
         environment = 'production' if user_type in ['User', 'Organization'] else 'unknown'
@@ -183,5 +226,7 @@ class GitHubVerifier(BaseVerifier):
                 'public_repos': user_data.get('public_repos', 0),
                 'followers': user_data.get('followers', 0),
                 'scopes': scopes,
+                'scopes_confirmed': scopes_confirmed,
+                'scope_error': scope_error,
             },
         )

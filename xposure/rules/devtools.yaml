@@ -1,0 +1,449 @@
+rules:
+  # HashiCorp Vault
+  - id: vault_token
+    name: HashiCorp Vault Token
+    type: vault_token
+    severity: critical
+    pattern: 'hvs\.[a-zA-Z0-9_-]{24,}'
+    verifier: vault
+    metadata:
+      provider: hashicorp_vault
+      docs: https://developer.hashicorp.com/vault/docs/concepts/tokens
+    remediation: |
+      1. Revoke the token using: vault token revoke <token>
+      2. Audit all secrets accessed by this token
+      3. Rotate any secrets that may have been accessed
+
+  - id: vault_service_token
+    name: HashiCorp Vault Service Token
+    type: vault_token
+    severity: critical
+    pattern: 's\.[a-zA-Z0-9]{24}'
+    context_required: true
+    context_patterns:
+      - 'vault'
+      - 'VAULT'
+    metadata:
+      provider: hashicorp_vault
+
+  # Kubernetes
+  - id: kubernetes_service_token
+    name: Kubernetes Service Account Token
+    type: k8s_token
+    severity: critical
+    pattern: 'eyJhbGciOiJSUzI1NiIs[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+'
+    context_required: true
+    context_patterns:
+      - 'kubernetes'
+      - 'k8s'
+      - 'service.*account'
+    metadata:
+      provider: kubernetes
+
+  # NPM
+  - id: npm_access_token
+    name: NPM Access Token
+    type: npm_token
+    severity: high
+    pattern: 'npm_[a-zA-Z0-9]{36}'
+    verifier: npm
+    metadata:
+      provider: npm
+      docs: https://docs.npmjs.com/about-access-tokens
+
+  - id: npm_auth_token
+    name: NPM Auth Token (legacy)
+    type: npm_token
+    severity: high
+    pattern: '//registry\.npmjs\.org/:_authToken=[a-zA-Z0-9\-_]+'
+    metadata:
+      provider: npm
+
+  # PyPI
+  - id: pypi_api_token
+    name: PyPI API Token
+    type: pypi_token
+    severity: high
+    pattern: 'pypi-AgE[a-zA-Z0-9_-]{50,}'
+    verifier: pypi
+    metadata:
+      provider: pypi
+      docs: https://pypi.org/help/#apitoken
+
+  # Docker Hub
+  - id: dockerhub_access_token
+    name: Docker Hub Access Token
+    type: docker_token
+    severity: high
+    pattern: 'dckr_pat_[a-zA-Z0-9_-]{28}'
+    verifier: docker
+    metadata:
+      provider: docker_hub
+      docs: https://docs.docker.com/docker-hub/access-tokens/
+
+  # Sentry
+  - id: sentry_auth_token
+    name: Sentry Auth Token
+    type: sentry_token
+    severity: medium
+    pattern: 'sntrys_[a-zA-Z0-9]{64}'
+    verifier: sentry
+    metadata:
+      provider: sentry
+
+  - id: sentry_dsn
+    name: Sentry DSN
+    type: sentry_dsn
+    severity: medium
+    pattern: 'https://[a-f0-9]+@[a-z0-9]+\.ingest\.sentry\.io/[0-9]+'
+    metadata:
+      provider: sentry
+      docs: https://docs.sentry.io/product/sentry-basics/dsn-explainer/
+
+  # Datadog
+  - id: datadog_api_key
+    name: Datadog API Key
+    type: datadog_api_key
+    severity: high
+    pattern: '[a-f0-9]{32}'
+    context_required: true
+    context_patterns:
+      - 'datadog'
+      - 'DD_API_KEY'
+      - 'DATADOG'
+    pair_with: datadog_app_key
+    verifier: datadog
+    metadata:
+      provider: datadog
+
+  - id: datadog_app_key
+    name: Datadog Application Key
+    type: datadog_app_key
+    severity: high
+    pattern: '[a-f0-9]{40}'
+    context_required: true
+    context_patterns:
+      - 'datadog'
+      - 'DD_APP_KEY'
+    pair_with: datadog_api_key
+    metadata:
+      provider: datadog
+
+  # New Relic
+  - id: newrelic_license_key
+    name: New Relic License Key
+    type: newrelic_key
+    severity: high
+    pattern: '[a-f0-9]{40}'
+    context_required: true
+    context_patterns:
+      - 'newrelic'
+      - 'NEW_RELIC'
+      - 'license_key'
+    metadata:
+      provider: newrelic
+
+  - id: newrelic_api_key
+    name: New Relic API Key
+    type: newrelic_api_key
+    severity: high
+    pattern: 'NRAK-[a-zA-Z0-9]{27}'
+    metadata:
+      provider: newrelic
+
+  # Splunk
+  - id: splunk_hec_token
+    name: Splunk HEC Token
+    type: splunk_token
+    severity: high
+    pattern: '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
+    context_required: true
+    context_patterns:
+      - 'splunk'
+      - 'SPLUNK'
+      - 'hec'
+    metadata:
+      provider: splunk
+
+  # Databricks
+  - id: databricks_token
+    name: Databricks Personal Access Token
+    type: databricks_token
+    severity: critical
+    pattern: 'dapi[a-f0-9]{32}'
+    verifier: databricks
+    metadata:
+      provider: databricks
+      docs: https://docs.databricks.com/dev-tools/auth.html
+
+  # CircleCI
+  - id: circleci_token
+    name: CircleCI Personal API Token
+    type: circleci_token
+    severity: high
+    pattern: 'circleci_[a-f0-9]{40}'
+    metadata:
+      provider: circleci
+
+  # TravisCI
+  - id: travis_token
+    name: Travis CI API Token
+    type: travis_token
+    severity: high
+    pattern: '[a-zA-Z0-9]{22}'
+    context_required: true
+    context_patterns:
+      - 'travis'
+      - 'TRAVIS'
+    metadata:
+      provider: travis_ci
+
+  # Grafana
+  - id: grafana_api_key
+    name: Grafana API Key
+    type: grafana_key
+    severity: medium
+    pattern: 'eyJrIjoi[a-zA-Z0-9_-]+[=]*'
+    metadata:
+      provider: grafana
+
+  - id: grafana_cloud_token
+    name: Grafana Cloud API Token
+    type: grafana_cloud_token
+    severity: high
+    pattern: 'glc_[a-zA-Z0-9_-]{32,}'
+    metadata:
+      provider: grafana_cloud
+
+  # Private Keys
+  - id: rsa_private_key
+    name: RSA Private Key
+    type: private_key
+    severity: critical
+    pattern: '-----BEGIN RSA PRIVATE KEY-----'
+    metadata:
+      key_type: rsa
+    remediation: |
+      1. Immediately revoke/replace the compromised key
+      2. Update all systems using this key
+      3. Audit access logs for unauthorized use
+
+  - id: openssh_private_key
+    name: OpenSSH Private Key
+    type: private_key
+    severity: critical
+    pattern: '-----BEGIN OPENSSH PRIVATE KEY-----'
+    metadata:
+      key_type: openssh
+
+  - id: ec_private_key
+    name: EC Private Key
+    type: private_key
+    severity: critical
+    pattern: '-----BEGIN EC PRIVATE KEY-----'
+    metadata:
+      key_type: ec
+
+  - id: dsa_private_key
+    name: DSA Private Key
+    type: private_key
+    severity: critical
+    pattern: '-----BEGIN DSA PRIVATE KEY-----'
+    metadata:
+      key_type: dsa
+
+  - id: pgp_private_key
+    name: PGP Private Key Block
+    type: private_key
+    severity: critical
+    pattern: '-----BEGIN PGP PRIVATE KEY BLOCK-----'
+    metadata:
+      key_type: pgp
+
+  - id: putty_private_key
+    name: PuTTY Private Key
+    type: private_key
+    severity: critical
+    pattern: 'PuTTY-User-Key-File-[23]:'
+    metadata:
+      key_type: putty
+
+  # JFrog/Artifactory
+  - id: artifactory_token
+    name: JFrog Artifactory Token
+    type: artifactory_token
+    severity: high
+    pattern: 'AKC[a-zA-Z0-9]{10,}'
+    metadata:
+      provider: jfrog
+
+  - id: artifactory_api_key
+    name: JFrog Artifactory API Key
+    type: artifactory_api_key
+    severity: high
+    pattern: '[a-f0-9]{64}'
+    context_required: true
+    context_patterns:
+      - 'artifactory'
+      - 'jfrog'
+      - 'ARTIFACTORY'
+    metadata:
+      provider: jfrog
+
+  # Postman
+  - id: postman_api_key
+    name: Postman API Key
+    type: postman_key
+    severity: medium
+    pattern: 'PMAK-[a-f0-9]{24}-[a-f0-9]{34}'
+    metadata:
+      provider: postman
+
+  # Linear
+  - id: linear_api_key
+    name: Linear API Key
+    type: linear_key
+    severity: medium
+    pattern: 'lin_api_[a-zA-Z0-9]{40}'
+    metadata:
+      provider: linear
+
+  # Vercel
+  - id: vercel_token
+    name: Vercel API Token
+    type: vercel_token
+    severity: high
+    pattern: '[a-zA-Z0-9]{24}'
+    context_required: true
+    context_patterns:
+      - 'vercel'
+      - 'VERCEL'
+      - 'zeit'
+    metadata:
+      provider: vercel
+
+  # Netlify
+  - id: netlify_access_token
+    name: Netlify Access Token
+    type: netlify_token
+    severity: high
+    pattern: '[a-zA-Z0-9_-]{40,}'
+    context_required: true
+    context_patterns:
+      - 'netlify'
+      - 'NETLIFY'
+    metadata:
+      provider: netlify
+
+  # Heroku
+  - id: heroku_api_key
+    name: Heroku API Key
+    type: heroku_key
+    severity: high
+    pattern: '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
+    context_required: true
+    context_patterns:
+      - 'heroku'
+      - 'HEROKU'
+    metadata:
+      provider: heroku
+
+  # Okta
+  - id: okta_api_token
+    name: Okta API Token
+    type: okta_token
+    severity: critical
+    pattern: '00[a-zA-Z0-9_-]{40}'
+    context_required: true
+    context_patterns:
+      - 'okta'
+      - 'OKTA'
+    verifier: okta
+    metadata:
+      provider: okta
+      docs: https://developer.okta.com/docs/reference/api/authn/
+
+  # Auth0
+  - id: auth0_management_token
+    name: Auth0 Management API Token
+    type: auth0_token
+    severity: critical
+    pattern: 'eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*'
+    context_required: true
+    context_patterns:
+      - 'auth0'
+      - 'AUTH0'
+    metadata:
+      provider: auth0
+
+  # Shopify
+  - id: shopify_access_token
+    name: Shopify Access Token
+    type: shopify_token
+    severity: high
+    pattern: 'shpat_[a-fA-F0-9]{32}'
+    verifier: shopify
+    metadata:
+      provider: shopify
+
+  - id: shopify_shared_secret
+    name: Shopify Shared Secret
+    type: shopify_secret
+    severity: high
+    pattern: 'shpss_[a-fA-F0-9]{32}'
+    metadata:
+      provider: shopify
+
+  # Contentful
+  - id: contentful_delivery_token
+    name: Contentful Delivery API Token
+    type: contentful_token
+    severity: medium
+    pattern: '[a-zA-Z0-9_-]{43}'
+    context_required: true
+    context_patterns:
+      - 'contentful'
+      - 'CONTENTFUL'
+    metadata:
+      provider: contentful
+
+  # Airtable
+  - id: airtable_api_key
+    name: Airtable API Key
+    type: airtable_key
+    severity: medium
+    pattern: 'key[a-zA-Z0-9]{14}'
+    metadata:
+      provider: airtable
+
+  - id: airtable_pat
+    name: Airtable Personal Access Token
+    type: airtable_pat
+    severity: medium
+    pattern: 'pat[a-zA-Z0-9]{14}\.[a-f0-9]{64}'
+    metadata:
+      provider: airtable
+
+  # Notion
+  - id: notion_integration_token
+    name: Notion Integration Token
+    type: notion_token
+    severity: medium
+    pattern: 'secret_[a-zA-Z0-9]{43}'
+    metadata:
+      provider: notion
+
+  # Atlassian
+  - id: atlassian_api_token
+    name: Atlassian API Token
+    type: atlassian_token
+    severity: high
+    pattern: '[a-zA-Z0-9]{24}'
+    context_required: true
+    context_patterns:
+      - 'atlassian'
+      - 'jira'
+      - 'confluence'
+      - 'ATLASSIAN'
+    metadata:
+      provider: atlassian
