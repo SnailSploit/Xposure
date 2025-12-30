@@ -1,10 +1,10 @@
-# X-POSURE v1.0
+# X-POSURE v1.0 → v2.0 (In Development)
 
 ```
  ██╗  ██╗       ██████╗  ██████╗ ███████╗██╗   ██╗██████╗ ███████╗
  ╚██╗██╔╝       ██╔══██╗██╔═══██╗██╔════╝██║   ██║██╔══██╗██╔════╝
-  ╚███╔╝  █████╗██████╔╝██║   ██║███████╗██║   ██║██████╔╝█████╗  
-  ██╔██╗  ╚════╝██╔═══╝ ██║   ██║╚════██║██║   ██║██╔══██╗██╔══╝  
+  ╚███╔╝  █████╗██████╔╝██║   ██║███████╗██║   ██║██████╔╝█████╗
+  ██╔██╗  ╚════╝██╔═══╝ ██║   ██║╚════██║██║   ██║██╔══██╗██╔══╝
  ██╔╝ ██╗       ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗
  ╚═╝  ╚═╝       ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
 
@@ -13,19 +13,28 @@
 ```
 
 <p align="center">
-  <strong>💀 The shit your DevOps forgot. 💀</strong>
+  <strong>💀 Expose EVERYTHING about a target with a single click 💀</strong>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-red?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/version-1.0.0→2.0-orange?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/detection-66→1000+-red?style=for-the-badge" alt="Detection Types">
   <img src="https://img.shields.io/badge/python-3.10+-blue?style=for-the-badge" alt="Python">
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/status-active-success?style=for-the-badge" alt="Status">
 </p>
 
 <p align="center">
-  <strong>Domain-based credential harvester for red team operations and bug bounty hunting</strong>
+  <strong>The most comprehensive domain-based credential harvester for offensive security</strong>
 </p>
+
+---
+
+> **⚠️ CURRENT STATUS (v1.0):** X-POSURE currently detects **66 credential types**. We're expanding to **1000+ types** to truly "expose everything" about a target. See [EXPOSURE_EXPANSION_PLAN.md](EXPOSURE_EXPANSION_PLAN.md) for the 12-week roadmap.
+>
+> **Current Coverage:** 6.4% vs industry-leading tools | **Target Coverage:** 97%+
+>
+> **What Works Now:** Web discovery, advanced correlation, active verification (5 providers)
+> **Coming Soon:** 15x more credential types, 14x more verifiers, comprehensive coverage
 
 ---
 
@@ -84,22 +93,37 @@ python -m xposure example.com -o results.json
 - **Multi-layered**: Scans original content + all decoded variants
 
 ### 🎯 Rules Engine
-**64+ Detection Rules** across 6 categories:
+**Current: 66 credential types | Target: 1000+ types**
 
-| Category | Rules | Examples |
-|----------|-------|----------|
-| ☁️ **Cloud** | 15 | AWS (keys, secrets, tokens), GCP, Azure, DigitalOcean, Terraform |
-| 🤖 **AI/ML** | 16 | OpenAI, Anthropic, Cohere, HuggingFace, Stability AI, Pinecone |
-| 📦 **Version Control** | 10 | GitHub (PATs, OAuth, Apps), GitLab, Bitbucket, Azure DevOps |
-| 💬 **Communication** | 13 | Slack, Discord, Twilio, SendGrid, Mailgun, Telegram, Zendesk |
-| 💳 **Payment** | 7 | Stripe, PayPal, Square, Braintree |
-| 🗄️ **Database** | 6 | MongoDB, PostgreSQL, MySQL, Redis, Firebase, Supabase |
+| Category | Current | Planned | Key Additions |
+|----------|---------|---------|---------------|
+| ☁️ **Cloud Infrastructure** | 15 | 150 | +Cloudflare, Vercel, Netlify, IBM Cloud, Oracle, Render, Railway, Fly.io |
+| 🤖 **AI/ML Services** | 16 | 60 | +Google AI, xAI, ElevenLabs, DeepSeek, Groq, Perplexity, Together AI |
+| 📦 **Version Control** | 10 | 30 | (Good coverage - minor additions) |
+| 💬 **Communication** | 13 | 50 | +Microsoft Teams, Webex, RingCentral, MessageBird, Customer.io |
+| 💳 **Payment Processing** | 7 | 30 | +Checkout.com, Adyen, Paddle, LemonSqueezy, Chargebee |
+| 🗄️ **Databases** | 6 | 40 | +Elasticsearch, InfluxDB, Cassandra, Neo4j, DynamoDB, CosmosDB |
+| 🔧 **CI/CD & DevOps** | 1 | 100 | +CircleCI, Jenkins, BuildKite, Docker, Kubernetes, ArgoCD |
+| 📊 **Monitoring** | 0 | 40 | +Datadog, New Relic, Sentry, Grafana, Splunk, Honeycomb |
+| 🔐 **Secret Management** | 0 | 20 | +HashiCorp Vault, Doppler, 1Password, Infisical |
+| 💼 **SaaS/Productivity** | 0 | 200 | +Notion, Airtable, Jira, Linear, HubSpot, Salesforce |
+| 🏪 **CMS/E-commerce** | 0 | 50 | +Shopify, WooCommerce, Contentful, Strapi, Sanity |
+| 🔒 **Security/Compliance** | 0 | 40 | +Wiz, Snyk, Qualys, Tenable, Detectify |
+| 🎯 **Analytics** | 0 | 50 | +Mixpanel, Amplitude, Segment, PostHog, FullStory |
+| 🌐 **Others** | 0 | 300+ | Social, Finance, HR, Blockchain, Media, Regional APIs |
 
-**Features:**
+**Current Features:**
 - Context-aware matching (requires surrounding keywords)
 - Severity levels (CRITICAL to INFO)
 - Exclusion patterns for false positives
 - Metadata: provider docs, remediation steps
+- False positive detection with Shannon entropy filtering
+
+**Coming in v2.0:**
+- 15x more detection rules (66 → 1000+)
+- Advanced pattern matching with trie-based optimization
+- Machine learning-enhanced false positive reduction
+- Community-contributed rule marketplace
 
 ### 🧩 Correlation Module
 - **Deduplication**: SHA256 hash-based with multi-source evidence tracking
@@ -114,13 +138,16 @@ python -m xposure example.com -o results.json
 - **Content Graph**: Tracks discovery chains (domain → subdomain → JS file → finding)
 
 ### ✅ Verification Engine
+**Current: 5 active verifiers | Target: 70+ verifiers**
+
 **Passive Verification** (format checks):
 - AWS access key structure validation
 - GitHub token prefix detection (ghp_, gho_, ghu_, ghs_, ghr_)
 - Stripe key environment detection (live vs test)
 - OpenAI key type identification (project vs user)
+- Generic format validation for all credential types
 
-**Active Verification** (5 providers):
+**Active Verification - Current (5 providers):**
 
 #### 🔶 AWS Verifier
 - **Method**: STS GetCallerIdentity API
@@ -161,6 +188,25 @@ python -m xposure example.com -o results.json
 - ✓ Blast Radius (CRITICAL → INFO)
 - ✓ Environment (production, staging, test)
 - ✓ Pivot Opportunities (where attackers can go)
+
+**Coming in v2.0 - Additional Verifiers (+65):**
+
+**Phase 1 (Week 1-2):** Essential Cloud & DevOps
+- GCP (tokeninfo), Azure (Microsoft Graph), DigitalOcean, Cloudflare, Vercel, Netlify
+- Datadog, Sentry, New Relic, GitLab, Bitbucket, Docker Hub
+- CircleCI, Terraform Cloud, MongoDB Atlas, Supabase
+
+**Phase 2 (Week 3-4):** Common SaaS
+- Notion, Airtable, Jira, Linear, HubSpot, Anthropic
+- Google AI, xAI, ElevenLabs, SendGrid, Twilio, Microsoft Teams
+
+**Phase 3 (Week 5-6):** Specialized Services
+- Shopify, WooCommerce, Contentful, Mixpanel, Amplitude
+- Auth0, Okta, HashiCorp Vault, Grafana
+
+**Phase 4 (Week 7+):** Long-tail & Generic
+- 30+ additional service-specific verifiers
+- Generic HTTP verifier framework for 500+ services
 
 ---
 
@@ -442,19 +488,109 @@ python test_extraction.py
 
 ## 📈 Development Roadmap
 
-### ✅ Completed (v1.0)
-- [x] **Session 1**: Core scaffolding, CLI, state persistence
-- [x] **Session 2**: Discovery modules (subdomains, paths, JS)
-- [x] **Session 3**: Extraction pipeline (regex, decode, AST, objects)
-- [x] **Session 4**: Rules engine (YAML loader, matcher, 64+ rules)
-- [x] **Session 5**: Correlation (pairing, dedup, confidence scoring, graph)
-- [x] **Session 6**: Verification (AWS, GitHub, Slack, Stripe, OpenAI)
+### ✅ Completed (v1.0) - Foundation
+- [x] **Core Engine**: Scaffolding, CLI, state persistence, async architecture
+- [x] **Discovery Pipeline**: Subdomains (crt.sh + DNS), paths, JavaScript harvesting, config files, source maps
+- [x] **Extraction Pipeline**: Regex scanner, decode chains, AST parsing, object extraction
+- [x] **Rules Engine**: YAML-based system with 66 credential types
+- [x] **Correlation Module**: Deduplication, pairing, confidence scoring, content graph
+- [x] **Verification System**: 5 active verifiers (AWS, GitHub, Slack, Stripe, OpenAI)
+- [x] **False Positive Detection**: Shannon entropy filtering, context analysis
 
-### 🚧 Planned
-- [ ] **Session 7**: Live dashboard with Rich
-- [ ] **Session 8**: GitHub dorking + S3 bucket enumeration
-- [ ] **Session 9**: Additional verifiers (GCP, Azure, Anthropic)
-- [ ] **Session 10**: Polish, comprehensive tests, packaging
+### 🚧 v2.0 Expansion (12-Week Plan) - "Expose Everything"
+
+See [EXPOSURE_EXPANSION_PLAN.md](EXPOSURE_EXPANSION_PLAN.md) for detailed implementation strategy.
+
+**Week 1: Critical Foundation (→166 types, 16% coverage)**
+- [ ] Fix `pyjsparser` dependency (blocker)
+- [ ] Add Tier 1 critical types (+100): Cloudflare, Vercel, Datadog, monitoring, CI/CD
+- [ ] Add 15 essential verifiers: GCP, Azure, DigitalOcean, Datadog, Sentry
+- [ ] Create rule generator automation
+- [ ] Setup comprehensive test suite
+
+**Week 2-3: Essential Services (→316 types, 31% coverage)**
+- [ ] Add Tier 2 types (+150): Microsoft Teams, Notion, Jira, Shopify, Auth0
+- [ ] Add 25 verifiers: Notion, Airtable, HubSpot, Anthropic, Google AI
+- [ ] Implement performance optimizations (trie-based matching)
+- [ ] Add caching layer
+
+**Week 4-6: Important Coverage (→516 types, 50% coverage)**
+- [ ] Add Tier 3 types (+200): Wiz, Snyk, Mixpanel, Analytics, Marketing tools
+- [ ] Add 30 verifiers: Shopify, Mixpanel, Auth0
+- [ ] Generic HTTP verifier framework
+- [ ] Automated false positive testing
+
+**Week 7-9: Useful Additions (→716 types, 69% coverage)**
+- [ ] Add Tier 4 types (+200): Finance, HR, Social, Blockchain, Media
+- [ ] Performance tuning and optimization
+- [ ] Live dashboard with Rich
+- [ ] Comprehensive documentation
+
+**Week 10-12: Excellence (→1000+ types, 97%+ coverage)**
+- [ ] Add Tier 5 long-tail types (+300+): Niche APIs, regional services
+- [ ] Final polish and optimization
+- [ ] Benchmark testing and publication
+- [ ] Community contribution framework
+
+### 🎯 v2.0 Success Metrics
+- ✅ 1000+ credential types (15x current)
+- ✅ 70+ active verifiers (14x current)
+- ✅ <5% false positive rate
+- ✅ <5min full domain scan
+- ✅ 97%+ coverage vs industry leaders
+- ✅ Production-ready for enterprise targets
+
+### 🔮 v3.0 Vision (Future)
+- [ ] Git repository scanning (compete with TruffleHog fully)
+- [ ] Filesystem scanning for local assessments
+- [ ] S3/GCS/Azure Blob bucket enumeration
+- [ ] CI/CD pipeline integrations (GitHub Actions, GitLab CI)
+- [ ] Pre-commit/pre-receive hooks
+- [ ] Enterprise SaaS platform
+- [ ] API marketplace for custom detectors
+
+---
+
+## 📋 Planning Documents
+
+Comprehensive analysis and expansion strategy documents:
+
+1. **[STATUS_REVIEW.md](STATUS_REVIEW.md)** - Current state analysis
+   - Detailed comparison: X-POSURE vs TruffleHog
+   - Gap analysis (66 vs 1036 credential types)
+   - Technical assessment of strengths and weaknesses
+
+2. **[EXPOSURE_EXPANSION_PLAN.md](EXPOSURE_EXPANSION_PLAN.md)** - 12-week implementation plan
+   - Tier-by-tier expansion strategy (Critical → Long-tail)
+   - Detailed timelines and resource requirements
+   - Technical implementation details
+   - Verification expansion strategy
+   - Performance optimization plans
+
+3. **[EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)** - Decision framework
+   - Two paths analysis (Niche vs Comprehensive)
+   - Success metrics and milestones
+   - Risk mitigation strategies
+   - Immediate next steps
+
+---
+
+## 🚨 Known Issues & Blockers
+
+### Critical Blockers
+- **`pyjsparser` dependency fails to install** - Build error on pip install
+  - Impact: JavaScript AST parsing disabled
+  - Workaround: Regex-only extraction (functional but less effective)
+  - Fix planned: Switch to `esprima-python` or `slimit` (Week 1)
+
+### High Priority
+- **Limited test coverage** - Only 4 test files
+  - Impact: Risk of regressions during expansion
+  - Fix planned: Comprehensive test suite (Week 1)
+
+- **Performance with large files** - Scans can be slow on 1MB+ JavaScript files
+  - Impact: Long scan times for some targets
+  - Fix planned: Smart sampling and caching (Week 2-3)
 
 ---
 
@@ -509,7 +645,9 @@ Built with:
 - Click (CLI framework)
 - PyYAML (rule parsing)
 - aiodns (async DNS)
-- pyjsparser (JavaScript AST)
+- Rich (terminal UI)
+
+**Inspired by:** TruffleHog, Nuclei, and the offensive security community
 
 **Special thanks to the security community for inspiration and feedback.**
 
@@ -519,11 +657,38 @@ Built with:
 
 - **GitHub**: [@SnailSploit](https://github.com/SnailSploit)
 - **Project**: [X-Posure](https://github.com/SnailSploit/X-Posure)
+- **Issues**: [GitHub Issues](https://github.com/SnailSploit/X-Posure/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/SnailSploit/X-Posure/discussions)
+
+---
+
+## 🎯 The Vision
+
+**X-POSURE** exists to solve one problem: **expose EVERYTHING about a target with a single click.**
+
+Not 6.4%. Not "good enough." **EVERYTHING.**
+
+- Every exposed credential across all major services
+- Every misconfigured API key in every JavaScript file
+- Every forgotten secret in every config file
+- Every leaked token in every subdomain
+
+**v1.0 laid the foundation. v2.0 delivers the vision.**
+
+12 weeks. 1000+ credential types. 70+ verifiers. 97%+ coverage.
+
+The shit your DevOps forgot? **We'll find it all.** 💀
 
 ---
 
 <p align="center">
-  <strong>💀 Find the shit your DevOps forgot. 💀</strong>
+  <strong>💀 Expose EVERYTHING. Leave nothing hidden. 💀</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/current-66_types-orange?style=flat-square" alt="Current">
+  <img src="https://img.shields.io/badge/target-1000+_types-red?style=flat-square" alt="Target">
+  <img src="https://img.shields.io/badge/coverage-6.4%→97%+-green?style=flat-square" alt="Coverage">
 </p>
 
 <p align="center">
