@@ -22,8 +22,9 @@
                               by SnailSploit
 ```
 
-<!-- Logo: drop your SnailSploit banner in assets/banner.png -->
-<!-- <p align="center"><img src="assets/banner.png" width="700" alt="X-POSURE"></p> -->
+<p align="center">
+  <img src="assets/banner.png" width="700" alt="X-POSURE by SnailSploit">
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-4.0.0-ff0040?style=for-the-badge&labelColor=1a1a2e" alt="Version">
@@ -717,8 +718,4 @@ X-Posure/
 
 <p align="center">
   <code>[ EOF ]</code>
-</p>
-
-<p align="center">
-  <sub>You didn't see anything. This README will self-destruct in 5... 4... just kidding.</sub>
 </p>
