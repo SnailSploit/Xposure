@@ -25,7 +25,16 @@ def print_banner(compact: bool = False):
 @click.option('--quiet', '-q', is_flag=True, help='Minimal output')
 @click.option('--no-verify', is_flag=True, help='Skip active verification')
 @click.option('--version', '-v', is_flag=True, help='Show version')
-def main(target, github_token, output, quiet, no_verify, version):
+@click.option('--recursive-crawl', '-rc', is_flag=True, help='Recursive crawl with evasion (UA rotation, fingerprints, sleep)')
+@click.option('--crawl-depth', type=int, default=5, help='Max crawl depth (default: 5)')
+@click.option('--crawl-max-pages', type=int, default=500, help='Max pages to crawl (default: 500)')
+@click.option('--crawl-sleep', type=float, nargs=2, default=(1.0, 3.0), help='Min/max sleep between requests (default: 1.0 3.0)')
+@click.option('--no-trufflehog', is_flag=True, help='Disable TruffleHog secrets scanning during crawl')
+@click.option('--shodan-key', envvar='SHODAN_API_KEY', help='Shodan API key for infra mapping')
+@click.option('--anthropic-key', envvar='ANTHROPIC_API_KEY', help='Anthropic API key for AI analysis')
+def main(target, github_token, output, quiet, no_verify, version,
+         recursive_crawl, crawl_depth, crawl_max_pages, crawl_sleep,
+         no_trufflehog, shodan_key, anthropic_key):
     """
     X-POSURE — Shit your DevOps forgot.
 
@@ -38,6 +47,10 @@ def main(target, github_token, output, quiet, no_verify, version):
         xposure example.com --github-token ghp_xxx
 
         xposure example.com -o findings.json
+
+        xposure example.com -rc --shodan-key XXXXX --anthropic-key sk-ant-XXX
+
+        xposure example.com -rc --crawl-depth 10 --crawl-sleep 2.0 5.0
     """
     if version:
         print(f"x-posure v{__version__}")
@@ -60,6 +73,14 @@ def main(target, github_token, output, quiet, no_verify, version):
         verify=not no_verify,
         output_file=output,
         quiet=quiet,
+        recursive_crawl=recursive_crawl,
+        crawl_depth=crawl_depth,
+        crawl_max_pages=crawl_max_pages,
+        crawl_min_sleep=crawl_sleep[0],
+        crawl_max_sleep=crawl_sleep[1],
+        use_trufflehog=not no_trufflehog,
+        shodan_key=shodan_key,
+        anthropic_key=anthropic_key,
     )
 
     try:

@@ -15,6 +15,8 @@ class Config:
 
     # Authentication tokens
     github_token: Optional[str] = None
+    shodan_key: Optional[str] = None
+    anthropic_key: Optional[str] = None
 
     # Behavior
     verify: bool = True
@@ -37,6 +39,15 @@ class Config:
     discover_wayback: bool = True
     discover_configs: bool = True      # Config file discovery
     discover_sourcemaps: bool = True   # Source map mining
+
+    # Recursive crawl
+    recursive_crawl: bool = False
+    crawl_depth: int = 5               # max link-follow depth
+    crawl_max_pages: int = 500         # max pages to crawl
+    crawl_workers: int = 10            # concurrent crawl workers
+    crawl_min_sleep: float = 1.0       # min delay between requests (seconds)
+    crawl_max_sleep: float = 3.0       # max delay between requests (seconds)
+    use_trufflehog: bool = True        # run trufflehog alongside crawl
 
     # Extraction
     max_decode_depth: int = 5  # recursive decode limit
@@ -78,6 +89,8 @@ class Config:
 
         # Override with environment variables
         self.github_token = self.github_token or os.getenv("GITHUB_TOKEN")
+        self.shodan_key = self.shodan_key or os.getenv("SHODAN_API_KEY")
+        self.anthropic_key = self.anthropic_key or os.getenv("ANTHROPIC_API_KEY")
 
     def get_wordlist(self, name: str) -> list[str]:
         """

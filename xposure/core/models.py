@@ -176,6 +176,27 @@ class Finding:
 
 
 @dataclass
+class InfraMapping:
+    """Infrastructure mapping from DNS resolution + Shodan."""
+    domain_to_ips: dict = field(default_factory=dict)   # domain -> [ips]
+    ip_to_shodan: dict = field(default_factory=dict)    # ip -> ShodanHostInfo dict
+    dns_records: dict = field(default_factory=dict)     # domain -> ResolvedHost dict
+    unique_ips: list[str] = field(default_factory=list)
+    total_open_ports: int = 0
+    total_vulns: int = 0
+
+    def to_dict(self) -> dict:
+        return {
+            "domain_to_ips": self.domain_to_ips,
+            "ip_to_shodan": self.ip_to_shodan,
+            "dns_records": self.dns_records,
+            "unique_ips": self.unique_ips,
+            "total_open_ports": self.total_open_ports,
+            "total_vulns": self.total_vulns,
+        }
+
+
+@dataclass
 class ScanStats:
     """Statistics for a scan."""
     target: str
@@ -190,6 +211,11 @@ class ScanStats:
     sourcemaps_found: int = 0
     wayback_urls_found: int = 0
 
+    # Recursive crawl stats
+    crawl_pages: int = 0
+    crawl_urls_found: int = 0
+    trufflehog_findings: int = 0
+
     # Extract stats
     decoded_blobs: int = 0
     ast_parsed: int = 0
@@ -202,9 +228,14 @@ class ScanStats:
     invalid_findings: int = 0
     error_findings: int = 0
 
+    # Enrichment stats
+    dns_resolved: int = 0
+    shodan_queried: int = 0
+    ai_analyzed: bool = False
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
-        return {
+        result = {
             "target": self.target,
             "start_time": self.start_time.isoformat(),
             "end_time": self.end_time.isoformat() if self.end_time else None,
@@ -230,3 +261,16 @@ class ScanStats:
                 "errors": self.error_findings,
             },
         }
+        if self.crawl_pages or self.crawl_urls_found or self.trufflehog_findings:
+            result["recursive_crawl"] = {
+                "pages_crawled": self.crawl_pages,
+                "urls_found": self.crawl_urls_found,
+                "trufflehog_findings": self.trufflehog_findings,
+            }
+        if self.dns_resolved or self.shodan_queried or self.ai_analyzed:
+            result["enrichment"] = {
+                "dns_resolved": self.dns_resolved,
+                "shodan_queried": self.shodan_queried,
+                "ai_analyzed": self.ai_analyzed,
+            }
+        return result
