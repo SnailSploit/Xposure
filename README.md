@@ -11,7 +11,7 @@
     █  ██╔╝ ██╗      ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗      █
     █  ╚═╝  ╚═╝      ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝      █
     █                                                                        █
-    █  [ v4.0.0 ]  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  [ ENTERPRISE ]       █
+    █  [ v4.0.0 ]  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  [ ENTERPRISE ]   █
     █                                                                        █
     █  "Control is an illusion. But credentials? Those are real."            █
     █                                                    - Mr. Robot, maybe  █
@@ -22,11 +22,21 @@
                               by SnailSploit
 ```
 
+<!-- Logo: drop your SnailSploit banner in assets/banner.png -->
+<!-- <p align="center"><img src="assets/banner.png" width="700" alt="X-POSURE"></p> -->
+
 <p align="center">
   <img src="https://img.shields.io/badge/version-4.0.0-ff0040?style=for-the-badge&labelColor=1a1a2e" alt="Version">
   <img src="https://img.shields.io/badge/python-3.10+-00d4ff?style=for-the-badge&labelColor=1a1a2e" alt="Python">
   <img src="https://img.shields.io/badge/status-OPERATIONAL-00ff41?style=for-the-badge&labelColor=1a1a2e" alt="Status">
   <img src="https://img.shields.io/badge/license-MIT-9d4edd?style=for-the-badge&labelColor=1a1a2e" alt="License">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/recursive_crawl-NEW-ff6b35?style=for-the-badge&labelColor=1a1a2e" alt="Recursive Crawl">
+  <img src="https://img.shields.io/badge/shodan-INTEGRATED-e040fb?style=for-the-badge&labelColor=1a1a2e" alt="Shodan">
+  <img src="https://img.shields.io/badge/claude_AI-POWERED-f5a623?style=for-the-badge&labelColor=1a1a2e" alt="AI">
+  <img src="https://img.shields.io/badge/trufflehog-SECRETS-00e5ff?style=for-the-badge&labelColor=1a1a2e" alt="TruffleHog">
 </p>
 
 <p align="center">
@@ -46,18 +56,79 @@
 │  extracts, correlates, verifies, and reports exposed secrets across your    │
 │  target's entire attack surface.                                            │
 │                                                                              │
+│  v4.0 adds recursive crawling with evasion, Shodan infrastructure mapping, │
+│  Claude AI-powered contextual analysis, and TruffleHog deep secrets scan.  │
+│                                                                              │
 │  Built for those who understand that the real vulnerability                 │
 │  isn't in the code — it's in what the code exposes.                        │
 │                                                                              │
-│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
 │                                                                              │
-│  [+] 100+ Detection Rules     [+] 8 Active Verifiers                        │
-│  [+] AST-based Extraction     [+] Enterprise API                            │
-│  [+] JWT Decoding             [+] Webhook Alerts                            │
-│  [+] SARIF CI/CD Output       [+] Scheduled Scans                           │
+│  [+] 100+ Detection Rules     [+] 8 Active Verifiers                       │
+│  [+] AST-based Extraction     [+] Enterprise API                           │
+│  [+] JWT Decoding             [+] Webhook Alerts                           │
+│  [+] SARIF CI/CD Output       [+] Scheduled Scans                          │
+│  [+] Recursive Crawling       [+] Shodan Recon                             │
+│  [+] AI-Powered Analysis      [+] TruffleHog Secrets                       │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## `> diff v3 v4 --stat`
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│  ██╗    ██╗██╗  ██╗ █████╗ ████████╗███████╗    ███╗   ██╗███████╗██╗    ██╗│
+│  ██║    ██║██║  ██║██╔══██╗╚══██╔══╝██╔════╝    ████╗  ██║██╔════╝██║    ██║│
+│  ██║ █╗ ██║███████║███████║   ██║   ███████╗    ██╔██╗ ██║█████╗  ██║ █╗ ██║│
+│  ██║███╗██║██╔══██║██╔══██║   ██║   ╚════██║    ██║╚██╗██║██╔══╝  ██║███╗██║│
+│  ╚███╔███╔╝██║  ██║██║  ██║   ██║   ███████║    ██║ ╚████║███████╗╚███╔███╔╝│
+│   ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚═╝  ╚═══╝╚══════╝ ╚══╝╚══╝│
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Recursive Crawl Engine (`-rc`)
+
+| Feature | Description |
+|---------|-------------|
+| **Smart Crawling** | Depth-limited recursive spider with configurable max pages |
+| **Evasion Suite** | User-Agent rotation, browser fingerprints, referer spoofing |
+| **Rate Limiting** | Configurable random sleep intervals between requests |
+| **Content Extraction** | Inline secrets scanning on every crawled page |
+| **Link Following** | Same-domain link discovery with depth tracking |
+
+### Shodan Infrastructure Mapping (`--shodan-key`)
+
+| Feature | Description |
+|---------|-------------|
+| **Host Recon** | Open ports, services, banners, OS detection |
+| **CVE Lookup** | Known vulnerabilities on exposed services |
+| **SSL/TLS Intel** | Certificate details, expiry, issuer chain |
+| **Geo/ASN Data** | ISP, organization, physical location |
+| **Attack Surface** | Full infrastructure map from a single domain |
+
+### AI-Powered Analysis (`--anthropic-key`)
+
+| Feature | Description |
+|---------|-------------|
+| **Context Engine** | Claude analyzes findings with full scan context |
+| **Risk Scoring** | AI-generated severity and blast radius assessment |
+| **Exploit Paths** | Identifies credential chaining opportunities |
+| **Remediation** | Actionable fix recommendations per finding |
+| **Executive Summary** | Natural language report generation |
+
+### TruffleHog Deep Scan
+
+| Feature | Description |
+|---------|-------------|
+| **600+ Detectors** | Covers every major SaaS, cloud, and dev platform |
+| **Verified Secrets** | Active verification built into TruffleHog |
+| **Inline Pipeline** | Runs on every crawled page automatically |
+| **Dedup & Merge** | Results merged with X-POSURE's own findings |
 
 ---
 
@@ -71,6 +142,10 @@
 │  pip (latest)                       │
 │  ~50MB disk space                   │
 │  Internet connection                │
+│                                     │
+│  Optional:                          │
+│  trufflehog (for deep scan)         │
+│  shodan (pip install shodan)        │
 └─────────────────────────────────────┘
 ```
 
@@ -87,6 +162,9 @@ pip install -r requirements.txt
 # Or install as a package (recommended)
 pip install -e .
 
+# Optional: install TruffleHog for deep secrets scanning
+# See: https://github.com/trufflesecurity/trufflehog
+
 # Verify installation
 python -m xposure --version
 ```
@@ -99,30 +177,9 @@ docker build -t xposure .
 
 # Run a scan
 docker run -it xposure example.com
-```
 
-### Manual Dependencies
-
-```bash
-# Core dependencies
-pip install aiohttp>=3.8.0      # Async HTTP client
-pip install aiodns>=3.0.0       # Async DNS resolver
-pip install click>=8.0.0        # CLI framework
-pip install pyyaml>=6.0.0       # YAML parsing
-pip install pyjsparser>=2.7.0   # JavaScript AST (optional)
-```
-
-### Verify Everything Works
-
-```bash
-# Run the self-test
-python -c "
-from xposure.storage import get_database
-from xposure.api import APIServer
-from xposure.verify import AWSVerifier, GitHubVerifier, JWTVerifier
-from xposure.output import format_sarif
-print('[+] All systems operational')
-"
+# Recursive crawl with Shodan + AI
+docker run -it xposure example.com -rc --shodan-key XXXXX --anthropic-key sk-ant-XXX
 ```
 
 ---
@@ -146,9 +203,49 @@ python -m xposure example.com --quiet
 
 # Skip active verification (passive only)
 python -m xposure example.com --no-verify
+```
 
-# Verbose mode (debug output)
-python -m xposure example.com -v
+### Recursive Crawl Mode (NEW)
+
+```bash
+# Basic recursive crawl with evasion
+python -m xposure example.com -rc
+
+# Deep crawl with custom depth and page limit
+python -m xposure example.com -rc --crawl-depth 10 --crawl-max-pages 1000
+
+# Stealth mode: slow crawl with wide sleep intervals
+python -m xposure example.com -rc --crawl-sleep 3.0 8.0
+
+# Full recon: crawl + Shodan + AI analysis
+python -m xposure example.com -rc --shodan-key YOUR_KEY --anthropic-key sk-ant-XXX
+
+# Disable TruffleHog (regex-only mode)
+python -m xposure example.com -rc --no-trufflehog
+```
+
+### CLI Reference
+
+```
+Usage: python -m xposure [OPTIONS] [TARGET]
+
+Options:
+  -g, --github-token TEXT      GitHub token for dorking
+  -o, --output PATH            Output file (JSON)
+  -q, --quiet                  Minimal output
+  --no-verify                  Skip active verification
+  -v, --version                Show version
+
+  Recursive Crawl:
+  -rc, --recursive-crawl       Enable recursive crawl with evasion
+  --crawl-depth INTEGER        Max crawl depth (default: 5)
+  --crawl-max-pages INTEGER    Max pages to crawl (default: 500)
+  --crawl-sleep FLOAT FLOAT    Min/max sleep between requests (default: 1.0 3.0)
+  --no-trufflehog              Disable TruffleHog secrets scanning
+
+  Integrations:
+  --shodan-key TEXT            Shodan API key for infrastructure mapping
+  --anthropic-key TEXT         Anthropic API key for AI-powered analysis
 ```
 
 ### API Server Mode
@@ -204,12 +301,12 @@ await scheduler.start()
 
 | Category | Count | Examples |
 |----------|-------|----------|
-| ☁️ **Cloud** | 25+ | AWS, GCP, Azure, DigitalOcean, Heroku, Vercel |
-| 🤖 **AI/ML** | 16+ | OpenAI, Anthropic, Cohere, HuggingFace, Replicate |
-| 📦 **DevOps** | 20+ | GitHub, GitLab, Docker, NPM, PyPI, CircleCI |
-| 💬 **Communication** | 15+ | Slack, Discord, Twilio, SendGrid, Mailgun |
-| 💳 **Payment** | 10+ | Stripe, PayPal, Square, Plaid, Shopify |
-| 🗄️ **Database** | 15+ | MongoDB, PostgreSQL, Redis, Supabase, PlanetScale |
+| **Cloud** | 25+ | AWS, GCP, Azure, DigitalOcean, Heroku, Vercel |
+| **AI/ML** | 16+ | OpenAI, Anthropic, Cohere, HuggingFace, Replicate |
+| **DevOps** | 20+ | GitHub, GitLab, Docker, NPM, PyPI, CircleCI |
+| **Communication** | 15+ | Slack, Discord, Twilio, SendGrid, Mailgun |
+| **Payment** | 10+ | Stripe, PayPal, Square, Plaid, Shopify |
+| **Database** | 15+ | MongoDB, PostgreSQL, Redis, Supabase, PlanetScale |
 
 ### Active Verifiers (8 Providers)
 
@@ -226,6 +323,22 @@ await scheduler.start()
 │ Azure       │ Client secrets, SAS tokens, connection strings                │
 │ JWT         │ Decode, validate claims, extract identity & permissions       │
 └─────────────┴────────────────────────────────────────────────────────────────┘
+```
+
+### Recursive Crawl Engine
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  [SPIDER]      Depth-limited recursive crawl with link extraction          │
+│  [EVASION]     User-Agent rotation from 10+ real browser profiles          │
+│  [FINGERPRINT] Full browser fingerprint headers (Accept, Encoding, etc.)   │
+│  [STEALTH]     Random sleep intervals + referer chain spoofing             │
+│  [TRUFFLEHOG]  Inline TruffleHog scanning on every crawled page            │
+│  [SHODAN]      Infrastructure mapping: ports, CVEs, SSL, geo, ASN         │
+│  [CLAUDE AI]   Contextual analysis, risk scoring, remediation advice       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Enterprise Features
@@ -295,7 +408,7 @@ await scheduler.start()
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Example: Create a Scan
+### Example: Full Recon Scan via API
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/scans \
@@ -305,7 +418,10 @@ curl -X POST http://localhost:8080/api/v1/scans \
     "target": "https://example.com",
     "options": {
       "verify": true,
-      "discover_subdomains": true
+      "recursive_crawl": true,
+      "crawl_depth": 10,
+      "shodan_key": "YOUR_SHODAN_KEY",
+      "anthropic_key": "sk-ant-YOUR_KEY"
     }
   }'
 ```
@@ -344,7 +460,24 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
 
 [*] Target: evil-corp.com
 [*] Scan ID: evil-corp_20251222_031337
-[*] Mode: FULL (discovery + extraction + verification)
+[*] Mode: FULL RECON (crawl + shodan + ai + trufflehog)
+
+[RECURSIVE CRAWL] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Crawling https://evil-corp.com (depth 0)
+[+] User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...
+[+] Discovered 47 links → queuing depth 1
+[+] Sleeping 2.3s (evasion)
+[+] Crawling https://evil-corp.com/api/config (depth 1)
+[+] TruffleHog: 3 verified secrets on this page
+[+] Crawled 312 pages across 5 depth levels
+
+[SHODAN RECON] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] evil-corp.com → 203.0.113.42
+[+] Open ports: 22, 80, 443, 3306, 6379, 8080, 9200
+[+] CVE-2024-21762 (Fortinet FortiOS) — CRITICAL
+[+] CVE-2023-44487 (HTTP/2 Rapid Reset) — HIGH
+[+] Redis 7.0.11 exposed on port 6379 (no auth)
+[+] Elasticsearch 8.x on port 9200 (no auth)
 
 [DISCOVERY] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 [+] Querying crt.sh for subdomains...
@@ -381,16 +514,24 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
     └─ VERIFIED: Bot 'Jenkins CI' in 'Evil Corp' workspace
     └─ BLAST RADIUS: MEDIUM
 
+[AI ANALYSIS] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Claude analyzing 24 findings with full context...
+[+] Risk Assessment: CRITICAL — Admin AWS keys + exposed Redis = full takeover
+[+] Attack Chain: .env → AWS Admin → S3 buckets → lateral movement
+[+] Remediation: 7 actionable recommendations generated
+
 ════════════════════════════════════════════════════════════════════
                          SCAN COMPLETE
 ════════════════════════════════════════════════════════════════════
 
     ┌─────────────────────────────────────────────────────────────┐
-    │  CRITICAL: 2   HIGH: 5   MEDIUM: 8   LOW: 9                │
+    │  CRITICAL: 4   HIGH: 7   MEDIUM: 8   LOW: 5                │
     │  ─────────────────────────────────────────────────────────  │
-    │  Verified: 15   Invalid: 4   Errors: 0   Suppressed: 5     │
+    │  Verified: 18   Invalid: 4   Errors: 0   Suppressed: 2     │
     │  ─────────────────────────────────────────────────────────  │
-    │  Duration: 47.3s   Requests: 1,247   Rate Limited: 0       │
+    │  Pages Crawled: 312  Shodan Hosts: 3  AI Insights: 7       │
+    │  ─────────────────────────────────────────────────────────  │
+    │  Duration: 94.7s   Requests: 2,847   Rate Limited: 0       │
     └─────────────────────────────────────────────────────────────┘
 
 [!] HIGH-VALUE TARGETS IDENTIFIED:
@@ -405,10 +546,15 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
     ║      Identity: evil-corp-bot                                  ║
     ║      Scopes: repo, admin:org, write:packages                 ║
     ║      Source: https://jenkins.evil-corp.com/config.js:847    ║
+    ╠═══════════════════════════════════════════════════════════════╣
+    ║  #3  Redis (NO AUTH) + Elasticsearch (NO AUTH) (CRITICAL)    ║
+    ║      Shodan: 203.0.113.42:6379, 203.0.113.42:9200           ║
+    ║      Risk: Unauthenticated data stores on public internet    ║
     ╚═══════════════════════════════════════════════════════════════╝
 
 [*] Results saved to: evil-corp_findings.json
 [*] SARIF report: evil-corp_findings.sarif
+[*] AI report: evil-corp_ai_analysis.md
 ```
 
 ---
@@ -417,9 +563,11 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
 
 ```
 X-Posure/
+├── assets/                      # Logos & media
+│
 ├── xposure/
 │   ├── __init__.py
-│   ├── cli.py                    # CLI interface
+│   ├── cli.py                    # CLI interface (Click)
 │   ├── config.py                 # Configuration
 │   │
 │   ├── core/                     # Core engine
@@ -439,7 +587,14 @@ X-Posure/
 │   │   ├── ast.py                # JavaScript AST parser
 │   │   └── objects.py            # Object extraction
 │   │
-│   ├── rules/                    # Detection rules
+│   ├── crawl/                    # Recursive crawl engine [NEW]
+│   │   └── recursive.py          # Spider + evasion + TruffleHog
+│   │
+│   ├── intel/                    # Intelligence integrations [NEW]
+│   │   ├── shodan_recon.py       # Shodan infrastructure mapping
+│   │   └── ai_analysis.py        # Claude AI-powered analysis
+│   │
+│   ├── rules/                    # Detection rules (YAML)
 │   │   ├── cloud.yaml            # Cloud providers
 │   │   ├── ai.yaml               # AI/ML services
 │   │   ├── devtools.yaml         # DevOps tools
@@ -475,6 +630,14 @@ X-Posure/
 │       ├── subdomains.txt        # 150+ prefixes
 │       └── paths.txt             # 200+ paths
 │
+├── tests/
+│   ├── test_recursive_crawl.py   # Crawl engine tests (16 tests)
+│   ├── test_rules.py             # Detection rule tests
+│   ├── test_extraction.py        # Extraction pipeline tests
+│   ├── test_correlation.py       # Correlation engine tests
+│   └── test_verification.py      # Verifier tests
+│
+├── Dockerfile
 ├── requirements.txt
 ├── pyproject.toml
 └── README.md
@@ -533,11 +696,13 @@ X-Posure/
 │  Built with:                                                                 │
 │    • Python 3.10+      • aiohttp           • PyYAML                         │
 │    • Click             • aiodns            • pyjsparser                     │
+│    • Shodan            • TruffleHog        • Anthropic Claude               │
 │                                                                              │
 │  Inspired by:                                                                │
 │    • The security community                                                  │
 │    • Late night CTFs                                                         │
 │    • That one .env file in production                                       │
+│    • Redis with no password on port 6379                                    │
 │                                                                              │
 │  ─────────────────────────────────────────────────────────────────────────  │
 │                                                                              │

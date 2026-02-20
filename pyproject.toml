@@ -18,6 +18,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+recon = [
+    "anthropic>=0.40.0",
+    "shodan>=1.31.0",
+]
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
