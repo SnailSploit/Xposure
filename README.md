@@ -1,4 +1,4 @@
-# X-POSURE v4.0
+# X-POSURE v5.0
 
 ```
 
@@ -11,7 +11,7 @@
     █  ██╔╝ ██╗      ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗      █
     █  ╚═╝  ╚═╝      ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝      █
     █                                                                        █
-    █  [ v4.0.0 ]  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  [ ENTERPRISE ]   █
+    █  [ v5.0.0 ]  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  [ APEX ]        █
     █                                                                        █
     █  "Control is an illusion. But credentials? Those are real."            █
     █                                                    - Mr. Robot, maybe  █
@@ -27,17 +27,17 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-4.0.0-ff0040?style=for-the-badge&labelColor=1a1a2e" alt="Version">
+  <img src="https://img.shields.io/badge/version-5.0.0-ff0040?style=for-the-badge&labelColor=1a1a2e" alt="Version">
   <img src="https://img.shields.io/badge/python-3.10+-00d4ff?style=for-the-badge&labelColor=1a1a2e" alt="Python">
-  <img src="https://img.shields.io/badge/status-OPERATIONAL-00ff41?style=for-the-badge&labelColor=1a1a2e" alt="Status">
+  <img src="https://img.shields.io/badge/codename-APEX-ff6b35?style=for-the-badge&labelColor=1a1a2e" alt="Codename">
   <img src="https://img.shields.io/badge/license-MIT-9d4edd?style=for-the-badge&labelColor=1a1a2e" alt="License">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/recursive_crawl-NEW-ff6b35?style=for-the-badge&labelColor=1a1a2e" alt="Recursive Crawl">
-  <img src="https://img.shields.io/badge/shodan-INTEGRATED-e040fb?style=for-the-badge&labelColor=1a1a2e" alt="Shodan">
-  <img src="https://img.shields.io/badge/claude_AI-POWERED-f5a623?style=for-the-badge&labelColor=1a1a2e" alt="AI">
-  <img src="https://img.shields.io/badge/trufflehog-SECRETS-00e5ff?style=for-the-badge&labelColor=1a1a2e" alt="TruffleHog">
+  <img src="https://img.shields.io/badge/24_verifiers-NEW-00ff41?style=for-the-badge&labelColor=1a1a2e" alt="24 Verifiers">
+  <img src="https://img.shields.io/badge/internal_scan-NEW-e040fb?style=for-the-badge&labelColor=1a1a2e" alt="Internal Scan">
+  <img src="https://img.shields.io/badge/git_mining-NEW-f5a623?style=for-the-badge&labelColor=1a1a2e" alt="Git Mining">
+  <img src="https://img.shields.io/badge/combined_mode-NEW-00e5ff?style=for-the-badge&labelColor=1a1a2e" alt="Combined Mode">
 </p>
 
 <p align="center">
@@ -55,29 +55,35 @@
 │                                                                              │
 │  It's a fully autonomous credential intelligence platform that discovers,   │
 │  extracts, correlates, verifies, and reports exposed secrets across your    │
-│  target's entire attack surface.                                            │
+│  target's entire attack surface — inside and out.                           │
 │                                                                              │
-│  v4.0 adds recursive crawling with evasion, Shodan infrastructure mapping, │
-│  Claude AI-powered contextual analysis, and TruffleHog deep secrets scan.  │
+│  v5.0 "APEX" is the everything release:                                    │
+│                                                                              │
+│    Outside-in recon + inside-out container scanning + git history mining    │
+│    + recursive crawling + credential verification across 24 platforms.     │
 │                                                                              │
 │  Built for those who understand that the real vulnerability                 │
 │  isn't in the code — it's in what the code exposes.                        │
 │                                                                              │
 │  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
 │                                                                              │
-│  [+] 100+ Detection Rules     [+] 8 Active Verifiers                       │
+│  [+] 100+ Detection Rules     [+] 24 Active Verifiers                     │
 │  [+] AST-based Extraction     [+] Enterprise API                           │
 │  [+] JWT Decoding             [+] Webhook Alerts                           │
-│  [+] SARIF CI/CD Output       [+] Scheduled Scans                          │
+│  [+] SARIF + HTML Reports     [+] Scheduled Scans                          │
 │  [+] Recursive Crawling       [+] Shodan Recon                             │
 │  [+] AI-Powered Analysis      [+] TruffleHog Secrets                       │
+│  [+] Git History Mining       [+] Internal/Container Scan                  │
+│  [+] TLS Certificate Harvest  [+] Wayback Machine                          │
+│  [+] Cloud Storage Enum       [+] Network Probing                          │
+│  [+] DNS Enumeration          [+] State Persistence + Resume               │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## `> diff v3 v4 --stat`
+## `> diff v4 v5 --stat`
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -91,6 +97,54 @@
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
+
+### Inside-Out Scanning (NEW)
+
+| Feature | Description |
+|---------|-------------|
+| **Internal Mode** (`--internal`) | Scans the local container/server environment for leaked secrets |
+| **Network Probing** | Discovers internal services, metadata endpoints, cloud IMDS |
+| **Environment Scan** | Reads env vars, config files, mounted secrets |
+| **Container Detection** | Detects Docker, Kubernetes, ECS, and cloud compute contexts |
+
+### Git History Mining (NEW)
+
+| Feature | Description |
+|---------|-------------|
+| **Local Repos** (`--git /path`) | Deep scan of commit history for secrets |
+| **Remote Repos** (`--git https://...`) | Clone and scan remote repositories |
+| **TruffleHog Integration** | 600+ detectors with verification |
+| **Diff Analysis** | Scans diffs, not just current state |
+
+### Combined Mode (NEW)
+
+| Feature | Description |
+|---------|-------------|
+| **Full Spectrum** (`--combined`) | Runs external + internal + git scans together |
+| **Unified Correlation** | Cross-references findings across all scan modes |
+| **Single Report** | Consolidated output across all attack surfaces |
+
+### 24 Credential Verifiers (UP FROM 8)
+
+| Category | Verifiers |
+|----------|-----------|
+| **Cloud** | AWS, Azure, GCP, Heroku, DigitalOcean, Cloudflare |
+| **VCS/Registries** | GitHub, NPM, PyPI, Supabase |
+| **Communication** | Slack, Discord, Telegram, Twilio |
+| **Payment/APIs** | Stripe, SendGrid, Shodan, OpenAI, Anthropic |
+| **Databases** | MongoDB, PostgreSQL, Redis, Vault |
+| **Auth** | JWT decode + claim validation |
+
+### Expanded Discovery
+
+| Feature | Description |
+|---------|-------------|
+| **TLS Certificate Harvest** | Extracts domains and orgs from certificate chains |
+| **DNS Enumeration** | Zone transfers, record type enumeration, brute force |
+| **Wayback Machine** | Historical URL discovery from the Internet Archive |
+| **Cloud Storage** | S3 bucket, GCS bucket, Azure blob enumeration |
+| **Source Maps** | Discovers and parses `.map` files for original source |
+| **Config Files** | Detects exposed `.env`, `config.js`, `settings.py`, etc. |
 
 ### Recursive Crawl Engine (`-rc`)
 
@@ -122,15 +176,6 @@
 | **Remediation** | Actionable fix recommendations per finding |
 | **Executive Summary** | Natural language report generation |
 
-### TruffleHog Deep Scan
-
-| Feature | Description |
-|---------|-------------|
-| **600+ Detectors** | Covers every major SaaS, cloud, and dev platform |
-| **Verified Secrets** | Active verification built into TruffleHog |
-| **Inline Pipeline** | Runs on every crawled page automatically |
-| **Dedup & Merge** | Results merged with X-POSURE's own findings |
-
 ---
 
 ## `> ./install.sh`
@@ -147,6 +192,7 @@
 │  Optional:                          │
 │  trufflehog (for deep scan)         │
 │  shodan (pip install shodan)        │
+│  gitpython (pip install gitpython)  │
 └─────────────────────────────────────┘
 ```
 
@@ -163,11 +209,19 @@ pip install -r requirements.txt
 # Or install as a package (recommended)
 pip install -e .
 
+# Install with all optional dependencies
+pip install -e '.[full]'
+
+# Or pick what you need
+pip install -e '.[recon]'    # Shodan + Anthropic AI
+pip install -e '.[git]'      # Git history scanning
+pip install -e '.[db]'       # Database verifiers (MongoDB, Postgres, Redis)
+
 # Optional: install TruffleHog for deep secrets scanning
 # See: https://github.com/trufflesecurity/trufflehog
 
 # Verify installation
-python -m xposure --version
+xposure --version
 ```
 
 ### Docker Install
@@ -177,76 +231,160 @@ python -m xposure --version
 docker build -t xposure .
 
 # Run a scan
-docker run -it xposure example.com
+docker run -it xposure scan example.com
 
-# Recursive crawl with Shodan + AI
-docker run -it xposure example.com -rc --shodan-key XXXXX --anthropic-key sk-ant-XXX
+# Full recon: crawl + Shodan + AI + internal
+docker run -it xposure scan example.com --combined -rc --shodan-key XXXXX --anthropic-key sk-ant-XXX
 ```
 
 ---
 
-## `> ./run.sh --help`
+## `> xposure --help`
 
 ### Basic Usage
 
 ```bash
 # Scan a domain
-python -m xposure example.com
+xposure scan example.com
 
 # Save results to JSON
-python -m xposure example.com -o results.json
+xposure scan example.com -o results.json
 
 # Export as SARIF (for GitHub/GitLab CI)
-python -m xposure example.com --format sarif -o results.sarif
+xposure scan example.com --sarif results.sarif
+
+# Export as HTML report
+xposure scan example.com --html report.html
 
 # Quiet mode (minimal output)
-python -m xposure example.com --quiet
+xposure scan example.com --quiet
 
 # Skip active verification (passive only)
-python -m xposure example.com --no-verify
+xposure scan example.com --no-verify
+
+# Show raw credential values (unmasked)
+xposure scan example.com --unmask
 ```
 
-### Recursive Crawl Mode (NEW)
+### Scan Modes
 
 ```bash
-# Basic recursive crawl with evasion
-python -m xposure example.com -rc
+# Standard external scan
+xposure scan example.com
+
+# Recursive crawl with evasion
+xposure scan example.com -rc
 
 # Deep crawl with custom depth and page limit
-python -m xposure example.com -rc --crawl-depth 10 --crawl-max-pages 1000
+xposure scan example.com -rc --crawl-depth 10 --crawl-max-pages 1000
 
 # Stealth mode: slow crawl with wide sleep intervals
-python -m xposure example.com -rc --crawl-sleep 3.0 8.0
+xposure scan example.com -rc --crawl-sleep 3.0 8.0
+
+# Internal container/server scan
+xposure scan --internal
+
+# Git history scan (local repo)
+xposure scan --git /path/to/repo
+
+# Git history scan (remote repo)
+xposure scan --git https://github.com/org/repo.git
+
+# Scan a local directory for secrets
+xposure scan --file /path/to/code
+
+# COMBINED: everything at once
+xposure scan --combined example.com -rc --git ./ --internal
 
 # Full recon: crawl + Shodan + AI analysis
-python -m xposure example.com -rc --shodan-key YOUR_KEY --anthropic-key sk-ant-XXX
+xposure scan example.com -rc --shodan-key YOUR_KEY --anthropic-key sk-ant-XXX
 
-# Disable TruffleHog (regex-only mode)
-python -m xposure example.com -rc --no-trufflehog
+# Resume a previous scan
+xposure scan example.com --resume scan_id_here
+```
+
+### Other Commands
+
+```bash
+# Re-verify findings from a previous scan
+xposure verify findings.json
+
+# Generate reports from previous scan results
+xposure report findings.json --html report.html
+xposure report findings.json --sarif results.sarif
+
+# Diff two scan results to find new/removed findings
+xposure diff old_findings.json new_findings.json
+```
+
+### Config File
+
+Create `.xposure.yaml` in your project root:
+
+```yaml
+target: example.com
+
+modes:
+  recursive_crawl: true
+  internal: false
+  git: ./
+
+keys:
+  shodan: YOUR_SHODAN_KEY
+  github: ghp_xxxxxxxxxxxx
+  anthropic: sk-ant-xxxxxxxxxxxx
+```
+
+```bash
+# Use default .xposure.yaml
+xposure scan
+
+# Use a custom config file
+xposure scan -c /path/to/config.yaml
 ```
 
 ### CLI Reference
 
 ```
-Usage: python -m xposure [OPTIONS] [TARGET]
+Usage: xposure [OPTIONS] COMMAND [ARGS]
 
-Options:
-  -g, --github-token TEXT      GitHub token for dorking
-  -o, --output PATH            Output file (JSON)
-  -q, --quiet                  Minimal output
-  --no-verify                  Skip active verification
-  -v, --version                Show version
+Commands:
+  scan      Scan a target for exposed credentials
+  verify    Re-verify findings from a previous scan
+  report    Generate reports from previous scan results
+  diff      Diff two scan results to find new/removed findings
+
+Scan Options:
+  TARGET                           Domain or URL to scan
+  -g, --github-token TEXT          GitHub token for dorking
+  -o, --output PATH                Output file (JSON)
+  -q, --quiet                      Minimal output
+  -v, --version                    Show version
+  -c, --config PATH                Config file path (default: .xposure.yaml)
+  --no-verify                      Skip active verification
+  --unmask                         Show raw credential values in output
+  --resume TEXT                    Resume scan from state file
+
+  Scan Modes:
+  -i, --internal                   Scan local container/server environment
+  --git TEXT                       Scan git repo (path or URL)
+  --file PATH                      Scan local directory for secrets
+  --combined                       Run all scan modes together
 
   Recursive Crawl:
-  -rc, --recursive-crawl       Enable recursive crawl with evasion
-  --crawl-depth INTEGER        Max crawl depth (default: 5)
-  --crawl-max-pages INTEGER    Max pages to crawl (default: 500)
-  --crawl-sleep FLOAT FLOAT    Min/max sleep between requests (default: 1.0 3.0)
-  --no-trufflehog              Disable TruffleHog secrets scanning
+  -rc, --recursive-crawl           Enable recursive crawl with evasion
+  --crawl-depth INTEGER            Max crawl depth (default: 5)
+  --crawl-max-pages INTEGER        Max pages to crawl (default: 500)
+  --crawl-sleep FLOAT FLOAT        Min/max sleep between requests (default: 1.0 3.0)
+  --no-trufflehog                  Disable TruffleHog secrets scanning
 
   Integrations:
-  --shodan-key TEXT            Shodan API key for infrastructure mapping
-  --anthropic-key TEXT         Anthropic API key for AI-powered analysis
+  --shodan-key TEXT                Shodan API key for infrastructure mapping
+  --anthropic-key TEXT             Anthropic API key for AI-powered analysis
+
+  Output:
+  --sarif PATH                     Also output SARIF file
+  --html PATH                      Also output HTML report
 ```
 
 ### API Server Mode
@@ -298,46 +436,121 @@ await scheduler.start()
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Detection Engine (100+ Rules)
+### Detection Engine (100+ Rules across 8 Categories)
 
-| Category | Count | Examples |
-|----------|-------|----------|
-| **Cloud** | 25+ | AWS, GCP, Azure, DigitalOcean, Heroku, Vercel |
-| **AI/ML** | 16+ | OpenAI, Anthropic, Cohere, HuggingFace, Replicate |
-| **DevOps** | 20+ | GitHub, GitLab, Docker, NPM, PyPI, CircleCI |
-| **Communication** | 15+ | Slack, Discord, Twilio, SendGrid, Mailgun |
-| **Payment** | 10+ | Stripe, PayPal, Square, Plaid, Shopify |
-| **Database** | 15+ | MongoDB, PostgreSQL, Redis, Supabase, PlanetScale |
+| Category | File | Examples |
+|----------|------|----------|
+| **Cloud** | `cloud.yaml` | AWS, GCP, Azure, DigitalOcean, Heroku, Vercel |
+| **AI/ML** | `ai.yaml` | OpenAI, Anthropic, Cohere, HuggingFace, Replicate |
+| **DevOps** | `devtools.yaml` | Docker, CircleCI, Jenkins, Terraform |
+| **Communication** | `communication.yaml` | Slack, Discord, Twilio, SendGrid, Mailgun |
+| **Payment** | `payment.yaml` | Stripe, PayPal, Square, Plaid, Shopify |
+| **Database** | `database.yaml` | MongoDB, PostgreSQL, Redis, Supabase, PlanetScale |
+| **VCS** | `vcs.yaml` | GitHub, GitLab, Bitbucket, NPM, PyPI |
+| **Cloud Services** | `cloud_services.yaml` | Cloudflare, Fastly, Akamai, Firebase |
 
-### Active Verifiers (8 Providers)
+### Active Verifiers (24 Providers)
 
 ```
-┌─────────────┬────────────────────────────────────────────────────────────────┐
-│ Provider    │ Capabilities                                                   │
-├─────────────┼────────────────────────────────────────────────────────────────┤
-│ AWS         │ STS identity, IAM user/role detection, blast radius           │
-│ GitHub      │ User info, OAuth scopes, repo access, org membership          │
-│ Slack       │ Workspace, bot/user detection, permission enumeration         │
-│ Stripe      │ Account info, live/test detection, charges enabled            │
-│ OpenAI      │ Model access, key type, usage capabilities                    │
-│ GCP         │ API key validation, service account, OAuth tokens             │
-│ Azure       │ Client secrets, SAS tokens, connection strings                │
-│ JWT         │ Decode, validate claims, extract identity & permissions       │
-└─────────────┴────────────────────────────────────────────────────────────────┘
+┌─────────────────┬──────────────────────────────────────────────────────────┐
+│ Provider        │ Capabilities                                             │
+├─────────────────┼──────────────────────────────────────────────────────────┤
+│ AWS             │ STS identity, IAM user/role, blast radius               │
+│ Azure           │ Client secrets, SAS tokens, connection strings          │
+│ GCP             │ API key validation, service account, OAuth              │
+│ GitHub          │ User info, scopes, repo access, org membership         │
+│ Heroku          │ App access, account info                                │
+│ DigitalOcean    │ Account info, droplet access                            │
+│ Cloudflare      │ Zone access, API permissions                            │
+│ Slack           │ Workspace, bot/user detection, permissions              │
+│ Discord         │ Bot token validation, guild access                      │
+│ Telegram        │ Bot token validation, bot info                          │
+│ Twilio          │ Account SID, API key validation                        │
+│ Stripe          │ Account info, live/test detection                      │
+│ SendGrid        │ API key validation, scopes                              │
+│ OpenAI          │ Model access, key type, usage                          │
+│ Anthropic       │ API key validation, model access                       │
+│ Shodan          │ API key validation, query credits                      │
+│ NPM             │ Token validation, publish access                        │
+│ PyPI            │ Token validation, package access                        │
+│ Supabase        │ Project access, API key type                            │
+│ MongoDB         │ Connection test, database enumeration                   │
+│ PostgreSQL      │ Connection test, table enumeration                      │
+│ Redis           │ Connection test, info extraction                        │
+│ Vault           │ Token validation, policy access                         │
+│ JWT             │ Decode, validate claims, extract identity              │
+└─────────────────┴──────────────────────────────────────────────────────────┘
 ```
 
-### Recursive Crawl Engine
+### 9-Phase Scan Pipeline
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                                                                             │
-│  [SPIDER]      Depth-limited recursive crawl with link extraction          │
-│  [EVASION]     User-Agent rotation from 10+ real browser profiles          │
-│  [FINGERPRINT] Full browser fingerprint headers (Accept, Encoding, etc.)   │
-│  [STEALTH]     Random sleep intervals + referer chain spoofing             │
-│  [TRUFFLEHOG]  Inline TruffleHog scanning on every crawled page            │
-│  [SHODAN]      Infrastructure mapping: ports, CVEs, SSL, geo, ASN         │
-│  [CLAUDE AI]   Contextual analysis, risk scoring, remediation advice       │
+│  Phase 1: PASSIVE RECON                                                    │
+│  ─────────────────────────────────────────────────────────                  │
+│  [SUBDOMAINS]  crt.sh, brute force, DNS enumeration                       │
+│  [TLS]         Certificate chain harvest, SAN extraction                  │
+│  [DNS]         Zone transfers, record enumeration                          │
+│  [WAYBACK]     Historical URL discovery from Internet Archive             │
+│  [CLOUD]       S3/GCS/Azure blob bucket enumeration                       │
+│                                                                             │
+│  Phase 2: ACTIVE CRAWLING                                                  │
+│  ─────────────────────────────────────────────────────────                  │
+│  [SPIDER]      Depth-limited recursive crawl with link extraction         │
+│  [EVASION]     User-Agent rotation, browser fingerprints                  │
+│  [JS]          JavaScript file discovery + inline script extraction       │
+│  [AST]         JavaScript AST parsing for embedded credentials            │
+│  [CONFIGS]     Exposed config file detection (.env, config.js, etc.)      │
+│  [SOURCEMAPS]  .map file discovery + original source extraction           │
+│                                                                             │
+│  Phase 3: SECRET DETECTION                                                 │
+│  ─────────────────────────────────────────────────────────                  │
+│  [RULES]       100+ regex patterns across 8 YAML rule categories          │
+│  [ENTROPY]     Shannon entropy analysis for unknown patterns              │
+│  [JWT]         JWT pre-scanning, decoding, claim extraction               │
+│  [DECODE]      Multi-layer decode chain (base64, hex, URL, etc.)          │
+│  [TRUFFLEHOG]  600+ verified detectors (inline pipeline)                  │
+│                                                                             │
+│  Phase 4: INTERNAL / CONTAINER SCAN                                        │
+│  ─────────────────────────────────────────────────────────                  │
+│  [ENV]         Environment variable scanning                               │
+│  [MOUNTS]      Mounted secrets / config file detection                     │
+│  [METADATA]    Cloud IMDS endpoint probing (AWS, GCP, Azure)              │
+│  [NETWORK]     Internal service discovery + port probing                   │
+│                                                                             │
+│  Phase 5: GIT HISTORY MINING                                               │
+│  ─────────────────────────────────────────────────────────                  │
+│  [COMMITS]     Full commit history scanning                                │
+│  [DIFFS]       Diff-based secret detection                                 │
+│  [TRUFFLEHOG]  Deep git history scan with verified detectors              │
+│                                                                             │
+│  Phase 6: VERIFICATION                                                     │
+│  ─────────────────────────────────────────────────────────                  │
+│  [COORDINATOR] Routes findings to the right verifier                      │
+│  [24 VERIFIERS] Active credential validation across platforms             │
+│  [IDENTITY]    Determines who/what the credential belongs to              │
+│  [BLAST RADIUS] Assesses potential damage (CRITICAL → LOW)               │
+│                                                                             │
+│  Phase 7: OUTSIDE-IN ENHANCEMENT                                           │
+│  ─────────────────────────────────────────────────────────                  │
+│  [DNS]         Bulk domain resolution                                      │
+│  [SHODAN]      Infrastructure mapping: ports, CVEs, SSL, geo             │
+│  [FINGERPRINT] Technology fingerprinting on exposed services              │
+│                                                                             │
+│  Phase 8: CORRELATION ENGINE                                               │
+│  ─────────────────────────────────────────────────────────                  │
+│  [DEDUP]       Candidate deduplication + merge                            │
+│  [PAIRING]     Credential pair detection (key + secret)                   │
+│  [CONFIDENCE]  Multi-signal confidence scoring                             │
+│  [AI]          Claude-powered contextual risk analysis                     │
+│                                                                             │
+│  Phase 9: REPORTING                                                        │
+│  ─────────────────────────────────────────────────────────                  │
+│  [JSON]        Structured findings export                                  │
+│  [SARIF]       GitHub/GitLab CI integration                                │
+│  [HTML]        Rich HTML report with findings + infrastructure             │
+│  [CONSOLE]     Live Rich dashboard during scan                             │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -354,7 +567,10 @@ await scheduler.start()
 │  [METRICS]      Prometheus-compatible counters, gauges, histograms         │
 │  [LOGGING]      Structured JSON logging for SIEM integration               │
 │  [SARIF]        Static Analysis Results for GitHub/GitLab CI               │
+│  [HTML]         Rich HTML reports with infrastructure mapping              │
+│  [STATE]        Scan state persistence + resume capability                 │
 │  [FP MGMT]      False positive suppression with rules                      │
+│  [CONFIG]       YAML config file support (.xposure.yaml)                   │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -421,6 +637,9 @@ curl -X POST http://localhost:8080/api/v1/scans \
       "verify": true,
       "recursive_crawl": true,
       "crawl_depth": 10,
+      "internal": true,
+      "git": "./",
+      "combined": true,
       "shodan_key": "YOUR_SHODAN_KEY",
       "anthropic_key": "sk-ant-YOUR_KEY"
     }
@@ -456,12 +675,12 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
     ██╔╝ ██╗      ██║     ╚██████╔╝███████║╚██████╔╝██║  ██║███████╗
     ╚═╝  ╚═╝      ╚═╝      ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
 
-    v4.0.0 // ENTERPRISE EDITION
+    v5.0.0 // APEX
     ─────────────────────────────────────────────────────────────────
 
 [*] Target: evil-corp.com
-[*] Scan ID: evil-corp_20251222_031337
-[*] Mode: FULL RECON (crawl + shodan + ai + trufflehog)
+[*] Scan ID: evil-corp_20260221_031337
+[*] Mode: COMBINED (external + internal + git + crawl + shodan + ai)
 
 [RECURSIVE CRAWL] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 [+] Crawling https://evil-corp.com (depth 0)
@@ -472,23 +691,31 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
 [+] TruffleHog: 3 verified secrets on this page
 [+] Crawled 312 pages across 5 depth levels
 
+[INTERNAL SCAN] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Detected: Docker container (ECS Fargate)
+[+] AWS IMDS: IAM role 'ecs-task-role' available
+[+] Environment: 4 secrets found in env vars
+[+] Mounted: /run/secrets/db_password
+
+[GIT HISTORY] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+[+] Scanning 1,247 commits in ./
+[+] Found AWS key in commit abc1234 (removed 3 months ago)
+[+] TruffleHog: 5 verified secrets in git history
+
 [SHODAN RECON] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 [+] evil-corp.com → 203.0.113.42
 [+] Open ports: 22, 80, 443, 3306, 6379, 8080, 9200
 [+] CVE-2024-21762 (Fortinet FortiOS) — CRITICAL
-[+] CVE-2023-44487 (HTTP/2 Rapid Reset) — HIGH
 [+] Redis 7.0.11 exposed on port 6379 (no auth)
 [+] Elasticsearch 8.x on port 9200 (no auth)
 
 [DISCOVERY] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 [+] Querying crt.sh for subdomains...
-[+] Found: api.evil-corp.com
-[+] Found: staging.evil-corp.com
-[+] Found: dev.evil-corp.com
-[+] Found: jenkins.evil-corp.com
-[+] Discovered 47 subdomains
-[+] Discovered 23 JavaScript files
-[+] Discovered 156 paths
+[+] TLS harvest: 12 domains from certificate chains
+[+] DNS enum: zone transfer successful on ns1.evil-corp.com
+[+] Wayback: 847 historical URLs discovered
+[+] Found: api.evil-corp.com, staging.evil-corp.com, dev.evil-corp.com
+[+] Discovered 47 subdomains, 23 JavaScript files, 156 paths
 
 [EXTRACTION] ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 [+] Analyzing https://dev.evil-corp.com/.env
@@ -526,13 +753,14 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
 ════════════════════════════════════════════════════════════════════
 
     ┌─────────────────────────────────────────────────────────────┐
-    │  CRITICAL: 4   HIGH: 7   MEDIUM: 8   LOW: 5                │
+    │  CRITICAL: 6   HIGH: 9   MEDIUM: 8   LOW: 5                │
     │  ─────────────────────────────────────────────────────────  │
-    │  Verified: 18   Invalid: 4   Errors: 0   Suppressed: 2     │
+    │  Verified: 22   Invalid: 4   Errors: 0   Suppressed: 2     │
     │  ─────────────────────────────────────────────────────────  │
     │  Pages Crawled: 312  Shodan Hosts: 3  AI Insights: 7       │
+    │  Git Commits: 1247   Internal Hits: 4  Pairs: 3            │
     │  ─────────────────────────────────────────────────────────  │
-    │  Duration: 94.7s   Requests: 2,847   Rate Limited: 0       │
+    │  Duration: 127.3s   Requests: 3,912   Rate Limited: 0      │
     └─────────────────────────────────────────────────────────────┘
 
 [!] HIGH-VALUE TARGETS IDENTIFIED:
@@ -551,10 +779,15 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
     ║  #3  Redis (NO AUTH) + Elasticsearch (NO AUTH) (CRITICAL)    ║
     ║      Shodan: 203.0.113.42:6379, 203.0.113.42:9200           ║
     ║      Risk: Unauthenticated data stores on public internet    ║
+    ╠═══════════════════════════════════════════════════════════════╣
+    ║  #4  AWS IAM Role from Git History (HIGH)                    ║
+    ║      Found in: commit abc1234 (deleted 3 months ago)         ║
+    ║      Still valid: YES                                         ║
     ╚═══════════════════════════════════════════════════════════════╝
 
 [*] Results saved to: evil-corp_findings.json
 [*] SARIF report: evil-corp_findings.sarif
+[*] HTML report: evil-corp_report.html
 [*] AI report: evil-corp_ai_analysis.md
 ```
 
@@ -564,79 +797,118 @@ curl -X POST http://localhost:8080/api/v1/webhooks \
 
 ```
 X-Posure/
-├── assets/                      # Logos & media
+├── assets/                          # Logos & media
 │
 ├── xposure/
 │   ├── __init__.py
-│   ├── cli.py                    # CLI interface (Click)
-│   ├── config.py                 # Configuration
+│   ├── __main__.py                  # python -m xposure
+│   ├── __version__.py               # Version: 5.0.0 "APEX"
+│   ├── cli.py                       # CLI interface (Click)
+│   ├── config.py                    # Configuration
+│   ├── state.py                     # Scan state persistence + resume
 │   │
-│   ├── core/                     # Core engine
-│   │   ├── engine.py             # Main scanning engine
-│   │   ├── models.py             # Data models
-│   │   └── graph.py              # Evidence graph
+│   ├── core/                        # Core engine
+│   │   ├── engine.py                # Main 9-phase scanning engine
+│   │   ├── models.py                # Data models
+│   │   └── graph.py                 # Evidence relationship graph
 │   │
-│   ├── discover/                 # Discovery modules
-│   │   ├── subdomains.py         # Subdomain enumeration
-│   │   ├── paths.py              # Path discovery
-│   │   ├── js.py                 # JavaScript harvesting
-│   │   └── github.py             # GitHub dorking
+│   ├── discover/                    # Discovery modules (20 files)
+│   │   ├── base.py                  # Base discoverer class
+│   │   ├── subdomains.py            # Subdomain enumeration (crt.sh, brute)
+│   │   ├── dns_enum.py              # DNS enumeration + zone transfers
+│   │   ├── tls_harvest.py           # TLS certificate chain harvest
+│   │   ├── paths.py                 # Path/endpoint discovery
+│   │   ├── js.py                    # JavaScript file harvesting
+│   │   ├── configs.py               # Exposed config file detection
+│   │   ├── sourcemaps.py            # Source map discovery + parsing
+│   │   ├── github.py                # GitHub dorking
+│   │   ├── crawler.py               # Recursive crawl spider + evasion
+│   │   ├── fingerprints.py          # Browser fingerprint rotation
+│   │   ├── trufflehog.py            # TruffleHog integration
+│   │   ├── internal.py              # Internal/container scanning
+│   │   ├── network_probe.py         # Internal network + IMDS probing
+│   │   ├── git_scanner.py           # Git history mining
+│   │   ├── wayback.py               # Wayback Machine URL discovery
+│   │   ├── cloud_storage.py         # S3/GCS/Azure blob enumeration
+│   │   ├── resolver.py              # Bulk DNS resolution
+│   │   └── shodan.py                # Shodan infrastructure mapping
 │   │
-│   ├── extract/                  # Extraction pipeline
-│   │   ├── quick.py              # Regex scanner
-│   │   ├── decode.py             # Decode chain
-│   │   ├── ast.py                # JavaScript AST parser
-│   │   └── objects.py            # Object extraction
+│   ├── extract/                     # Extraction pipeline
+│   │   ├── quick.py                 # Fast regex scanner
+│   │   ├── decode.py                # Multi-layer decode chain
+│   │   ├── ast.py                   # JavaScript AST parser
+│   │   ├── objects.py               # Object/config extraction
+│   │   ├── entropy.py               # Shannon entropy + FP detection
+│   │   └── jwt_prescan.py           # JWT pre-extraction + decode
 │   │
-│   ├── crawl/                    # Recursive crawl engine [NEW]
-│   │   └── recursive.py          # Spider + evasion + TruffleHog
+│   ├── correlate/                   # Correlation engine
+│   │   ├── dedup.py                 # Candidate deduplication + merge
+│   │   ├── pairing.py               # Credential pair detection
+│   │   ├── confidence.py            # Multi-signal confidence scoring
+│   │   └── ai_analyzer.py           # Claude AI contextual analysis
 │   │
-│   ├── intel/                    # Intelligence integrations [NEW]
-│   │   ├── shodan_recon.py       # Shodan infrastructure mapping
-│   │   └── ai_analysis.py        # Claude AI-powered analysis
+│   ├── verify/                      # Verification engines (24 verifiers)
+│   │   ├── base.py                  # Base verifier class
+│   │   ├── coordinator.py           # Routes findings to verifiers
+│   │   ├── aws.py                   # AWS STS
+│   │   ├── azure.py                 # Microsoft Azure
+│   │   ├── gcp.py                   # Google Cloud
+│   │   ├── github.py                # GitHub API
+│   │   ├── heroku.py                # Heroku
+│   │   ├── digitalocean.py          # DigitalOcean
+│   │   ├── cloudflare.py            # Cloudflare
+│   │   ├── slack.py                 # Slack
+│   │   ├── discord.py               # Discord
+│   │   ├── telegram.py              # Telegram
+│   │   ├── twilio.py                # Twilio
+│   │   ├── stripe.py                # Stripe
+│   │   ├── sendgrid.py              # SendGrid
+│   │   ├── openai.py                # OpenAI
+│   │   ├── anthropic.py             # Anthropic
+│   │   ├── shodan.py                # Shodan
+│   │   ├── npm.py                   # NPM
+│   │   ├── pypi.py                  # PyPI
+│   │   ├── supabase.py              # Supabase
+│   │   ├── mongodb.py               # MongoDB
+│   │   ├── postgres.py              # PostgreSQL
+│   │   ├── redis_verify.py          # Redis
+│   │   ├── vault.py                 # HashiCorp Vault
+│   │   └── jwt.py                   # JWT decode + validate
 │   │
-│   ├── rules/                    # Detection rules (YAML)
-│   │   ├── cloud.yaml            # Cloud providers
-│   │   ├── ai.yaml               # AI/ML services
-│   │   ├── devtools.yaml         # DevOps tools
-│   │   └── cloud_services.yaml   # SaaS platforms
+│   ├── rules/                       # Detection rules (8 YAML files)
+│   │   ├── engine.py                # Rule matching engine
+│   │   ├── loader.py                # YAML rule loader
+│   │   ├── cloud.yaml               # Cloud provider patterns
+│   │   ├── ai.yaml                  # AI/ML service patterns
+│   │   ├── devtools.yaml            # DevOps tool patterns
+│   │   ├── communication.yaml       # Communication service patterns
+│   │   ├── payment.yaml             # Payment platform patterns
+│   │   ├── database.yaml            # Database connection patterns
+│   │   ├── vcs.yaml                 # VCS/registry patterns
+│   │   └── cloud_services.yaml      # SaaS/CDN patterns
 │   │
-│   ├── verify/                   # Verification engines
-│   │   ├── aws.py                # AWS STS
-│   │   ├── github.py             # GitHub API
-│   │   ├── gcp.py                # Google Cloud
-│   │   ├── azure.py              # Microsoft Azure
-│   │   ├── jwt.py                # JWT decoder
-│   │   └── ...                   # Slack, Stripe, OpenAI
+│   ├── output/                      # Output formats
+│   │   ├── console.py               # Rich live dashboard
+│   │   ├── sarif.py                 # SARIF format (CI/CD)
+│   │   └── html_report.py           # HTML report generator
 │   │
-│   ├── api/                      # REST API [ENTERPRISE]
-│   │   ├── server.py             # aiohttp server
-│   │   └── webhooks.py           # Webhook notifications
+│   ├── api/                         # REST API [ENTERPRISE]
+│   │   ├── server.py                # FastAPI/aiohttp server
+│   │   └── webhooks.py              # Webhook notifications
 │   │
-│   ├── storage/                  # Persistence [ENTERPRISE]
-│   │   └── database.py           # SQLite backend
+│   ├── storage/                     # Persistence [ENTERPRISE]
+│   │   └── database.py              # SQLite backend
 │   │
-│   ├── scheduler/                # Scheduling [ENTERPRISE]
-│   │   └── scheduler.py          # Cron-based scheduler
+│   ├── scheduler/                   # Scheduling [ENTERPRISE]
+│   │   └── scheduler.py             # Cron-based scheduler
 │   │
-│   ├── observability/            # Monitoring [ENTERPRISE]
-│   │   ├── logging.py            # Structured logging
-│   │   └── metrics.py            # Prometheus metrics
+│   ├── observability/               # Monitoring [ENTERPRISE]
+│   │   ├── logging.py               # Structured JSON logging
+│   │   └── metrics.py               # Prometheus metrics
 │   │
-│   ├── output/                   # Output formats
-│   │   ├── console.py            # Terminal output
-│   │   └── sarif.py              # SARIF format
-│   │
-│   └── wordlists/                # Discovery wordlists
-│       ├── subdomains.txt        # 150+ prefixes
-│       └── paths.txt             # 200+ paths
-│
-├── tests/
-│   ├── test_recursive_crawl.py   # Crawl engine tests (16 tests)
-│   ├── test_rules.py             # Detection rule tests
-│   ├── test_extraction.py        # Extraction pipeline tests
-│   ├── test_correlation.py       # Correlation engine tests
-│   └── test_verification.py      # Verifier tests
+│   └── ui/                          # Terminal UI
+│       ├── banners.py               # ASCII art banners
+│       └── colors.py                # Color definitions
 │
 ├── Dockerfile
 ├── requirements.txt
