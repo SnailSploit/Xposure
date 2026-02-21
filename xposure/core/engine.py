@@ -373,54 +373,51 @@ class XPosureEngine:
         return results
 
     async def _extraction_phase(self, discovered_content: dict):
-        """Extract credentials from discovered content."""
+        """Extract credentials from discovered content.
+
+        Uses a ProcessPoolExecutor to parallelize CPU-bound work (regex
+        scanning, entropy analysis, decode chains) across multiple cores.
+        """
         if not self.config.quiet:
             print("\n[extraction] analyzing content...")
 
-        from ..rules.engine import RuleEngine
-        from ..extract.decode import DecodeChain
-        from ..extract.entropy import FalsePositiveDetector, EntropyAnalyzer
-        from ..extract.jwt_prescan import JWTPreScanner
+        import asyncio
+        import os
+        from ..extract.parallel import ParallelExtractor
         from ..core.models import Source
-
-        rule_engine = RuleEngine()
-        decoder = DecodeChain(max_depth=self.config.max_decode_depth)
-        fp_detector = FalsePositiveDetector()
-        jwt_prescanner = JWTPreScanner()
-        entropy_analyzer = EntropyAnalyzer()
 
         # Get JS data
         js_data = discovered_content.get('js_data', {'external_urls': [], 'inline_content': []})
         external_js_urls = js_data.get('external_urls', [])
         inline_scripts = js_data.get('inline_content', [])
-        
+
         # Get config files
         config_files = discovered_content.get('configs', [])
-        
+
         # Get source maps
         source_maps = discovered_content.get('source_maps', [])
-        
+
         # Get GitHub results
         github_results = discovered_content.get('github_results', [])
-        
+
         # Collect URLs to fetch (paths + external JS)
         urls_to_fetch = []
         urls_to_fetch.extend(external_js_urls)
         urls_to_fetch.extend(discovered_content.get('paths', []))
-        
+
         # Add base target URLs
         urls_to_fetch.append(f"https://{self.config.target}")
         urls_to_fetch.append(f"https://www.{self.config.target}")
-        
+
         # Deduplicate
         urls_to_fetch = list(dict.fromkeys(urls_to_fetch))
-        
+
         total_to_analyze = (
-            len(urls_to_fetch) + 
-            len(inline_scripts) + 
-            len(config_files) + 
-            len(source_maps) +
-            len(github_results)
+            len(urls_to_fetch)
+            + len(inline_scripts)
+            + len(config_files)
+            + len(source_maps)
+            + len(github_results)
         )
         if not self.config.quiet:
             print(f"[extraction] analyzing {total_to_analyze} sources...")
@@ -431,187 +428,111 @@ class XPosureEngine:
             if github_results:
                 print(f"  - {len(github_results)} GitHub results")
 
-        # Track filtered candidates
-        filtered_count = 0
+        # ── Phase A: Collect all content to scan ─────────────────────
+        # Each item is (content, Source, label, source_type_hint)
+        work_items: list[tuple[str, Source, str, str]] = []
 
-        # Helper function to scan content with FP detection
-        async def scan_content(content: str, source: Source, label: str, source_type: str = ""):
-            """Scan content for credentials with false positive filtering."""
-            nonlocal filtered_count
-
-            if not content or len(content) < 10:
-                return
-
-            # 0. JWT pre-extraction — mask JWTs before rule engine sees them
-            masked_content, extracted_jwts = jwt_prescanner.prescan(content)
-
-            # Convert extracted JWTs directly to candidates
-            for jwt_token in extracted_jwts:
-                jwt_candidate = Candidate(
-                    type='jwt_token',
-                    value=jwt_token.raw,
-                    source=source,
-                    entropy=self._calculate_entropy(jwt_token.raw),
-                    context=content[max(0, jwt_token.start - 100):jwt_token.end + 100],
-                    confidence=0.8,
-                )
-                self.all_candidates.append(jwt_candidate)
-                self.stats.candidates_found += 1
-                if not self.config.quiet:
-                    sub = jwt_token.payload.get('sub', 'unknown')
-                    print(f"  [jwt] JWT token (sub={sub}) in {label}")
-
-            # 0b. Entropy pre-scan for unknown secret patterns
-            entropy_hits = entropy_analyzer.scan_for_high_entropy_strings(masked_content)
-            for hit in entropy_hits:
-                entropy_candidate = Candidate(
-                    type='high_entropy_string',
-                    value=hit['value'],
-                    source=source,
-                    entropy=hit['entropy'],
-                    context=hit['context'],
-                    confidence=0.4,
-                )
-                # Only add if FP detector passes it
-                is_fp, _ = fp_detector.is_false_positive(hit['value'], hit['context'])
-                if not is_fp:
-                    self.all_candidates.append(entropy_candidate)
-                    self.stats.candidates_found += 1
-
-            # 1. Rules-based scan on MASKED content (JWTs replaced with nulls)
-            raw_candidates = list(rule_engine.scan(masked_content, source))
-            
-            # 2. Filter false positives
-            valid_candidates = []
-            for candidate in raw_candidates:
-                is_fp, reason = fp_detector.is_false_positive(
-                    candidate.value,
-                    candidate.context,
-                    source_type or source.type
-                )
-                
-                if is_fp:
-                    filtered_count += 1
-                    if self.config.verbose:
-                        print(f"  [filtered] {candidate.type}: {reason}")
-                    continue
-                
-                # Adjust confidence based on FP analysis
-                adjustment = fp_detector.get_confidence_adjustment(
-                    candidate.value,
-                    candidate.context,
-                    source_type or source.type
-                )
-                candidate.confidence = max(0.0, min(1.0, candidate.confidence + adjustment))
-                
-                valid_candidates.append(candidate)
-            
-            self.stats.candidates_found += len(valid_candidates)
-
-            if valid_candidates:
-                if not self.config.quiet:
-                    print(f"[extract] found {len(valid_candidates)} candidates in {label}")
-                
-                for candidate in valid_candidates:
-                    self.all_candidates.append(candidate)
-                    if not self.config.quiet:
-                        display_val = candidate.value[:30] + "..." if len(candidate.value) > 30 else candidate.value
-                        conf = f"({candidate.confidence:.0%})" if candidate.confidence else ""
-                        print(f"  [+] {candidate.type}: {display_val} {conf}")
-
-            # 3. Try decoding encoded content
-            try:
-                sample_size = min(len(content), 5000)
-                decoded_variants = list(decoder.decode_all(content[:sample_size]))
-                self.stats.decoded_blobs += max(0, len(decoded_variants) - 1)
-
-                for decoded_content, decode_path in decoded_variants[1:]:
-                    if decode_path and decoded_content:
-                        source_decoded = Source(
-                            type='decoded',
-                            url=source.url,
-                            path=' -> '.join(decode_path),
-                        )
-
-                        decoded_candidates = list(rule_engine.scan(decoded_content, source_decoded))
-                        
-                        # Filter decoded candidates too
-                        for candidate in decoded_candidates:
-                            is_fp, _ = fp_detector.is_false_positive(candidate.value, candidate.context)
-                            if not is_fp:
-                                self.stats.candidates_found += 1
-                                self.all_candidates.append(candidate)
-
-                        if not self.config.quiet and decoded_candidates:
-                            print(f"[decoded] found {len(decoded_candidates)} in {' -> '.join(decode_path)}")
-            except Exception:
-                pass
-
-        # 1. Process config files first (highest priority)
+        # 1. Config files (highest priority)
         for config in config_files:
             content = config.get('content', '')
             url = config.get('url', 'unknown')
             file_type = config.get('metadata', {}).get('file_type', 'config')
-            
-            source = Source(type='config_file', url=url)
-            await scan_content(content, source, f"config: {url}", source_type=file_type)
+            work_items.append((content, Source(type='config_file', url=url), f"config: {url}", file_type))
 
-        # 2. Process source map content
+        # 2. Source map content
         for source_map in source_maps:
             original_sources = source_map.get('original_sources', [])
             map_url = source_map.get('url', 'unknown')
-            
             for orig in original_sources:
                 content = orig.get('content')
                 if not content:
                     continue
-                    
                 path = orig.get('path', 'unknown')
-                source = Source(type='source_map', url=f"{map_url}:{path}")
-                await scan_content(content, source, f"sourcemap: {path}", source_type='source_map')
+                work_items.append((content, Source(type='source_map', url=f"{map_url}:{path}"), f"sourcemap: {path}", 'source_map'))
 
-        # 3. Process GitHub results
+        # 3. GitHub results
         for gh_result in github_results:
             content = gh_result.get('content', '')
             if not content:
                 continue
-                
             url = gh_result.get('url', 'unknown')
             repo = gh_result.get('metadata', {}).get('repo_name', '')
-            
-            source = Source(type='github', url=url)
-            await scan_content(content, source, f"github: {repo}", source_type='github')
+            work_items.append((content, Source(type='github', url=url), f"github: {repo}", 'github'))
 
-        # 4. Process inline scripts
+        # 4. Inline scripts
         for inline in inline_scripts:
             content = inline.get('content', '')
             source_url = inline.get('source_url', 'unknown')
-            
-            source = Source(type='inline_script', url=source_url)
-            await scan_content(content, source, f"inline: {source_url}", source_type='inline_script')
+            work_items.append((content, Source(type='inline_script', url=source_url), f"inline: {source_url}", 'inline_script'))
 
-        # 5. Fetch and process external URLs
+        # 5. Fetch external URLs (async I/O, then CPU extraction)
+        fetch_tasks = []
         for url in urls_to_fetch:
-            try:
-                content = await self._fetch_url_content(url)
-                if not content:
-                    continue
+            fetch_tasks.append(self._fetch_url_content(url))
 
-                source_type = 'js_file' if url.endswith('.js') or '/js/' in url else 'url'
-                source = Source(type=source_type, url=url)
+        fetched_contents = await asyncio.gather(*fetch_tasks, return_exceptions=True)
 
-                self.graph.track_discovery(
-                    source=Source(type='domain', url=f"https://{self.config.target}"),
-                    discovered_url=url,
-                    discovered_type=source_type,
-                )
-
-                await scan_content(content, source, url, source_type=source_type)
-
-            except Exception as e:
-                if self.config.verbose:
-                    print(f"[extract] Error processing {url}: {e}")
+        for url, result in zip(urls_to_fetch, fetched_contents):
+            if isinstance(result, Exception) or not result:
                 continue
+            source_type = 'js_file' if url.endswith('.js') or '/js/' in url else 'url'
+            self.graph.track_discovery(
+                source=Source(type='domain', url=f"https://{self.config.target}"),
+                discovered_url=url,
+                discovered_type=source_type,
+            )
+            work_items.append((result, Source(type=source_type, url=url), url, source_type))
+
+        # ── Phase B: Parallel CPU extraction ─────────────────────────
+        # Use min(cpu_count, 4) workers to avoid over-subscribing on
+        # small machines while still bypassing the GIL on larger ones.
+        workers = min(os.cpu_count() or 2, 4)
+
+        if not self.config.quiet:
+            print(f"[extraction] parallel extraction with {workers} workers...")
+
+        loop = asyncio.get_event_loop()
+        filtered_count = 0
+
+        with ParallelExtractor(
+            workers=workers,
+            max_decode_depth=getattr(self.config, 'max_decode_depth', 5),
+            verbose=getattr(self.config, 'verbose', False),
+        ) as extractor:
+            futures = []
+            for content, source, label, source_type_hint in work_items:
+                fut = extractor.submit(content, source, label, source_type_hint)
+                futures.append(fut)
+
+            # Collect results (blocks until all workers finish)
+            results = await loop.run_in_executor(None, extractor.collect, futures)
+
+        # ── Phase C: Merge results into engine state ─────────────────
+        for result in results:
+            filtered_count += result.get('filtered_count', 0)
+            self.stats.decoded_blobs += result.get('decoded_blobs', 0)
+
+            for cand_dict in result.get('candidates', []):
+                source = Source(
+                    type=cand_dict['source_type'],
+                    url=cand_dict['source_url'],
+                    path=cand_dict.get('source_path', ''),
+                )
+                candidate = Candidate(
+                    type=cand_dict['type'],
+                    value=cand_dict['value'],
+                    source=source,
+                    entropy=cand_dict['entropy'],
+                    context=cand_dict['context'],
+                    confidence=cand_dict['confidence'],
+                )
+                self.all_candidates.append(candidate)
+                self.stats.candidates_found += 1
+
+            label = result.get('label', '')
+            n = len(result.get('candidates', []))
+            if n > 0 and not self.config.quiet:
+                print(f"[extract] found {n} candidates in {label}")
 
         if not self.config.quiet:
             print(f"[extraction] found {self.stats.candidates_found} total candidates")

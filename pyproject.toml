@@ -13,7 +13,7 @@ dependencies = [
     "click>=8.0.0",
     "rich>=13.0.0",
     "pyyaml>=6.0.0",
-    "pyjsparser>=2.7.0",      # JS AST parsing
+    "esprima>=4.0",            # JS AST parsing (replaced pyjsparser)
     "jsbeautifier>=1.14.0",   # JS beautification
 ]
 

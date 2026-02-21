@@ -18,14 +18,19 @@ class JSASTParser:
         self.timeout = timeout
         self.parser_available = False
 
-        # Try to import pyjsparser
+        # Try to import esprima (preferred) or pyjsparser (legacy fallback)
         try:
-            import pyjsparser
-            self.parser = pyjsparser.PyJsParser()
+            import esprima
+            self._esprima = esprima
             self.parser_available = True
         except ImportError:
-            # Fall back to regex-based extraction
-            self.parser_available = False
+            try:
+                import pyjsparser
+                self._pyjsparser = pyjsparser.PyJsParser()
+                self.parser_available = True
+            except ImportError:
+                # Fall back to regex-based extraction
+                self.parser_available = False
 
     def extract_assignments(self, js_code: str) -> Generator[dict, None, None]:
         """
@@ -62,8 +67,12 @@ class JSASTParser:
             Assignment dictionaries
         """
         try:
-            # Parse JavaScript to AST
-            ast = self.parser.parse(js_code)
+            # Parse JavaScript to AST — esprima returns objects with .toDict()
+            if hasattr(self, '_esprima'):
+                ast_obj = self._esprima.parseScript(js_code, tolerant=True)
+                ast = ast_obj.toDict()
+            else:
+                ast = self._pyjsparser.parse(js_code)
 
             # Walk the AST
             yield from self._walk_ast(ast)

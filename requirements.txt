@@ -6,7 +6,7 @@ aiodns>=3.0.0
 click>=8.0.0
 rich>=13.0.0
 pyyaml>=6.0.0
-pyjsparser>=2.7.0
+esprima>=4.0
 jsbeautifier>=1.14.0
 
 # Recursive crawl + enrichment (optional — installed with pip install -e '.[recon]')
