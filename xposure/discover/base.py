@@ -58,9 +58,20 @@ class BaseDiscoverer(ABC):
 
     async def __aenter__(self):
         """Context manager entry."""
+        # Use explicit connect timeout so DNS/TCP hangs don't block forever
+        timeout = aiohttp.ClientTimeout(
+            total=self.config.request_timeout,
+            connect=min(self.config.request_timeout, 10),
+            sock_connect=min(self.config.request_timeout, 10),
+        )
+        connector = aiohttp.TCPConnector(
+            limit=self.config.max_concurrent_requests,
+            enable_cleanup_closed=True,
+        )
         self.session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=self.config.request_timeout),
+            timeout=timeout,
             headers={'User-Agent': self.config.user_agent},
+            connector=connector,
         )
         return self
 

@@ -2,6 +2,7 @@
 
 import asyncio
 import re
+import secrets
 from typing import AsyncGenerator, Set
 from urllib.parse import urljoin, urlparse
 
@@ -13,10 +14,24 @@ from .base import BaseDiscoverer
 class PathDiscoverer(BaseDiscoverer):
     """Discover interesting paths and endpoints."""
 
+    # Circuit breaker: skip remaining paths after this many consecutive failures
+    CIRCUIT_BREAKER_THRESHOLD = 5
+
     def __init__(self, config):
         """Initialize path discoverer."""
         super().__init__(config)
         self.seen: Set[str] = set()
+        self._consecutive_failures = 0
+        self._is_wildcard = False
+
+    async def _detect_wildcard(self, base_url: str) -> bool:
+        """Check if the server responds 200/403 for random non-existent paths."""
+        canary = f"/{secrets.token_hex(16)}-{secrets.token_hex(8)}.html"
+        canary_url = urljoin(base_url, canary)
+        result = await self._path_exists(canary_url)
+        # Reset failure counter since this was a test probe
+        self._consecutive_failures = 0
+        return result
 
     async def discover(self) -> AsyncGenerator[dict, None]:
         """
@@ -27,6 +42,19 @@ class PathDiscoverer(BaseDiscoverer):
         """
         target = self.config.target
         base_url = f"https://{target}"
+
+        # Wildcard detection: if a random path returns 200/403, skip path brute-force
+        self._is_wildcard = await self._detect_wildcard(base_url)
+        if self._is_wildcard:
+            if not self.config.quiet:
+                print(f"[discover] {target} returns 200/403 for all paths (wildcard/catch-all), "
+                      f"skipping path brute-force")
+            # Still parse robots.txt and sitemap (those are content-based, not status-based)
+            async for result in self._parse_robots(base_url):
+                yield result
+            async for result in self._parse_sitemap(base_url):
+                yield result
+            return
 
         # Load paths wordlist (falls back to hardcoded if no file)
         interesting_paths = self.config.get_wordlist('paths')
@@ -104,6 +132,13 @@ class PathDiscoverer(BaseDiscoverer):
             print(f"[discover] Testing {len(interesting_paths)} paths...")
 
         for path in interesting_paths:
+            # Circuit breaker: if target is unreachable, stop wasting time
+            if self._consecutive_failures >= self.CIRCUIT_BREAKER_THRESHOLD:
+                if not self.config.quiet:
+                    print(f"[discover] target unreachable after {self._consecutive_failures} "
+                          f"consecutive failures, skipping remaining paths")
+                break
+
             url = urljoin(base_url, path)
 
             if url in self.seen:
@@ -153,6 +188,7 @@ class PathDiscoverer(BaseDiscoverer):
                 allow_redirects=False,
                 timeout=self.session.timeout
             ) as response:
+                self._consecutive_failures = 0  # reset on any HTTP response
                 # 200 = exists, 403 = exists but forbidden
                 if response.status in (200, 403):
                     self.stats.requests_successful += 1
@@ -160,16 +196,19 @@ class PathDiscoverer(BaseDiscoverer):
                 return False
 
         except asyncio.TimeoutError:
+            self._consecutive_failures += 1
             self.stats.timeouts += 1
             self.stats.requests_failed += 1
             return False
 
         except aiohttp.ClientConnectorError as e:
+            self._consecutive_failures += 1
             error_type = self._classify_error(e)
             self._record_error(error_type, url, e)
             return False
 
         except Exception as e:
+            self._consecutive_failures += 1
             self.stats.other_errors += 1
             self.stats.requests_failed += 1
             if self.config.verbose:

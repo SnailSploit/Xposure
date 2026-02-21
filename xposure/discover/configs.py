@@ -1,7 +1,10 @@
 """Configuration file discovery for X-POSURE."""
 
+import secrets
 from typing import AsyncGenerator
 from urllib.parse import urljoin
+
+import aiohttp
 
 from .base import BaseDiscoverer
 
@@ -165,6 +168,29 @@ class ConfigDiscoverer(BaseDiscoverer):
         '/graphql',  # GraphQL introspection
     ]
 
+    async def _is_host_reachable(self, base_url: str) -> bool:
+        """Quick connectivity check — HEAD request with no retries."""
+        if not self.session:
+            return False
+        try:
+            async with self.session.head(
+                base_url + '/',
+                allow_redirects=False,
+                timeout=aiohttp.ClientTimeout(total=10, connect=5),
+            ) as resp:
+                return True  # Any HTTP response means host is reachable
+        except Exception:
+            return False
+
+    async def _detect_wildcard(self, base_url: str) -> bool:
+        """Check if the server responds with content for random non-existent paths."""
+        canary = f"/{secrets.token_hex(16)}.json"
+        canary_url = urljoin(base_url, canary)
+        content = await self.fetch(canary_url, retry=False)
+        if content and not self._is_error_page(content):
+            return True
+        return False
+
     async def discover(self, subdomains: list[str] = None) -> AsyncGenerator[dict, None]:
         """
         Discover configuration files.
@@ -176,7 +202,7 @@ class ConfigDiscoverer(BaseDiscoverer):
             dict: Result with type='config', url, content, metadata
         """
         base_urls = [f"https://{self.config.target}", f"https://www.{self.config.target}"]
-        
+
         # Add subdomains
         if subdomains:
             for sub in subdomains[:20]:  # Limit subdomain checks
@@ -187,12 +213,27 @@ class ConfigDiscoverer(BaseDiscoverer):
 
         # Check main domain with all paths
         for base_url in base_urls[:2]:  # Main domain + www
+            # Quick reachability check before iterating all paths
+            if not await self._is_host_reachable(base_url):
+                if not self.config.quiet:
+                    print(f"[config] {base_url} unreachable, skipping")
+                continue
+
+            # Wildcard detection: skip if server returns content for everything
+            if await self._detect_wildcard(base_url):
+                if not self.config.quiet:
+                    print(f"[config] {base_url} returns content for all paths (wildcard), skipping")
+                continue
+
             for path in self.CONFIG_PATHS:
                 async for result in self._check_config(base_url, path):
                     yield result
 
         # Check subdomains with limited paths
         for base_url in base_urls[2:]:
+            if not await self._is_host_reachable(base_url):
+                continue
+
             for path in self.SUBDOMAIN_PATHS:
                 async for result in self._check_config(base_url, path):
                     yield result
@@ -206,25 +247,25 @@ class ConfigDiscoverer(BaseDiscoverer):
             path: Config path to append
 
         Yields:
-            Config file results
+            Config file results (also yields None sentinel to signal connection success)
         """
         url = urljoin(base_url, path)
-        
+
         content = await self.fetch(url)
-        
+
         if not content:
             return
-            
+
         # Skip error pages and redirects
         if self._is_error_page(content):
             return
 
         # Determine file type
         file_type = self._detect_file_type(path, content)
-        
+
         # Calculate interest score
         interest_score = self._calculate_interest(content, path)
-        
+
         if interest_score < 0.3:
             return
 

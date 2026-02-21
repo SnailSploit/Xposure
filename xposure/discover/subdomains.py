@@ -132,7 +132,17 @@ class SubdomainDiscoverer(BaseDiscoverer):
         if not self.config.quiet:
             print(f"[discover] Testing {len(subdomain_prefixes)} subdomain prefixes...")
 
+        consecutive_failures = 0
+        circuit_breaker_threshold = 5
+
         for subdomain_prefix in subdomain_prefixes:
+            # Circuit breaker: if DNS is completely broken, stop early
+            if consecutive_failures >= circuit_breaker_threshold:
+                if not self.config.quiet:
+                    print(f"[discover] DNS unreachable after {consecutive_failures} "
+                          f"consecutive failures, skipping remaining subdomains")
+                break
+
             subdomain = f"{subdomain_prefix}.{domain}"
 
             if subdomain in self.seen:
@@ -141,6 +151,7 @@ class SubdomainDiscoverer(BaseDiscoverer):
             # Quick DNS check (A or CNAME record)
             if await self._dns_exists(subdomain):
                 self.seen.add(subdomain)
+                consecutive_failures = 0
 
                 yield {
                     'type': 'subdomain',
@@ -150,6 +161,8 @@ class SubdomainDiscoverer(BaseDiscoverer):
                         'source': 'dns_bruteforce',
                     }
                 }
+            else:
+                consecutive_failures += 1
 
             await self.rate_limit()
 

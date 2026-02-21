@@ -166,7 +166,7 @@ class XPosureEngine:
             'github_results': [],
         }
 
-        # Run discovery modules concurrently
+        # Run discovery modules concurrently with an overall timeout
         tasks = []
 
         # Subdomain discovery
@@ -176,9 +176,17 @@ class XPosureEngine:
         # Path discovery
         tasks.append(self._discover_paths())
 
-        # Gather results
+        # Gather results (5-minute overall timeout for initial discovery)
         if tasks:
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+            try:
+                results = await asyncio.wait_for(
+                    asyncio.gather(*tasks, return_exceptions=True),
+                    timeout=300,
+                )
+            except asyncio.TimeoutError:
+                if not self.config.quiet:
+                    print("[discovery] initial discovery timed out after 5 minutes")
+                results = []
 
             # Flatten results
             for result in results:
@@ -1036,7 +1044,11 @@ class XPosureEngine:
         try:
             import aiohttp
 
-            timeout = aiohttp.ClientTimeout(total=self.config.request_timeout)
+            timeout = aiohttp.ClientTimeout(
+                total=self.config.request_timeout,
+                connect=min(self.config.request_timeout, 10),
+                sock_connect=min(self.config.request_timeout, 10),
+            )
             async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.get(url, headers={'User-Agent': self.config.user_agent}) as response:
                     if response.status == 200:
