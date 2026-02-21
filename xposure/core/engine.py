@@ -1,6 +1,7 @@
 """X-POSURE main scanning engine."""
 
 import asyncio
+import math
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -378,12 +379,15 @@ class XPosureEngine:
 
         from ..rules.engine import RuleEngine
         from ..extract.decode import DecodeChain
-        from ..extract.entropy import FalsePositiveDetector
+        from ..extract.entropy import FalsePositiveDetector, EntropyAnalyzer
+        from ..extract.jwt_prescan import JWTPreScanner
         from ..core.models import Source
 
         rule_engine = RuleEngine()
         decoder = DecodeChain(max_depth=self.config.max_decode_depth)
         fp_detector = FalsePositiveDetector()
+        jwt_prescanner = JWTPreScanner()
+        entropy_analyzer = EntropyAnalyzer()
 
         # Get JS data
         js_data = discovered_content.get('js_data', {'external_urls': [], 'inline_content': []})
@@ -434,12 +438,48 @@ class XPosureEngine:
         async def scan_content(content: str, source: Source, label: str, source_type: str = ""):
             """Scan content for credentials with false positive filtering."""
             nonlocal filtered_count
-            
+
             if not content or len(content) < 10:
                 return
-                
-            # 1. Rules-based scan
-            raw_candidates = list(rule_engine.scan(content, source))
+
+            # 0. JWT pre-extraction — mask JWTs before rule engine sees them
+            masked_content, extracted_jwts = jwt_prescanner.prescan(content)
+
+            # Convert extracted JWTs directly to candidates
+            for jwt_token in extracted_jwts:
+                jwt_candidate = Candidate(
+                    type='jwt_token',
+                    value=jwt_token.raw,
+                    source=source,
+                    entropy=self._calculate_entropy(jwt_token.raw),
+                    context=content[max(0, jwt_token.start - 100):jwt_token.end + 100],
+                    confidence=0.8,
+                )
+                self.all_candidates.append(jwt_candidate)
+                self.stats.candidates_found += 1
+                if not self.config.quiet:
+                    sub = jwt_token.payload.get('sub', 'unknown')
+                    print(f"  [jwt] JWT token (sub={sub}) in {label}")
+
+            # 0b. Entropy pre-scan for unknown secret patterns
+            entropy_hits = entropy_analyzer.scan_for_high_entropy_strings(masked_content)
+            for hit in entropy_hits:
+                entropy_candidate = Candidate(
+                    type='high_entropy_string',
+                    value=hit['value'],
+                    source=source,
+                    entropy=hit['entropy'],
+                    context=hit['context'],
+                    confidence=0.4,
+                )
+                # Only add if FP detector passes it
+                is_fp, _ = fp_detector.is_false_positive(hit['value'], hit['context'])
+                if not is_fp:
+                    self.all_candidates.append(entropy_candidate)
+                    self.stats.candidates_found += 1
+
+            # 1. Rules-based scan on MASKED content (JWTs replaced with nulls)
+            raw_candidates = list(rule_engine.scan(masked_content, source))
             
             # 2. Filter false positives
             valid_candidates = []
@@ -1061,6 +1101,14 @@ class XPosureEngine:
                 for rem in analysis.remediation_priorities[:5]:
                     urgency = rem.get('urgency', 'N/A')
                     print(f"  {rem.get('priority', '?')}. [{urgency}] {rem.get('action', 'N/A')}")
+
+    @staticmethod
+    def _calculate_entropy(s: str) -> float:
+        """Calculate Shannon entropy of a string."""
+        if not s:
+            return 0.0
+        prob = [float(s.count(c)) / len(s) for c in set(s)]
+        return -sum(p * math.log2(p) for p in prob if p > 0)
 
     async def _fetch_url_content(self, url: str) -> str:
         """Fetch content from a URL."""

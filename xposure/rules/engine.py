@@ -1,9 +1,29 @@
 """Rule matching engine for X-POSURE."""
 
+import re
 from typing import Generator, Optional
 
 from ..core.models import Candidate, Source
 from .loader import Rule, RuleLoader
+
+
+# Context-aware suppression patterns — known FP contexts per credential type
+SUPPRESS_PATTERNS = {
+    'cloudflare_api_token': [
+        re.compile(r'/etc/passwd'),
+        re.compile(r'daemon:/usr'),
+        re.compile(r'PROXY.*http://'),
+    ],
+    'redis_password': [
+        re.compile(r'HTTPS?_PROXY='),
+        re.compile(r'npm_config_'),
+    ],
+    'elastic_cloud_id': [
+        re.compile(r':/usr/sbin'),
+        re.compile(r':/var/spool'),
+        re.compile(r'systemd-'),
+    ],
+}
 
 
 class RuleEngine:
@@ -33,6 +53,12 @@ class RuleEngine:
         matches = self.loader.match_all(content)
 
         for match in matches:
+            # Context-aware suppression — skip known FP contexts
+            if match['type'] in SUPPRESS_PATTERNS:
+                ctx = match.get('context', '')
+                if any(p.search(ctx) for p in SUPPRESS_PATTERNS[match['type']]):
+                    continue
+
             # Calculate entropy
             entropy = self._calculate_entropy(match['value'])
 
@@ -51,6 +77,28 @@ class RuleEngine:
                 candidate.source.raw_context = str(match.get('metadata'))
 
             yield candidate
+
+            # Rule chaining: if this rule has pair_with, search nearby
+            if match.get('pair_with'):
+                nearby_start = max(0, match['start'] - 500)
+                nearby_end = min(len(content), match['end'] + 500)
+                nearby = content[nearby_start:nearby_end]
+
+                for pair_type in match['pair_with']:
+                    pair_rules = self.loader.get_rules_by_type(pair_type)
+                    for rule in pair_rules:
+                        for pair_match in rule.match(nearby):
+                            pair_entropy = self._calculate_entropy(pair_match['value'])
+                            pair_candidate = Candidate(
+                                type=pair_match['type'],
+                                value=pair_match['value'],
+                                source=source,
+                                entropy=pair_entropy,
+                                context=pair_match['context'],
+                                confidence=self._calculate_confidence(pair_match, pair_entropy),
+                                paired_with=candidate,
+                            )
+                            yield pair_candidate
 
     def scan_with_rule(self, content: str, rule: Rule, source: Source) -> Generator[Candidate, None, None]:
         """

@@ -58,10 +58,21 @@ class Config:
     verify_timeout: int = 10
     verify_retries: int = 2
 
+    # Scan modes
+    scan_internal: bool = False        # Internal container/server scan
+    scan_git: Optional[str] = None     # Git repo path or URL
+    scan_file: Optional[str] = None    # Local directory path
+    scan_combined: bool = False        # Run all modes
+
     # Output
     output_file: Optional[str] = None
     quiet: bool = False
     verbose: bool = False
+    unmask: bool = False               # Show raw credential values
+
+    # Output formats
+    output_sarif: Optional[str] = None
+    output_html: Optional[str] = None
 
     # Paths
     state_dir: Path = field(default_factory=lambda: Path.home() / ".xposure")
@@ -72,6 +83,9 @@ class Config:
     # Custom wordlist files (optional overrides)
     subdomains_wordlist: Optional[Path] = None
     paths_wordlist: Optional[Path] = None
+
+    # Ignore patterns
+    ignore_patterns: list[str] = field(default_factory=list)
 
     def __post_init__(self):
         """Ensure directories exist."""

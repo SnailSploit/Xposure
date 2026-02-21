@@ -23,6 +23,14 @@ class VerificationResult:
     metadata: Dict = field(default_factory=dict)
     error: Optional[str] = None
 
+    # Enhanced: What can an attacker DO with this?
+    scope: List[str] = field(default_factory=list)
+    quota_remaining: Optional[int] = None
+    account_type: Optional[str] = None
+    last_used: Optional[str] = None
+    expiry: Optional[str] = None
+    rotatable: bool = True
+
 
 class BaseVerifier(ABC):
     """Base class for credential verifiers."""

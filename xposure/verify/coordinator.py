@@ -12,6 +12,22 @@ from .openai import OpenAIVerifier
 from .gcp import GCPVerifier
 from .azure import AzureVerifier
 from .jwt import JWTVerifier
+from .shodan import ShodanVerifier
+from .sendgrid import SendGridVerifier
+from .twilio import TwilioVerifier
+from .discord import DiscordVerifier
+from .telegram import TelegramVerifier
+from .heroku import HerokuVerifier
+from .digitalocean import DigitalOceanVerifier
+from .mongodb import MongoDBVerifier
+from .postgres import PostgresVerifier
+from .redis_verify import RedisVerifier
+from .npm import NPMVerifier
+from .pypi import PyPIVerifier
+from .anthropic import AnthropicVerifier
+from .cloudflare import CloudflareVerifier
+from .vault import VaultVerifier
+from .supabase import SupabaseVerifier
 from ..core.models import Finding, VerificationStatus
 
 
@@ -49,6 +65,22 @@ class VerifierCoordinator:
             GCPVerifier(timeout=timeout),
             AzureVerifier(timeout=timeout),
             JWTVerifier(timeout=timeout),
+            ShodanVerifier(timeout=timeout),
+            SendGridVerifier(timeout=timeout),
+            TwilioVerifier(timeout=timeout),
+            DiscordVerifier(timeout=timeout),
+            TelegramVerifier(timeout=timeout),
+            HerokuVerifier(timeout=timeout),
+            DigitalOceanVerifier(timeout=timeout),
+            MongoDBVerifier(timeout=timeout),
+            PostgresVerifier(timeout=timeout),
+            RedisVerifier(timeout=timeout),
+            NPMVerifier(timeout=timeout),
+            PyPIVerifier(timeout=timeout),
+            AnthropicVerifier(timeout=timeout),
+            CloudflareVerifier(timeout=timeout),
+            VaultVerifier(timeout=timeout),
+            SupabaseVerifier(timeout=timeout),
         ]
 
         # Statistics

@@ -24,6 +24,15 @@ class VerificationStatus(Enum):
     ERROR = "error"
 
 
+class FindingTier(Enum):
+    """Post-verification finding tier."""
+    CRITICAL = "critical"    # Verified + live + high-blast-radius
+    CONFIRMED = "confirmed"  # Verified + live
+    LIKELY = "likely"        # Unverified but high confidence + entropy
+    POSSIBLE = "possible"    # Pattern match, medium confidence
+    INFO = "info"            # Low confidence, informational
+
+
 @dataclass
 class Source:
     """Where a credential was found."""
@@ -130,6 +139,9 @@ class Finding:
     # Severity (from rule matching)
     severity: Optional[Severity] = None
 
+    # Tier (post-verification classification)
+    tier: FindingTier = FindingTier.POSSIBLE
+
     # Remediation
     remediation: Optional[str] = None
 
@@ -154,6 +166,7 @@ class Finding:
             "first_seen": self.first_seen.isoformat() if self.first_seen else None,
             "exposure_days": self.exposure_days,
             "evidence": self.evidence,
+            "tier": self.tier.value if isinstance(self.tier, FindingTier) else self.tier,
             "remediation": self.remediation,
         }
 
@@ -173,6 +186,52 @@ class Finding:
             self.confidence_factors.append(f"{actual_delta:+.2f} {reason} (clamped from {delta:+.2f})")
         else:
             self.confidence_factors.append(f"{delta:+.2f} {reason}")
+
+    def classify_tier(self):
+        """Classify finding into a tier based on verification and confidence."""
+        if self.status == VerificationStatus.VERIFIED:
+            if self.blast_radius in (Severity.CRITICAL, Severity.HIGH):
+                self.tier = FindingTier.CRITICAL
+            else:
+                self.tier = FindingTier.CONFIRMED
+        elif self.confidence >= 0.75 and self.entropy >= 4.0:
+            self.tier = FindingTier.LIKELY
+        elif self.confidence >= 0.4:
+            self.tier = FindingTier.POSSIBLE
+        else:
+            self.tier = FindingTier.INFO
+
+
+@dataclass
+class GitFinding:
+    """Secret found in git history."""
+    credential_type: str
+    value: str
+    commit_hash: str
+    author: str
+    author_email: str
+    date: Optional[datetime] = None
+    file_path: str = ""
+    line_number: int = 0
+    still_in_head: bool = False
+    diff_context: str = ""
+    branch: str = ""
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "credential_type": self.credential_type,
+            "value": self.value,
+            "commit_hash": self.commit_hash,
+            "author": self.author,
+            "author_email": self.author_email,
+            "date": self.date.isoformat() if self.date else None,
+            "file_path": self.file_path,
+            "line_number": self.line_number,
+            "still_in_head": self.still_in_head,
+            "diff_context": self.diff_context,
+            "branch": self.branch,
+        }
 
 
 @dataclass
@@ -233,6 +292,14 @@ class ScanStats:
     shodan_queried: int = 0
     ai_analyzed: bool = False
 
+    # Git scan stats
+    git_commits_scanned: int = 0
+    git_findings: int = 0
+
+    # Internal scan stats
+    internal_sources_scanned: int = 0
+    internal_findings: int = 0
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         result = {
@@ -272,5 +339,15 @@ class ScanStats:
                 "dns_resolved": self.dns_resolved,
                 "shodan_queried": self.shodan_queried,
                 "ai_analyzed": self.ai_analyzed,
+            }
+        if self.git_commits_scanned or self.git_findings:
+            result["git_scan"] = {
+                "commits_scanned": self.git_commits_scanned,
+                "findings": self.git_findings,
+            }
+        if self.internal_sources_scanned or self.internal_findings:
+            result["internal_scan"] = {
+                "sources_scanned": self.internal_sources_scanned,
+                "findings": self.internal_findings,
             }
         return result

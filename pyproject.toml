@@ -1,6 +1,6 @@
 [project]
 name = "xposure"
-version = "1.1.0"
+version = "5.0.0"
 description = "Shit your DevOps forgot."
 authors = [{name = "SnailSploit"}]
 license = {text = "MIT"}
@@ -21,6 +21,23 @@ dependencies = [
 recon = [
     "anthropic>=0.40.0",
     "shodan>=1.31.0",
+]
+git = [
+    "gitpython>=3.1",
+]
+db = [
+    "pymongo>=4.0",
+    "psycopg2-binary>=2.9",
+    "redis>=5.0",
+]
+full = [
+    "anthropic>=0.40.0",
+    "shodan>=1.31.0",
+    "gitpython>=3.1",
+    "pymongo>=4.0",
+    "psycopg2-binary>=2.9",
+    "redis>=5.0",
+    "cryptography>=41.0",
 ]
 dev = [
     "pytest>=7.0.0",
