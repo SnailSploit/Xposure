@@ -169,6 +169,9 @@ class TruffleHogScanner:
         if not self.config.verify:
             cmd.append("--only-verified=false")
 
+        # Cap total trufflehog runtime so it can't hang the demo.
+        max_runtime = 300.0  # 5 minutes
+        proc: Optional[asyncio.subprocess.Process] = None
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -176,8 +179,22 @@ class TruffleHogScanner:
                 stderr=asyncio.subprocess.PIPE,
             )
 
-            async for line in proc.stdout:
-                decoded = line.decode().strip()
+            start = asyncio.get_event_loop().time()
+            while True:
+                try:
+                    line = await asyncio.wait_for(proc.stdout.readline(), timeout=15.0)
+                except asyncio.TimeoutError:
+                    if asyncio.get_event_loop().time() - start > max_runtime:
+                        if not self.config.quiet:
+                            print(f"[trufflehog] exceeded {max_runtime:.0f}s, terminating")
+                        proc.terminate()
+                        break
+                    continue
+
+                if not line:
+                    break
+
+                decoded = line.decode(errors="ignore").strip()
                 if not decoded:
                     continue
 
@@ -192,7 +209,11 @@ class TruffleHogScanner:
                 except json.JSONDecodeError:
                     continue
 
-            await proc.wait()
+            try:
+                await asyncio.wait_for(proc.wait(), timeout=5.0)
+            except asyncio.TimeoutError:
+                proc.kill()
+                await proc.wait()
 
         except FileNotFoundError:
             if not self.config.quiet:
@@ -201,6 +222,12 @@ class TruffleHogScanner:
             self.stats["errors"] += 1
             if not self.config.quiet:
                 print(f"[trufflehog] error: {e}")
+            if proc is not None and proc.returncode is None:
+                try:
+                    proc.kill()
+                    await proc.wait()
+                except Exception:
+                    pass
 
     def _parse_finding(
         self, data: dict, scan_type: str, target: str
