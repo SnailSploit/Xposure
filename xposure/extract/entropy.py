@@ -188,40 +188,74 @@ class EntropyAnalyzer:
 
 class FalsePositiveDetector:
     """Detect and filter false positives."""
-    
+
+    # Exact values that are known-public test/demo credentials from vendor docs.
+    # Anything matching here is auto-FP regardless of entropy / context.
+    PUBLIC_TEST_VALUES = {
+        # AWS docs (used in millions of code samples)
+        "AKIAIOSFODNN7EXAMPLE",
+        "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        "ASIAIOSFODNN7EXAMPLE",
+        # GitHub example token shape
+        "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        # SendGrid docs example
+        "SG.SENDGRID_API_KEY",
+        # Common all-zero UUID
+        "00000000-0000-0000-0000-000000000000",
+        # OpenAI / Anthropic placeholder shapes seen in tutorials
+        "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    }
+
+    # Substring contains-checks for vendor test keys whose envelope is fixed
+    # but the random suffix varies (so we can't list exact values).
+    PUBLIC_TEST_PREFIXES = (
+        "sk_test_",       # Stripe test secret keys — legitimately test
+        "pk_test_",       # Stripe test publishable keys
+        "rk_test_",       # Stripe restricted test keys
+        "whsec_test_",    # Stripe webhook test secrets
+    )
+
     # Known false positive patterns
     FALSE_POSITIVE_PATTERNS = [
         # Placeholder/example patterns
         (r'(?i)^(test|example|fake|dummy|placeholder|sample|demo)', 'placeholder'),
-        (r'(?i)(your[-_]?api[-_]?key|insert[-_]?here|change[-_]?me)', 'placeholder'),
+        (r'(?i)(your[-_]?api[-_]?key|insert[-_]?here|change[-_]?me|insert[-_]?token|redacted)', 'placeholder'),
         (r'(?i)(xxxx|0000|1234|abcd){2,}', 'placeholder'),
         (r'(?i)^(TODO|FIXME|CHANGEME)', 'placeholder'),
-        
+        # angle-bracket / curly-brace placeholders that wrap descriptive words
+        (r'(?i)<[a-z][a-z0-9_-]*(api|secret|key|token|password|cred)[a-z0-9_-]*>', 'placeholder'),
+        # ALL_CAPS env-var-looking value with underscores (e.g. MY_API_KEY).
+        # Must contain at least one underscore so we don't match AKIA* / DOAB* style keys.
+        (r'^[A-Z][A-Z0-9]*_[A-Z0-9_]+$', 'env_var_name'),
+
         # Template/variable patterns
         (r'\$\{[^}]+\}', 'template'),
         (r'\{\{[^}]+\}\}', 'template'),
         (r'%[A-Z_]+%', 'template'),
         (r'<[A-Z_]+>', 'template'),
         (r'__[A-Z_]+__', 'template'),
-        
+
         # Common false positive strings
         (r'^[A-Za-z]{40,}$', 'all_letters'),  # Just letters, no numbers
         (r'^[0-9]{20,}$', 'all_numbers'),  # Just numbers
         (r'(.)\1{5,}', 'repeated_chars'),  # Repeated characters
-        
+        (r'^[*x_-]{8,}$', 'redaction_mask'),  # ****/xxxx redactions
+
         # Known binary/font data patterns
         (r'^eNp[A-Za-z0-9]', 'zlib_compressed'),  # zlib
         (r'^H4sI[A-Za-z0-9]', 'gzip_compressed'),  # gzip
         (r'^UEs[A-Za-z0-9]', 'zip_data'),  # ZIP
         (r'^AAAA[A-Za-z0-9]{20,}', 'font_data'),  # Common in fonts
         (r'^////[A-Za-z0-9]{20,}', 'binary_data'),  # Binary patterns
-        
+        (r'^iVBORw0KGgo', 'png_base64'),  # base64-encoded PNG header
+
         # UUID patterns (not secrets)
         (r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', 'uuid'),
-        
+
         # Common words that look like secrets
         (r'(?i)^(function|return|const|var|let|import|export|module)', 'js_keyword'),
-        
+
         # Hash patterns (usually not secrets, but output)
         (r'^[a-f0-9]{32}$', 'md5_hash'),
         (r'^[a-f0-9]{40}$', 'sha1_hash'),
@@ -255,16 +289,23 @@ class FalsePositiveDetector:
     ) -> tuple[bool, str]:
         """
         Check if a candidate is likely a false positive.
-        
+
         Args:
             value: The potential secret value
             context: Surrounding context
             source_type: Type of source (js_file, config, etc.)
-            
+
         Returns:
             Tuple of (is_false_positive, reason)
         """
-        # Check value patterns
+        # 1. Public, well-known test/demo values published in vendor docs.
+        if value in self.PUBLIC_TEST_VALUES:
+            return True, "Known public test/demo value"
+        for prefix in self.PUBLIC_TEST_PREFIXES:
+            if value.startswith(prefix):
+                return True, f"Vendor test-key prefix ({prefix})"
+
+        # 2. Check value patterns
         for pattern, reason in self.value_patterns:
             if pattern.search(value):
                 return True, f"Matches {reason} pattern"
