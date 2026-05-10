@@ -14,6 +14,25 @@ from ..correlate.pairing import CredentialPairer
 from ..correlate.confidence import ConfidenceScorer
 
 
+def _phase_guard(name: str):
+    """Decorator: log + skip a pipeline phase on error instead of crashing the scan."""
+    def deco(fn):
+        async def wrapper(self, *args, **kwargs):
+            try:
+                return await fn(self, *args, **kwargs)
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                self._log(f"[{name}] phase failed: {type(e).__name__}: {e}", level="error")
+                if getattr(self.config, "verbose", False):
+                    import traceback
+                    traceback.print_exc()
+                return None
+        wrapper.__name__ = fn.__name__
+        return wrapper
+    return deco
+
+
 class XPosureEngine:
     """Main X-POSURE scanning engine."""
 
@@ -80,6 +99,21 @@ class XPosureEngine:
         self._crawl_queue: Optional[asyncio.Queue] = None
         self._crawl_task: Optional[asyncio.Task] = None
 
+        # Optional live dashboard (set by run_with_dashboard)
+        self._dashboard = None
+
+    def _log(self, message: str, level: str = "info") -> None:
+        """Route a log line to the dashboard if attached, else stdout."""
+        if self._dashboard is not None:
+            self._dashboard.log(message, level=level)
+            return
+        if not self.config.quiet:
+            print(message)
+
+    def _set_phase(self, phase: str, detail: str = "") -> None:
+        if self._dashboard is not None:
+            self._dashboard.set_phase(phase, detail)
+
     async def run_quiet(self):
         """Run scan in quiet mode (no live dashboard)."""
         print(f"[x-posure] scanning {self.config.target}...")
@@ -93,32 +127,50 @@ class XPosureEngine:
 
     async def run_with_dashboard(self):
         """Run scan with live dashboard."""
-        # Import here to avoid dependency issues if Rich not installed
         try:
-            from ..output.console import LiveDashboard
+            from ..output.console import LiveDashboard, console, print_summary
         except ImportError:
             print("Warning: Rich not installed, falling back to quiet mode")
             await self.run_quiet()
             return
 
-        dashboard = LiveDashboard(self.config, self.state, self.stats)
+        # Suppress raw prints in engine; the dashboard is the primary view.
+        self.config.quiet = True
+
+        dashboard = LiveDashboard(
+            self.config,
+            self.state,
+            self.stats,
+            findings_ref=self.findings,
+            candidates_ref=self.all_candidates,
+        )
+        self._dashboard = dashboard
 
         try:
             await dashboard.start()
+            dashboard.log(f"scanning {self.config.target}", level="info")
             await self._run_scan()
+            dashboard.set_phase("done")
+            dashboard.log("scan complete", level="ok")
         except KeyboardInterrupt:
-            print("\n[x-posure] scan interrupted")
+            dashboard.log("interrupted by user", level="warn")
         finally:
+            self.stats.end_time = self.stats.end_time or datetime.now()
             dashboard.stop()
+            self._dashboard = None
             self._finalize()
+            try:
+                print_summary(self.stats, self.findings)
+            except Exception:
+                pass
 
     async def _run_scan(self):
         """Run the actual scan."""
-        print(f"[x-posure] target: {self.config.target}")
-        print(f"[x-posure] scan_id: {self.scan_id}")
+        self._log(f"target: {self.config.target}")
+        self._log(f"scan_id: {self.scan_id}")
 
         if self.config.recursive_crawl:
-            print(f"[x-posure] mode: recursive crawl (depth={self.config.crawl_depth})")
+            self._log(f"mode: recursive crawl (depth={self.config.crawl_depth})")
 
         # Start background crawl if -rc is enabled
         # It feeds URLs into extraction while normal discovery runs
@@ -126,34 +178,73 @@ class XPosureEngine:
             self._crawl_queue = asyncio.Queue()
             self._crawl_task = asyncio.create_task(self._background_crawl())
 
-        # 1. Discovery Phase (normal pipeline — always runs)
-        discovered_content = await self._discovery_phase()
+        # 1. Discovery Phase
+        self._set_phase("discovery")
+        discovered_content = {}
+        try:
+            discovered_content = await self._discovery_phase() or {}
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            self._log(f"[discovery] failed: {type(e).__name__}: {e}", level="error")
+            discovered_content = {
+                'urls': [], 'js_data': {'external_urls': [], 'inline_content': []},
+                'paths': [], 'configs': [], 'source_maps': [], 'github_results': [],
+            }
 
         # 2. Extraction Phase
-        await self._extraction_phase(discovered_content)
+        self._set_phase("extraction")
+        try:
+            await self._extraction_phase(discovered_content)
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            self._log(f"[extraction] failed: {type(e).__name__}: {e}", level="error")
 
         # 2b. Drain background crawl results into extraction
         if self.config.recursive_crawl and self._crawl_task:
-            await self._drain_crawl_results()
+            try:
+                await self._drain_crawl_results()
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                self._log(f"[crawl-drain] failed: {type(e).__name__}: {e}", level="error")
 
         # 3. Correlation Phase
-        await self._correlation_phase()
+        self._set_phase("correlation")
+        try:
+            await self._correlation_phase()
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            self._log(f"[correlation] failed: {type(e).__name__}: {e}", level="error")
 
         # 4. Verification Phase
         if self.config.verify:
-            await self._verification_phase()
+            self._set_phase("verification")
+            try:
+                await self._verification_phase()
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                self._log(f"[verification] failed: {type(e).__name__}: {e}", level="error")
 
         # 5. Enrichment Phases (when -rc is enabled)
         if self.config.recursive_crawl:
-            await self._enrichment_pipeline()
+            self._set_phase("enrichment")
+            try:
+                await self._enrichment_pipeline()
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                self._log(f"[enrichment] failed: {type(e).__name__}: {e}", level="error")
 
         # Update stats
         self.stats.end_time = datetime.now()
 
     async def _discovery_phase(self) -> dict:
         """Run discovery modules to find attack surface."""
-        if not self.config.quiet:
-            print("\n[discovery] starting reconnaissance...")
+        self._log("[discovery] starting reconnaissance")
 
         discovered_urls = []
         discovered_content = {
@@ -194,9 +285,7 @@ class XPosureEngine:
 
         discovered_content['paths'] = discovered_urls
 
-        if not self.config.quiet:
-            print(f"[discovery] found {self.stats.subdomains_found} subdomains")
-            print(f"[discovery] found {self.stats.js_files_found} js files")
+        self._log(f"[discovery] {self.stats.subdomains_found} subdomains, {self.stats.js_files_found} js files")
 
         # Config file discovery
         config_results = await self._discover_configs(discovered_urls)
@@ -235,9 +324,7 @@ class XPosureEngine:
 
                 subdomains.append(result['url'])
                 self.stats.subdomains_found += 1
-
-                if not self.config.quiet:
-                    print(f"[subdomain] {result['subdomain']}")
+                self._log(f"[subdomain] {result['subdomain']}")
 
         return subdomains
 
@@ -254,9 +341,7 @@ class XPosureEngine:
                     continue
 
                 paths.append(result['url'])
-
-                if not self.config.quiet:
-                    print(f"[path] {result['url']}")
+                self._log(f"[path] {result['url']}")
 
         return paths
 
@@ -373,8 +458,7 @@ class XPosureEngine:
 
     async def _extraction_phase(self, discovered_content: dict):
         """Extract credentials from discovered content."""
-        if not self.config.quiet:
-            print("\n[extraction] analyzing content...")
+        self._log("[extraction] analyzing content")
 
         from ..rules.engine import RuleEngine
         from ..extract.decode import DecodeChain
@@ -469,15 +553,11 @@ class XPosureEngine:
             self.stats.candidates_found += len(valid_candidates)
 
             if valid_candidates:
-                if not self.config.quiet:
-                    print(f"[extract] found {len(valid_candidates)} candidates in {label}")
-                
                 for candidate in valid_candidates:
                     self.all_candidates.append(candidate)
-                    if not self.config.quiet:
-                        display_val = candidate.value[:30] + "..." if len(candidate.value) > 30 else candidate.value
-                        conf = f"({candidate.confidence:.0%})" if candidate.confidence else ""
-                        print(f"  [+] {candidate.type}: {display_val} {conf}")
+                    display_val = candidate.value[:30] + "..." if len(candidate.value) > 30 else candidate.value
+                    conf = f"({candidate.confidence:.0%})" if candidate.confidence else ""
+                    self._log(f"  [+] {candidate.type}: {display_val} {conf}", level="ok")
 
             # 3. Try decoding encoded content
             try:
@@ -581,8 +661,7 @@ class XPosureEngine:
 
     async def _correlation_phase(self):
         """Correlate candidates into findings with pairing and confidence scoring."""
-        if not self.config.quiet:
-            print("\n[correlation] analyzing relationships...")
+        self._log("[correlation] analyzing relationships")
 
         # 1. Deduplicate candidates into findings
         unique_findings = []
@@ -681,8 +760,7 @@ class XPosureEngine:
 
     async def _verification_phase(self):
         """Verify credentials to determine validity, identity, and permissions."""
-        if not self.config.quiet:
-            print("\n[verification] validating credentials...")
+        self._log("[verification] validating credentials")
 
         from ..verify.coordinator import VerifierCoordinator
 
@@ -724,18 +802,27 @@ class XPosureEngine:
         self.stats.error_findings = stats.get('errors', 0)
         self.stats.unverified_findings = len(self.findings) - self.stats.verified_findings - self.stats.invalid_findings
 
-        if not self.config.quiet:
-            print(f"[verification] {self.stats.verified_findings} valid credentials")
-            print(f"[verification] {self.stats.invalid_findings} invalid credentials")
-            print(f"[verification] {self.stats.error_findings} verification errors")
+        self._log(
+            f"[verification] {self.stats.verified_findings} valid / "
+            f"{self.stats.invalid_findings} invalid / "
+            f"{self.stats.error_findings} errors",
+            level="ok" if self.stats.verified_findings else "info",
+        )
 
-            # Show high-value findings
-            high_value = [f for f in self.findings if f.status.value == 'verified' and f.blast_radius in [Severity.CRITICAL, Severity.HIGH]]
-
-            if high_value:
-                print(f"\n[!] {len(high_value)} HIGH-VALUE credentials found:")
-                for finding in high_value[:5]:  # Show first 5
-                    print(f"  [{finding.credential_type}] {finding.identity or 'Unknown'} ({finding.blast_radius.value})")
+        # Highlight high-value findings
+        high_value = [
+            f for f in self.findings
+            if f.status.value == 'verified'
+            and f.blast_radius in [Severity.CRITICAL, Severity.HIGH]
+        ]
+        if high_value:
+            self._log(f"[!] {len(high_value)} HIGH-VALUE verified credentials", level="error")
+            for finding in high_value[:5]:
+                self._log(
+                    f"  [{finding.credential_type}] {finding.identity or 'unknown'} "
+                    f"({finding.blast_radius.value})",
+                    level="error",
+                )
 
     # ── Background recursive crawl ──────────────────────────────────
 

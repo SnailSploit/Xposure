@@ -1,0 +1,4445 @@
+metadata:
+  name: gitleaks-imported
+  source: https://github.com/gitleaks/gitleaks
+  license: MIT (see LICENSE-gitleaks)
+  rule_count: 221
+rules:
+- id: gitleaks_1password-secret-key
+  name: |-
+    Uncovered a possible 1Password secret key, potentially compromising access to secrets in vaults.
+  type: 1password_secret_key
+  severity: medium
+  pattern: |-
+    \bA3-[A-Z0-9]{6}-(?:(?:[A-Z0-9]{11})|(?:[A-Z0-9]{6}-[A-Z0-9]{5}))-[A-Z0-9]{5}-[A-Z0-9]{5}-[A-Z0-9]{5}\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: 1password-secret-key
+    entropy_floor: 3.8
+    keywords:
+    - a3-
+- id: gitleaks_1password-service-account-token
+  name: |-
+    Uncovered a possible 1Password service account token, potentially compromising access to secrets in vaults.
+  type: 1password_service_account_token
+  severity: high
+  pattern: ops_eyJ[a-zA-Z0-9+/]{250,}={0,3}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: 1password-service-account-token
+    entropy_floor: 4
+    keywords:
+    - ops_
+- id: gitleaks_adafruit-api-key
+  name: |-
+    Identified a potential Adafruit API Key, which could lead to unauthorized access to Adafruit services and sensitive data
+  type: adafruit_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:adafruit)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9_-]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: adafruit-api-key
+    keywords:
+    - adafruit
+- id: gitleaks_adobe-client-id
+  name: |-
+    Detected a pattern that resembles an Adobe OAuth Web Client ID, posing a risk of compromised Adobe integrations and data
+  type: adobe_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:adobe)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: adobe-client-id
+    entropy_floor: 2
+    keywords:
+    - adobe
+- id: gitleaks_adobe-client-secret
+  name: |-
+    Discovered a potential Adobe Client Secret, which, if exposed, could allow unauthorized Adobe service access and data ma
+  type: adobe_client_secret
+  severity: high
+  pattern: (?i)\b(p8e-[a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: adobe-client-secret
+    entropy_floor: 2
+    keywords:
+    - p8e-
+- id: gitleaks_age-secret-key
+  name: |-
+    Discovered a potential Age encryption tool secret key, risking data decryption and unauthorized access to sensitive info
+  type: age_secret_key
+  severity: high
+  pattern: AGE-SECRET-KEY-1[QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7L]{58}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: age-secret-key
+    keywords:
+    - age-secret-key-1
+- id: gitleaks_airtable-api-key
+  name: |-
+    Uncovered a possible Airtable API Key, potentially compromising database access and leading to data leakage or alteratio
+  type: airtable_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:airtable)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{17})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: airtable-api-key
+    keywords:
+    - airtable
+- id: gitleaks_airtable-personnal-access-token
+  name: |-
+    Uncovered a possible Airtable Personal AccessToken, potentially compromising database access and leading to data leakage
+  type: airtable_personnal_access_token
+  severity: high
+  pattern: \b(pat[[:alnum:]]{14}\.[a-f0-9]{64})\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: airtable-personnal-access-token
+    keywords:
+    - airtable
+- id: gitleaks_algolia-api-key
+  name: |-
+    Identified an Algolia API Key, which could result in unauthorized search operations and data exposure on Algolia-managed
+  type: algolia_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:algolia)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: algolia-api-key
+    keywords:
+    - algolia
+- id: gitleaks_alibaba-access-key-id
+  name: |-
+    Detected an Alibaba Cloud AccessKey ID, posing a risk of unauthorized cloud resource access and potential data compromis
+  type: alibaba_access_key_id
+  severity: high
+  pattern: (?i)\b(LTAI[a-z0-9]{20})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: alibaba-access-key-id
+    entropy_floor: 2
+    keywords:
+    - ltai
+- id: gitleaks_alibaba-secret-key
+  name: |-
+    Discovered a potential Alibaba Cloud Secret Key, potentially allowing unauthorized operations and data access within Ali
+  type: alibaba_secret_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:alibaba)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{30})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: alibaba-secret-key
+    entropy_floor: 2
+    keywords:
+    - alibaba
+- id: gitleaks_anthropic-admin-api-key
+  name: |-
+    Detected an Anthropic Admin API Key, risking unauthorized access to administrative functions and sensitive AI model conf
+  type: anthropic_admin_api_key
+  severity: high
+  pattern: \b(sk-ant-admin01-[a-zA-Z0-9_\-]{93}AA)(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: anthropic-admin-api-key
+    keywords:
+    - sk-ant-admin01
+- id: gitleaks_anthropic-api-key
+  name: |-
+    Identified an Anthropic API Key, which may compromise AI assistant integrations and expose sensitive data to unauthorize
+  type: anthropic_api_key
+  severity: high
+  pattern: \b(sk-ant-api03-[a-zA-Z0-9_\-]{93}AA)(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: anthropic-api-key
+    keywords:
+    - sk-ant-api03
+- id: gitleaks_artifactory-api-key
+  name: |-
+    Detected an Artifactory api key, posing a risk unauthorized access to the central repository.
+  type: artifactory_api_key
+  severity: high
+  pattern: \bAKCp[A-Za-z0-9]{69}\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: artifactory-api-key
+    entropy_floor: 4.5
+    keywords:
+    - akcp
+- id: gitleaks_artifactory-reference-token
+  name: |-
+    Detected an Artifactory reference token, posing a risk of impersonation and unauthorized access to the central repositor
+  type: artifactory_reference_token
+  severity: high
+  pattern: \bcmVmd[A-Za-z0-9]{59}\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: artifactory-reference-token
+    entropy_floor: 4.5
+    keywords:
+    - cmvmd
+- id: gitleaks_asana-client-id
+  name: |-
+    Discovered a potential Asana Client ID, risking unauthorized access to Asana projects and sensitive task information.
+  type: asana_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:asana)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9]{16})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: asana-client-id
+    keywords:
+    - asana
+- id: gitleaks_asana-client-secret
+  name: |-
+    Identified an Asana Client Secret, which could lead to compromised project management integrity and unauthorized access.
+  type: asana_client_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:asana)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: asana-client-secret
+    keywords:
+    - asana
+- id: gitleaks_atlassian-api-token
+  name: |-
+    Detected an Atlassian API token, posing a threat to project management and collaboration tool security and data confiden
+  type: atlassian_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:(?-i:ATLASSIAN|[Aa]tlassian)|(?-i:CONFLUENCE|[Cc]onfluence)|(?-i:JIRA|[Jj]ira))(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{20}[a-f0-9]{4})(?:[\x60'"\s;]|\\[nr]|$)|\b(ATATT3[A-Za-z0-9_\-=]{186})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: atlassian-api-token
+    entropy_floor: 3.5
+    keywords:
+    - atlassian
+    - confluence
+    - jira
+    - atatt3
+- id: gitleaks_authress-service-client-access-key
+  name: |-
+    Uncovered a possible Authress Service Client Access Key, which may compromise access control services and sensitive data
+  type: authress_service_client_access_key
+  severity: high
+  pattern: |-
+    (?i)\b((?:sc|ext|scauth|authress)_[a-z0-9]{5,30}\.[a-z0-9]{4,6}\.(?-i:acc)[_-][a-z0-9-]{10,32}\.[a-z0-9+/_=-]{30,120})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: authress-service-client-access-key
+    entropy_floor: 2
+    keywords:
+    - sc_
+    - ext_
+    - scauth_
+    - authress_
+- id: gitleaks_aws-access-token
+  name: "Identified a pattern that may indicate AWS credentials, risking unauthorized cloud resource access and data breaches on "
+  type: aws_access_token
+  severity: high
+  pattern: \b((?:A3T[A-Z0-9]|AKIA|ASIA|ABIA|ACCA)[A-Z2-7]{16})\b
+  exclude_patterns:
+  - .+EXAMPLE$
+  metadata:
+    source: gitleaks
+    gitleaks_id: aws-access-token
+    entropy_floor: 3
+    keywords:
+    - a3t
+    - akia
+    - asia
+    - abia
+    - acca
+- id: gitleaks_aws-amazon-bedrock-api-key-long-lived
+  name: |-
+    Identified a pattern that may indicate long-lived Amazon Bedrock API keys, risking unauthorized Amazon Bedrock usage
+  type: aws_amazon_bedrock_api_key_long_lived
+  severity: high
+  pattern: \b(ABSK[A-Za-z0-9+/]{109,269}={0,2})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: aws-amazon-bedrock-api-key-long-lived
+    entropy_floor: 3
+    keywords:
+    - absk
+- id: gitleaks_aws-amazon-bedrock-api-key-short-lived
+  name: |-
+    Identified a pattern that may indicate short-lived Amazon Bedrock API keys, risking unauthorized Amazon Bedrock usage
+  type: aws_amazon_bedrock_api_key_short_lived
+  severity: high
+  pattern: bedrock-api-key-YmVkcm9jay5hbWF6b25hd3MuY29t
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: aws-amazon-bedrock-api-key-short-lived
+    entropy_floor: 3
+    keywords:
+    - bedrock-api-key-
+- id: gitleaks_azure-ad-client-secret
+  name: Azure AD Client Secret
+  type: azure_ad_client_secret
+  severity: medium
+  pattern: |-
+    (?:^|[\\'"\x60\s>=:(,)])([a-zA-Z0-9_~.]{3}\dQ~[a-zA-Z0-9_~.-]{31,34})(?:$|[\\'"\x60\s<),])
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: azure-ad-client-secret
+    entropy_floor: 3
+    keywords:
+    - q~
+- id: gitleaks_beamer-api-token
+  name: |-
+    Detected a Beamer API token, potentially compromising content management and exposing sensitive notifications and update
+  type: beamer_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:beamer)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(b_[a-z0-9=_\-]{44})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: beamer-api-token
+    keywords:
+    - beamer
+- id: gitleaks_bitbucket-client-id
+  name: |-
+    Discovered a potential Bitbucket Client ID, risking unauthorized repository access and potential codebase exposure.
+  type: bitbucket_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:bitbucket)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: bitbucket-client-id
+    keywords:
+    - bitbucket
+- id: gitleaks_bitbucket-client-secret
+  name: |-
+    Discovered a potential Bitbucket Client Secret, posing a risk of compromised code repositories and unauthorized access.
+  type: bitbucket_client_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:bitbucket)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: bitbucket-client-secret
+    keywords:
+    - bitbucket
+- id: gitleaks_bittrex-access-key
+  name: |-
+    Identified a Bittrex Access Key, which could lead to unauthorized access to cryptocurrency trading accounts and financia
+  type: bittrex_access_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:bittrex)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: bittrex-access-key
+    keywords:
+    - bittrex
+- id: gitleaks_bittrex-secret-key
+  name: |-
+    Detected a Bittrex Secret Key, potentially compromising cryptocurrency transactions and financial security.
+  type: bittrex_secret_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:bittrex)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: bittrex-secret-key
+    keywords:
+    - bittrex
+- id: gitleaks_cisco-meraki-api-key
+  name: |-
+    Cisco Meraki is a cloud-managed IT solution that provides networking, security, and device management through an easy-to
+  type: cisco_meraki_api_key
+  severity: high
+  pattern: |-
+    [\w.-]{0,50}?(?i:[\w.-]{0,50}?(?:(?-i:[Mm]eraki|MERAKI))(?:[ \t\w.-]{0,20})[\s'"]{0,3})(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9a-f]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: cisco-meraki-api-key
+    entropy_floor: 3
+    keywords:
+    - meraki
+- id: gitleaks_clickhouse-cloud-api-secret-key
+  name: |-
+    Identified a pattern that may indicate clickhouse cloud API secret key, risking unauthorized clickhouse cloud api access
+  type: clickhouse_cloud_api_secret_key
+  severity: high
+  pattern: \b(4b1d[A-Za-z0-9]{38})\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: clickhouse-cloud-api-secret-key
+    entropy_floor: 3
+    keywords:
+    - 4b1d
+- id: gitleaks_clojars-api-token
+  name: |-
+    Uncovered a possible Clojars API token, risking unauthorized access to Clojure libraries and potential code manipulation
+  type: clojars_api_token
+  severity: high
+  pattern: (?i)CLOJARS_[a-z0-9]{60}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: clojars-api-token
+    entropy_floor: 2
+    keywords:
+    - clojars_
+- id: gitleaks_cloudflare-api-key
+  name: |-
+    Detected a Cloudflare API Key, potentially compromising cloud application deployments and operational security.
+  type: cloudflare_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:cloudflare)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9_-]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: cloudflare-api-key
+    entropy_floor: 2
+    keywords:
+    - cloudflare
+- id: gitleaks_cloudflare-global-api-key
+  name: |-
+    Detected a Cloudflare Global API Key, potentially compromising cloud application deployments and operational security.
+  type: cloudflare_global_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:cloudflare)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{37})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: cloudflare-global-api-key
+    entropy_floor: 2
+    keywords:
+    - cloudflare
+- id: gitleaks_cloudflare-origin-ca-key
+  name: |-
+    Detected a Cloudflare Origin CA Key, potentially compromising cloud application deployments and operational security.
+  type: cloudflare_origin_ca_key
+  severity: high
+  pattern: \b(v1\.0-[a-f0-9]{24}-[a-f0-9]{146})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: cloudflare-origin-ca-key
+    entropy_floor: 2
+    keywords:
+    - cloudflare
+    - v1.0-
+- id: gitleaks_codecov-access-token
+  name: |-
+    Found a pattern resembling a Codecov Access Token, posing a risk of unauthorized access to code coverage reports and sen
+  type: codecov_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:codecov)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: codecov-access-token
+    keywords:
+    - codecov
+- id: gitleaks_cohere-api-token
+  name: |-
+    Identified a Cohere Token, posing a risk of unauthorized access to AI services and data manipulation.
+  type: cohere_api_token
+  severity: high
+  pattern: |-
+    [\w.-]{0,50}?(?i:[\w.-]{0,50}?(?:cohere|CO_API_KEY)(?:[ \t\w.-]{0,20})[\s'"]{0,3})(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-zA-Z0-9]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: cohere-api-token
+    entropy_floor: 4
+    keywords:
+    - cohere
+    - co_api_key
+- id: gitleaks_coinbase-access-token
+  name: |-
+    Detected a Coinbase Access Token, posing a risk of unauthorized access to cryptocurrency accounts and financial transact
+  type: coinbase_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:coinbase)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9_-]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: coinbase-access-token
+    keywords:
+    - coinbase
+- id: gitleaks_confluent-access-token
+  name: |-
+    Identified a Confluent Access Token, which could compromise access to streaming data platforms and sensitive data flow.
+  type: confluent_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:confluent)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{16})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: confluent-access-token
+    keywords:
+    - confluent
+- id: gitleaks_confluent-secret-key
+  name: |-
+    Found a Confluent Secret Key, potentially risking unauthorized operations and data access within Confluent services.
+  type: confluent_secret_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:confluent)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: confluent-secret-key
+    keywords:
+    - confluent
+- id: gitleaks_contentful-delivery-api-token
+  name: |-
+    Discovered a Contentful delivery API token, posing a risk to content management systems and data integrity.
+  type: contentful_delivery_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:contentful)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{43})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: contentful-delivery-api-token
+    keywords:
+    - contentful
+- id: gitleaks_curl-auth-header
+  name: |-
+    Discovered a potential authorization token provided in a curl command header, which could compromise the curl accessed r
+  type: curl_auth_header
+  severity: high
+  pattern: |-
+    (?i)\bcurl\b(?:.*?|.*?(?:[\r\n]{1,2}.*?){1,5})[ \t\n\r](?:-H|--header)(?:=|[ \t]{0,5})(?:"(?:Authorization:[ \t]{0,5}(?:Basic[ \t]([a-z0-9+/]{8,}={0,3})|(?:Bearer|(?:Api-)?Token)[ \t]([\w=~@.+/-]{8,})|([\w=~@.+/-]{8,}))|(?:(?:X-(?:[a-z]+-)?)?(?:Api-?)?(?:Key|Token)):[ \t]{0,5}([\w=~@.+/-]{8,}))"|'(?:Authorization:[ \t]{0,5}(?:Basic[ \t]([a-z0-9+/]{8,}={0,3})|(?:Bearer|(?:Api-)?Token)[ \t]([\w=~@.+/-]{8,})|([\w=~@.+/-]{8,}))|(?:(?:X-(?:[a-z]+-)?)?(?:Api-?)?(?:Key|Token)):[ \t]{0,5}([\w=~@.+/-]{8,}))')(?:\B|\s|\Z)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: curl-auth-header
+    entropy_floor: 2.75
+    keywords:
+    - curl
+- id: gitleaks_curl-auth-user
+  name: |-
+    Discovered a potential basic authorization token provided in a curl command, which could compromise the curl accessed re
+  type: curl_auth_user
+  severity: high
+  pattern: |-
+    \bcurl\b(?:.*|.*(?:[\r\n]{1,2}.*){1,5})[ \t\n\r](?:-u|--user)(?:=|[ \t]{0,5})("(:[^"]{3,}|[^:"]{3,}:|[^:"]{3,}:[^"]{3,})"|'([^:']{3,}:[^']{3,})'|((?:"[^"]{3,}"|'[^']{3,}'|[\w$@.-]+):(?:"[^"]{3,}"|'[^']{3,}'|[\w${}@.-]+)))(?:\s|\Z)
+  exclude_patterns:
+  - '[^:]+:(?:change(?:it|me)|pass(?:word)?|pwd|test|token|\*+|x+)'
+  - '[''"]?<[^>]+>[''"]?:[''"]?<[^>]+>|<[^:]+:[^>]+>[''"]?'
+  - '[^:]+:\[[^]]+]'
+  - '[''"]?[^:]+[''"]?:[''"]?\$(?:\d|\w+|\{(?:\d|\w+)})[''"]?'
+  - \$\([^)]+\):\$\([^)]+\)
+  - '[''"]?\$?{{[^}]+}}[''"]?:[''"]?\$?{{[^}]+}}[''"]?'
+  metadata:
+    source: gitleaks
+    gitleaks_id: curl-auth-user
+    entropy_floor: 2
+    keywords:
+    - curl
+- id: gitleaks_databricks-api-token
+  name: |-
+    Uncovered a Databricks API token, which may compromise big data analytics platforms and sensitive data processing.
+  type: databricks_api_token
+  severity: high
+  pattern: \b(dapi[a-f0-9]{32}(?:-\d)?)(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: databricks-api-token
+    entropy_floor: 3
+    keywords:
+    - dapi
+- id: gitleaks_datadog-access-token
+  name: |-
+    Detected a Datadog Access Token, potentially risking monitoring and analytics data exposure and manipulation.
+  type: datadog_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:datadog)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: datadog-access-token
+    keywords:
+    - datadog
+- id: gitleaks_defined-networking-api-token
+  name: |-
+    Identified a Defined Networking API token, which could lead to unauthorized network operations and data breaches.
+  type: defined_networking_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:dnkey)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(dnkey-[a-z0-9=_\-]{26}-[a-z0-9=_\-]{52})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: defined-networking-api-token
+    keywords:
+    - dnkey
+- id: gitleaks_digitalocean-access-token
+  name: |-
+    Found a DigitalOcean OAuth Access Token, risking unauthorized cloud resource access and data compromise.
+  type: digitalocean_access_token
+  severity: high
+  pattern: \b(doo_v1_[a-f0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: digitalocean-access-token
+    entropy_floor: 3
+    keywords:
+    - doo_v1_
+- id: gitleaks_digitalocean-pat
+  name: |-
+    Discovered a DigitalOcean Personal Access Token, posing a threat to cloud infrastructure security and data privacy.
+  type: digitalocean_pat
+  severity: high
+  pattern: \b(dop_v1_[a-f0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: digitalocean-pat
+    entropy_floor: 3
+    keywords:
+    - dop_v1_
+- id: gitleaks_digitalocean-refresh-token
+  name: |-
+    Uncovered a DigitalOcean OAuth Refresh Token, which could allow prolonged unauthorized access and resource manipulation.
+  type: digitalocean_refresh_token
+  severity: high
+  pattern: (?i)\b(dor_v1_[a-f0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: digitalocean-refresh-token
+    keywords:
+    - dor_v1_
+- id: gitleaks_discord-api-token
+  name: |-
+    Detected a Discord API key, potentially compromising communication channels and user data privacy on Discord.
+  type: discord_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:discord)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: discord-api-token
+    keywords:
+    - discord
+- id: gitleaks_discord-client-id
+  name: |-
+    Identified a Discord client ID, which may lead to unauthorized integrations and data exposure in Discord applications.
+  type: discord_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:discord)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9]{18})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: discord-client-id
+    entropy_floor: 2
+    keywords:
+    - discord
+- id: gitleaks_discord-client-secret
+  name: |-
+    Discovered a potential Discord client secret, risking compromised Discord bot integrations and data leaks.
+  type: discord_client_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:discord)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: discord-client-secret
+    entropy_floor: 2
+    keywords:
+    - discord
+- id: gitleaks_doppler-api-token
+  name: |-
+    Discovered a Doppler API token, posing a risk to environment and secrets management security.
+  type: doppler_api_token
+  severity: high
+  pattern: (?i)dp\.pt\.[a-z0-9]{43}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: doppler-api-token
+    entropy_floor: 2
+    keywords:
+    - dp.pt.
+- id: gitleaks_droneci-access-token
+  name: |-
+    Detected a Droneci Access Token, potentially compromising continuous integration and deployment workflows.
+  type: droneci_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:droneci)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: droneci-access-token
+    keywords:
+    - droneci
+- id: gitleaks_dropbox-api-token
+  name: |-
+    Identified a Dropbox API secret, which could lead to unauthorized file access and data breaches in Dropbox storage.
+  type: dropbox_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:dropbox)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{15})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: dropbox-api-token
+    keywords:
+    - dropbox
+- id: gitleaks_dropbox-long-lived-api-token
+  name: |-
+    Found a Dropbox long-lived API token, risking prolonged unauthorized access to cloud storage and sensitive data.
+  type: dropbox_long_lived_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:dropbox)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{11}(AAAAAAAAAA)[a-z0-9\-_=]{43})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: dropbox-long-lived-api-token
+    keywords:
+    - dropbox
+- id: gitleaks_dropbox-short-lived-api-token
+  name: |-
+    Discovered a Dropbox short-lived API token, posing a risk of temporary but potentially harmful data access and manipulat
+  type: dropbox_short_lived_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:dropbox)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(sl\.[a-z0-9\-=_]{135})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: dropbox-short-lived-api-token
+    keywords:
+    - dropbox
+- id: gitleaks_duffel-api-token
+  name: |-
+    Uncovered a Duffel API token, which may compromise travel platform integrations and sensitive customer data.
+  type: duffel_api_token
+  severity: high
+  pattern: (?i)duffel_(?:test|live)_[a-z0-9_\-=]{43}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: duffel-api-token
+    entropy_floor: 2
+    keywords:
+    - duffel_
+- id: gitleaks_dynatrace-api-token
+  name: |-
+    Detected a Dynatrace API token, potentially risking application performance monitoring and data exposure.
+  type: dynatrace_api_token
+  severity: high
+  pattern: (?i)dt0c01\.[a-z0-9]{24}\.[a-z0-9]{64}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: dynatrace-api-token
+    entropy_floor: 4
+    keywords:
+    - dt0c01.
+- id: gitleaks_easypost-api-token
+  name: |-
+    Identified an EasyPost API token, which could lead to unauthorized postal and shipment service access and data exposure.
+  type: easypost_api_token
+  severity: high
+  pattern: (?i)\bEZAK[a-z0-9]{54}\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: easypost-api-token
+    entropy_floor: 2
+    keywords:
+    - ezak
+- id: gitleaks_easypost-test-api-token
+  name: |-
+    Detected an EasyPost test API token, risking exposure of test environments and potentially sensitive shipment data.
+  type: easypost_test_api_token
+  severity: high
+  pattern: (?i)\bEZTK[a-z0-9]{54}\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: easypost-test-api-token
+    entropy_floor: 2
+    keywords:
+    - eztk
+- id: gitleaks_etsy-access-token
+  name: |-
+    Found an Etsy Access Token, potentially compromising Etsy shop management and customer data.
+  type: etsy_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:(?-i:ETSY|[Ee]tsy))(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{24})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: etsy-access-token
+    entropy_floor: 3
+    keywords:
+    - etsy
+- id: gitleaks_facebook-access-token
+  name: |-
+    Discovered a Facebook Access Token, posing a risk of unauthorized access to Facebook accounts and personal data exposure
+  type: facebook_access_token
+  severity: high
+  pattern: (?i)\b(\d{15,16}(\||%)[0-9a-z\-_]{27,40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: facebook-access-token
+    entropy_floor: 3
+    keywords:
+    - facebook
+- id: gitleaks_facebook-page-access-token
+  name: |-
+    Discovered a Facebook Page Access Token, posing a risk of unauthorized access to Facebook accounts and personal data exp
+  type: facebook_page_access_token
+  severity: high
+  pattern: (?i)\b(EAA[MC][a-z0-9]{100,})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: facebook-page-access-token
+    entropy_floor: 4
+    keywords:
+    - eaam
+    - eaac
+- id: gitleaks_facebook-secret
+  name: |-
+    Discovered a Facebook Application secret, posing a risk of unauthorized access to Facebook accounts and personal data ex
+  type: facebook_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:facebook)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: facebook-secret
+    entropy_floor: 3
+    keywords:
+    - facebook
+- id: gitleaks_fastly-api-token
+  name: |-
+    Uncovered a Fastly API key, which may compromise CDN and edge cloud services, leading to content delivery and security i
+  type: fastly_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:fastly)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: fastly-api-token
+    keywords:
+    - fastly
+- id: gitleaks_finicity-api-token
+  name: |-
+    Detected a Finicity API token, potentially risking financial data access and unauthorized financial operations.
+  type: finicity_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:finicity)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: finicity-api-token
+    keywords:
+    - finicity
+- id: gitleaks_finicity-client-secret
+  name: |-
+    Identified a Finicity Client Secret, which could lead to compromised financial service integrations and data breaches.
+  type: finicity_client_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:finicity)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{20})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: finicity-client-secret
+    keywords:
+    - finicity
+- id: gitleaks_finnhub-access-token
+  name: |-
+    Found a Finnhub Access Token, risking unauthorized access to financial market data and analytics.
+  type: finnhub_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:finnhub)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{20})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: finnhub-access-token
+    keywords:
+    - finnhub
+- id: gitleaks_flickr-access-token
+  name: |-
+    Discovered a Flickr Access Token, posing a risk of unauthorized photo management and potential data leakage.
+  type: flickr_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:flickr)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: flickr-access-token
+    keywords:
+    - flickr
+- id: gitleaks_flutterwave-encryption-key
+  name: |-
+    Uncovered a Flutterwave Encryption Key, which may compromise payment processing and sensitive financial information.
+  type: flutterwave_encryption_key
+  severity: high
+  pattern: (?i)FLWSECK_TEST-[a-h0-9]{12}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: flutterwave-encryption-key
+    entropy_floor: 2
+    keywords:
+    - flwseck_test
+- id: gitleaks_flutterwave-public-key
+  name: |-
+    Detected a Finicity Public Key, potentially exposing public cryptographic operations and integrations.
+  type: flutterwave_public_key
+  severity: high
+  pattern: (?i)FLWPUBK_TEST-[a-h0-9]{32}-X
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: flutterwave-public-key
+    entropy_floor: 2
+    keywords:
+    - flwpubk_test
+- id: gitleaks_flutterwave-secret-key
+  name: |-
+    Identified a Flutterwave Secret Key, risking unauthorized financial transactions and data breaches.
+  type: flutterwave_secret_key
+  severity: high
+  pattern: (?i)FLWSECK_TEST-[a-h0-9]{32}-X
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: flutterwave-secret-key
+    entropy_floor: 2
+    keywords:
+    - flwseck_test
+- id: gitleaks_flyio-access-token
+  name: Uncovered a Fly.io API key
+  type: flyio_access_token
+  severity: high
+  pattern: |-
+    \b((?:fo1_[\w-]{43}|fm1[ar]_[a-zA-Z0-9+\/]{100,}={0,3}|fm2_[a-zA-Z0-9+\/]{100,}={0,3}))(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: flyio-access-token
+    entropy_floor: 4
+    keywords:
+    - fo1_
+    - fm1
+    - fm2_
+- id: gitleaks_frameio-api-token
+  name: |-
+    Found a Frame.io API token, potentially compromising video collaboration and project management.
+  type: frameio_api_token
+  severity: high
+  pattern: (?i)fio-u-[a-z0-9\-_=]{64}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: frameio-api-token
+    keywords:
+    - fio-u-
+- id: gitleaks_freemius-secret-key
+  name: Detected a Freemius secret key, potentially exposing sensitive information.
+  type: freemius_secret_key
+  severity: high
+  pattern: (?i)["']secret_key["']\s*=>\s*["'](sk_[\S]{29})["']
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: freemius-secret-key
+    keywords:
+    - secret_key
+- id: gitleaks_freshbooks-access-token
+  name: |-
+    Discovered a Freshbooks Access Token, posing a risk to accounting software access and sensitive financial data exposure.
+  type: freshbooks_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:freshbooks)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: freshbooks-access-token
+    keywords:
+    - freshbooks
+- id: gitleaks_gcp-api-key
+  name: |-
+    Uncovered a GCP API key, which could lead to unauthorized access to Google Cloud services and data breaches.
+  type: gcp_api_key
+  severity: high
+  pattern: \b(AIza[\w-]{35})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns:
+  - AIzaSyabcdefghijklmnopqrstuvwxyz1234567
+  - AIzaSyAnLA7NfeLquW1tJFpx_eQCxoX-oo6YyIs
+  - AIzaSyCkEhVjf3pduRDt6d1yKOMitrUEke8agEM
+  - AIzaSyDMAScliyLx7F0NPDEJi1QmyCgHIAODrlU
+  - AIzaSyD3asb-2pEZVqMkmL6M9N6nHZRR_znhrh0
+  - AIzayDNSXIbFmlXbIE6mCzDLQAqITYefhixbX4A
+  - AIzaSyAdOS2zB6NCsk1pCdZ4-P6GBdi_UUPwX7c
+  - AIzaSyASWm6HmTMdYWpgMnjRBjxcQ9CKctWmLd4
+  - AIzaSyANUvH9H9BsUccjsu2pCmEkOPjjaXeDQgY
+  - AIzaSyA5_iVawFQ8ABuTZNUdcwERLJv_a_p4wtM
+  - AIzaSyA4UrcGxgwQFTfaI3no3t7Lt1sjmdnP5sQ
+  - AIzaSyDSb51JiIcB6OJpwwMicseKRhhrOq1cS7g
+  - AIzaSyBF2RrAIm4a0mO64EShQfqfd2AFnzAvvuU
+  - AIzaSyBcE-OOIbhjyR83gm4r2MFCu4MJmprNXsw
+  - AIzaSyB8qGxt4ec15vitgn44duC5ucxaOi4FmqE
+  - AIzaSyA8vmApnrHNFE0bApF4hoZ11srVL_n0nvY
+  metadata:
+    source: gitleaks
+    gitleaks_id: gcp-api-key
+    entropy_floor: 4
+    keywords:
+    - aiza
+- id: gitleaks_generic-api-key
+  name: |-
+    Detected a Generic API Key, potentially exposing access to various services and sensitive operations.
+  type: generic_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:access|auth|(?-i:[Aa]pi|API)|credential|creds|key|passw(?:or)?d|secret|token)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([\w.=-]{10,150}|[a-z0-9][a-z0-9+/]{11,}={0,3})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns:
+  - ^[a-zA-Z_.-]+$
+  - |-
+    (?i)(?:access(?:ibility|or)|access[_.-]?id|random[_.-]?access|api[_.-]?(?:id|name|version)|rapid|capital|[a-z0-9-]*?api[a-z0-9-]*?:jar:|author|X-MS-Exchange-Organization-Auth|Authentication-Results|(?:credentials?[_.-]?id|withCredentials)|(?:bucket|foreign|hot|idx|natural|primary|pub(?:lic)?|schema|sequence)[_.-]?key|(?:turkey)|key[_.-]?(?:alias|board|code|frame|id|length|mesh|name|pair|press(?:ed)?|ring|selector|signature|size|stone|storetype|word|up|down|left|right)|key[_.-]?vault[_.-]?(?:id|name)|keyVaultToStoreSecrets|key(?:store|tab)[_.-]?(?:file|path)|issuerkeyhash|(?-i:[DdMm]onkey|[DM]ONKEY)|keying|(?:secret)[_.-]?(?:length|name|size)|UserSecretsId|(?:csrf)[_.-]?token|(?:io\.jsonwebtoken[ \t]?:[ \t]?[\w-]+)|(?:api|credentials|token)[_.-]?(?:endpoint|ur[il])|public[_.-]?token|(?:key|token)[_.-]?file|(?-i:(?:[A-Z_]+=\n[A-Z_]+=|[a-z_]+=\n[a-z_]+=)(?:\n|\Z))|(?-i:(?:[A-Z.]+=\n[A-Z.]+=|[a-z.]+=\n[a-z.]+=)(?:\n|\Z)))
+  - (?i)000000
+  - (?i)6fe4476ee5a1832882e326b506d14126
+  - (?i)_ec2_
+  - (?i)aaaaaa
+  - (?i)about
+  - (?i)abstract
+  - (?i)academy
+  - (?i)acces
+  - (?i)account
+  - (?i)act\-
+  - (?i)act\.
+  - (?i)act_
+  - (?i)action
+  - (?i)active
+  - (?i)actively
+  - (?i)activity
+  - (?i)adapter
+  - (?i)add\-
+  - (?i)add\-on
+  - (?i)add\.
+  - (?i)add_
+  - (?i)addon
+  - (?i)addres
+  - (?i)admin
+  - (?i)adobe
+  - (?i)advanced
+  - (?i)adventure
+  - (?i)agent
+  - (?i)agile
+  - (?i)air\-
+  - (?i)air\.
+  - (?i)air_
+  - (?i)ajax
+  - (?i)akka
+  - (?i)alert
+  - (?i)alfred
+  - (?i)algorithm
+  - (?i)all\-
+  - (?i)all\.
+  - (?i)all_
+  - (?i)alloy
+  - (?i)alpha
+  - (?i)amazon
+  - (?i)amqp
+  - (?i)analysi
+  - (?i)analytic
+  - (?i)analyzer
+  - (?i)android
+  - (?i)angular
+  - (?i)angularj
+  - (?i)animate
+  - (?i)animation
+  - (?i)another
+  - (?i)ansible
+  - (?i)answer
+  - (?i)ant\-
+  - (?i)ant\.
+  - (?i)ant_
+  - (?i)any\-
+  - (?i)any\.
+  - (?i)any_
+  - (?i)apache
+  - (?i)app\-
+  - (?i)app\.
+  - (?i)app_
+  - (?i)apple
+  - (?i)arch
+  - (?i)archive
+  - (?i)archived
+  - (?i)arduino
+  - (?i)array
+  - (?i)art\-
+  - (?i)art\.
+  - (?i)art_
+  - (?i)article
+  - (?i)asp\-
+  - (?i)asp\.
+  - (?i)asp_
+  - (?i)asset
+  - (?i)async
+  - (?i)atom
+  - (?i)attention
+  - (?i)audio
+  - (?i)audit
+  - (?i)aura
+  - (?i)auth
+  - (?i)author
+  - (?i)authorize
+  - (?i)auto
+  - (?i)automated
+  - (?i)automatic
+  - (?i)awesome
+  - (?i)aws_
+  - (?i)azure
+  - (?i)back
+  - (?i)backbone
+  - (?i)backend
+  - (?i)backup
+  - (?i)bar\-
+  - (?i)bar\.
+  - (?i)bar_
+  - (?i)base
+  - (?i)based
+  - (?i)bash
+  - (?i)basic
+  - (?i)batch
+  - (?i)been
+  - (?i)beer
+  - (?i)behavior
+  - (?i)being
+  - (?i)benchmark
+  - (?i)best
+  - (?i)beta
+  - (?i)better
+  - (?i)big\-
+  - (?i)big\.
+  - (?i)big_
+  - (?i)binary
+  - (?i)binding
+  - (?i)bit\-
+  - (?i)bit\.
+  - (?i)bit_
+  - (?i)bitcoin
+  - (?i)block
+  - (?i)blog
+  - (?i)board
+  - (?i)book
+  - (?i)bookmark
+  - (?i)boost
+  - (?i)boot
+  - (?i)bootstrap
+  - (?i)bosh
+  - (?i)bot\-
+  - (?i)bot\.
+  - (?i)bot_
+  - (?i)bower
+  - (?i)box\-
+  - (?i)box\.
+  - (?i)box_
+  - (?i)boxen
+  - (?i)bracket
+  - (?i)branch
+  - (?i)bridge
+  - (?i)browser
+  - (?i)brunch
+  - (?i)buffer
+  - (?i)bug\-
+  - (?i)bug\.
+  - (?i)bug_
+  - (?i)build
+  - (?i)builder
+  - (?i)building
+  - (?i)buildout
+  - (?i)buildpack
+  - (?i)built
+  - (?i)bundle
+  - (?i)busines
+  - (?i)but\-
+  - (?i)but\.
+  - (?i)but_
+  - (?i)button
+  - (?i)cache
+  - (?i)caching
+  - (?i)cakephp
+  - (?i)calendar
+  - (?i)call
+  - (?i)camera
+  - (?i)campfire
+  - (?i)can\-
+  - (?i)can\.
+  - (?i)can_
+  - (?i)canva
+  - (?i)captcha
+  - (?i)capture
+  - (?i)card
+  - (?i)carousel
+  - (?i)case
+  - (?i)cassandra
+  - (?i)cat\-
+  - (?i)cat\.
+  - (?i)cat_
+  - (?i)category
+  - (?i)center
+  - (?i)cento
+  - (?i)challenge
+  - (?i)change
+  - (?i)changelog
+  - (?i)channel
+  - (?i)chart
+  - (?i)chat
+  - (?i)cheat
+  - (?i)check
+  - (?i)checker
+  - (?i)chef
+  - (?i)ches
+  - (?i)chinese
+  - (?i)chosen
+  - (?i)chrome
+  - (?i)ckeditor
+  - (?i)clas
+  - (?i)classe
+  - (?i)classic
+  - (?i)clean
+  - (?i)cli\-
+  - (?i)cli\.
+  - (?i)cli_
+  - (?i)client
+  - (?i)clojure
+  - (?i)clone
+  - (?i)closure
+  - (?i)cloud
+  - (?i)club
+  - (?i)cluster
+  - (?i)cms\-
+  - (?i)cms_
+  - (?i)coco
+  - (?i)code
+  - (?i)coding
+  - (?i)coffee
+  - (?i)color
+  - (?i)combination
+  - (?i)combo
+  - (?i)command
+  - (?i)commander
+  - (?i)comment
+  - (?i)commit
+  - (?i)common
+  - (?i)community
+  - (?i)compas
+  - (?i)compiler
+  - (?i)complete
+  - (?i)component
+  - (?i)composer
+  - (?i)computer
+  - (?i)computing
+  - (?i)con\-
+  - (?i)con\.
+  - (?i)con_
+  - (?i)concept
+  - (?i)conf
+  - (?i)config
+  - (?i)connect
+  - (?i)connector
+  - (?i)console
+  - (?i)contact
+  - (?i)container
+  - (?i)contao
+  - (?i)content
+  - (?i)contest
+  - (?i)context
+  - (?i)control
+  - (?i)convert
+  - (?i)converter
+  - (?i)conway'
+  - (?i)cookbook
+  - (?i)cookie
+  - (?i)cool
+  - (?i)copy
+  - (?i)cordova
+  - (?i)core
+  - (?i)couchbase
+  - (?i)couchdb
+  - (?i)countdown
+  - (?i)counter
+  - (?i)course
+  - (?i)craft
+  - (?i)crawler
+  - (?i)create
+  - (?i)creating
+  - (?i)creator
+  - (?i)credential
+  - (?i)crm\-
+  - (?i)crm\.
+  - (?i)crm_
+  - (?i)cros
+  - (?i)crud
+  - (?i)csv\-
+  - (?i)csv\.
+  - (?i)csv_
+  - (?i)cube
+  - (?i)cucumber
+  - (?i)cuda
+  - (?i)current
+  - (?i)currently
+  - (?i)custom
+  - (?i)daemon
+  - (?i)dark
+  - (?i)dart
+  - (?i)dash
+  - (?i)dashboard
+  - (?i)data
+  - (?i)database
+  - (?i)date
+  - (?i)day\-
+  - (?i)day\.
+  - (?i)day_
+  - (?i)dead
+  - (?i)debian
+  - (?i)debug
+  - (?i)debugger
+  - (?i)deck
+  - (?i)define
+  - (?i)del\-
+  - (?i)del\.
+  - (?i)del_
+  - (?i)delete
+  - (?i)demo
+  - (?i)deploy
+  - (?i)design
+  - (?i)designer
+  - (?i)desktop
+  - (?i)detection
+  - (?i)detector
+  - (?i)dev\-
+  - (?i)dev\.
+  - (?i)dev_
+  - (?i)develop
+  - (?i)developer
+  - (?i)device
+  - (?i)devise
+  - (?i)diff
+  - (?i)digital
+  - (?i)directive
+  - (?i)directory
+  - (?i)discovery
+  - (?i)display
+  - (?i)django
+  - (?i)dns\-
+  - (?i)dns_
+  - (?i)doc\-
+  - (?i)doc\.
+  - (?i)doc_
+  - (?i)docker
+  - (?i)docpad
+  - (?i)doctrine
+  - (?i)document
+  - (?i)doe\-
+  - (?i)doe\.
+  - (?i)doe_
+  - (?i)dojo
+  - (?i)dom\-
+  - (?i)dom\.
+  - (?i)dom_
+  - (?i)domain
+  - (?i)don't
+  - (?i)done
+  - (?i)dot\-
+  - (?i)dot\.
+  - (?i)dot_
+  - (?i)dotfile
+  - (?i)download
+  - (?i)draft
+  - (?i)drag
+  - (?i)drill
+  - (?i)drive
+  - (?i)driven
+  - (?i)driver
+  - (?i)drop
+  - (?i)dropbox
+  - (?i)drupal
+  - (?i)dsl\-
+  - (?i)dsl\.
+  - (?i)dsl_
+  - (?i)dynamic
+  - (?i)easy
+  - (?i)ecdsa
+  - (?i)eclipse
+  - (?i)edit
+  - (?i)editing
+  - (?i)edition
+  - (?i)editor
+  - (?i)element
+  - (?i)emac
+  - (?i)email
+  - (?i)embed
+  - (?i)embedded
+  - (?i)ember
+  - (?i)emitter
+  - (?i)emulator
+  - (?i)encoding
+  - (?i)endpoint
+  - (?i)engine
+  - (?i)english
+  - (?i)enhanced
+  - (?i)entity
+  - (?i)entry
+  - (?i)env_
+  - (?i)episode
+  - (?i)erlang
+  - (?i)error
+  - (?i)espresso
+  - (?i)event
+  - (?i)evented
+  - (?i)example
+  - (?i)exchange
+  - (?i)exercise
+  - (?i)experiment
+  - (?i)expire
+  - (?i)exploit
+  - (?i)explorer
+  - (?i)export
+  - (?i)exporter
+  - (?i)expres
+  - (?i)ext\-
+  - (?i)ext\.
+  - (?i)ext_
+  - (?i)extended
+  - (?i)extension
+  - (?i)external
+  - (?i)extra
+  - (?i)extractor
+  - (?i)fabric
+  - (?i)facebook
+  - (?i)factory
+  - (?i)fake
+  - (?i)fast
+  - (?i)feature
+  - (?i)feed
+  - (?i)fewfwef
+  - (?i)ffmpeg
+  - (?i)field
+  - (?i)file
+  - (?i)filter
+  - (?i)find
+  - (?i)finder
+  - (?i)firefox
+  - (?i)firmware
+  - (?i)first
+  - (?i)fish
+  - (?i)fix\-
+  - (?i)fix_
+  - (?i)flash
+  - (?i)flask
+  - (?i)flat
+  - (?i)flex
+  - (?i)flexible
+  - (?i)flickr
+  - (?i)flow
+  - (?i)fluent
+  - (?i)fluentd
+  - (?i)fluid
+  - (?i)folder
+  - (?i)font
+  - (?i)force
+  - (?i)foreman
+  - (?i)fork
+  - (?i)form
+  - (?i)format
+  - (?i)formatter
+  - (?i)forum
+  - (?i)foundry
+  - (?i)framework
+  - (?i)free
+  - (?i)friend
+  - (?i)friendly
+  - (?i)front\-end
+  - (?i)frontend
+  - (?i)ftp\-
+  - (?i)ftp\.
+  - (?i)ftp_
+  - (?i)fuel
+  - (?i)full
+  - (?i)fun\-
+  - (?i)fun\.
+  - (?i)fun_
+  - (?i)func
+  - (?i)future
+  - (?i)gaia
+  - (?i)gallery
+  - (?i)game
+  - (?i)gateway
+  - (?i)gem\-
+  - (?i)gem\.
+  - (?i)gem_
+  - (?i)gen\-
+  - (?i)gen\.
+  - (?i)gen_
+  - (?i)general
+  - (?i)generator
+  - (?i)generic
+  - (?i)genetic
+  - (?i)get\-
+  - (?i)get\.
+  - (?i)get_
+  - (?i)getenv
+  - (?i)getting
+  - (?i)ghost
+  - (?i)gist
+  - (?i)git\-
+  - (?i)git\.
+  - (?i)git_
+  - (?i)github
+  - (?i)gitignore
+  - (?i)gitlab
+  - (?i)glas
+  - (?i)gmail
+  - (?i)gnome
+  - (?i)gnu\-
+  - (?i)gnu\.
+  - (?i)gnu_
+  - (?i)goal
+  - (?i)golang
+  - (?i)gollum
+  - (?i)good
+  - (?i)google
+  - (?i)gpu\-
+  - (?i)gpu\.
+  - (?i)gpu_
+  - (?i)gradle
+  - (?i)grail
+  - (?i)graph
+  - (?i)graphic
+  - (?i)great
+  - (?i)grid
+  - (?i)groovy
+  - (?i)group
+  - (?i)grunt
+  - (?i)guard
+  - (?i)gui\-
+  - (?i)gui\.
+  - (?i)gui_
+  - (?i)guide
+  - (?i)guideline
+  - (?i)gulp
+  - (?i)gwt\-
+  - (?i)gwt\.
+  - (?i)gwt_
+  - (?i)hack
+  - (?i)hackathon
+  - (?i)hacker
+  - (?i)hacking
+  - (?i)hadoop
+  - (?i)haml
+  - (?i)handler
+  - (?i)hardware
+  - (?i)has\-
+  - (?i)has_
+  - (?i)hash
+  - (?i)haskell
+  - (?i)have
+  - (?i)haxe
+  - (?i)hello
+  - (?i)help
+  - (?i)helper
+  - (?i)here
+  - (?i)hero
+  - (?i)heroku
+  - (?i)high
+  - (?i)hipchat
+  - (?i)history
+  - (?i)home
+  - (?i)homebrew
+  - (?i)homepage
+  - (?i)hook
+  - (?i)host
+  - (?i)hosting
+  - (?i)hot\-
+  - (?i)hot\.
+  - (?i)hot_
+  - (?i)house
+  - (?i)how\-
+  - (?i)how\.
+  - (?i)how_
+  - (?i)html
+  - (?i)http
+  - (?i)hub\-
+  - (?i)hub\.
+  - (?i)hub_
+  - (?i)hubot
+  - (?i)human
+  - (?i)icon
+  - (?i)ide\-
+  - (?i)ide\.
+  - (?i)ide_
+  - (?i)idea
+  - (?i)identity
+  - (?i)idiomatic
+  - (?i)image
+  - (?i)impact
+  - (?i)import
+  - (?i)important
+  - (?i)importer
+  - (?i)impres
+  - (?i)index
+  - (?i)infinite
+  - (?i)info
+  - (?i)injection
+  - (?i)inline
+  - (?i)input
+  - (?i)inside
+  - (?i)inspector
+  - (?i)instagram
+  - (?i)install
+  - (?i)installer
+  - (?i)instant
+  - (?i)intellij
+  - (?i)interface
+  - (?i)internet
+  - (?i)interview
+  - (?i)into
+  - (?i)intro
+  - (?i)ionic
+  - (?i)iphone
+  - (?i)ipython
+  - (?i)irc\-
+  - (?i)irc_
+  - (?i)iso\-
+  - (?i)iso\.
+  - (?i)iso_
+  - (?i)issue
+  - (?i)jade
+  - (?i)jasmine
+  - (?i)java
+  - (?i)jbos
+  - (?i)jekyll
+  - (?i)jenkin
+  - (?i)jetbrains
+  - (?i)job\-
+  - (?i)job\.
+  - (?i)job_
+  - (?i)joomla
+  - (?i)jpa\-
+  - (?i)jpa\.
+  - (?i)jpa_
+  - (?i)jquery
+  - (?i)json
+  - (?i)just
+  - (?i)kafka
+  - (?i)karma
+  - (?i)kata
+  - (?i)kernel
+  - (?i)keyboard
+  - (?i)kindle
+  - (?i)kit\-
+  - (?i)kit\.
+  - (?i)kit_
+  - (?i)kitchen
+  - (?i)knife
+  - (?i)koan
+  - (?i)kohana
+  - (?i)lab\-
+  - (?i)lab\.
+  - (?i)lab_
+  - (?i)lambda
+  - (?i)lamp
+  - (?i)language
+  - (?i)laravel
+  - (?i)last
+  - (?i)latest
+  - (?i)latex
+  - (?i)launcher
+  - (?i)layer
+  - (?i)layout
+  - (?i)lazy
+  - (?i)ldap
+  - (?i)leaflet
+  - (?i)league
+  - (?i)learn
+  - (?i)learning
+  - (?i)led\-
+  - (?i)led\.
+  - (?i)led_
+  - (?i)leetcode
+  - (?i)les\-
+  - (?i)les\.
+  - (?i)les_
+  - (?i)level
+  - (?i)leveldb
+  - (?i)lib\-
+  - (?i)lib\.
+  - (?i)lib_
+  - (?i)librarie
+  - (?i)library
+  - (?i)license
+  - (?i)life
+  - (?i)liferay
+  - (?i)light
+  - (?i)lightbox
+  - (?i)like
+  - (?i)line
+  - (?i)link
+  - (?i)linked
+  - (?i)linkedin
+  - (?i)linux
+  - (?i)lisp
+  - (?i)list
+  - (?i)lite
+  - (?i)little
+  - (?i)load
+  - (?i)loader
+  - (?i)local
+  - (?i)location
+  - (?i)lock
+  - (?i)log\-
+  - (?i)log\.
+  - (?i)log_
+  - (?i)logger
+  - (?i)logging
+  - (?i)logic
+  - (?i)login
+  - (?i)logstash
+  - (?i)longer
+  - (?i)look
+  - (?i)love
+  - (?i)lua\-
+  - (?i)lua\.
+  - (?i)lua_
+  - (?i)mac\-
+  - (?i)mac\.
+  - (?i)mac_
+  - (?i)machine
+  - (?i)made
+  - (?i)magento
+  - (?i)magic
+  - (?i)mail
+  - (?i)make
+  - (?i)maker
+  - (?i)making
+  - (?i)man\-
+  - (?i)man\.
+  - (?i)man_
+  - (?i)manage
+  - (?i)manager
+  - (?i)manifest
+  - (?i)manual
+  - (?i)map\-
+  - (?i)map\.
+  - (?i)map_
+  - (?i)mapper
+  - (?i)mapping
+  - (?i)markdown
+  - (?i)markup
+  - (?i)master
+  - (?i)math
+  - (?i)matrix
+  - (?i)maven
+  - (?i)md5
+  - (?i)mean
+  - (?i)media
+  - (?i)mediawiki
+  - (?i)meetup
+  - (?i)memcached
+  - (?i)memory
+  - (?i)menu
+  - (?i)merchant
+  - (?i)message
+  - (?i)messaging
+  - (?i)meta
+  - (?i)metadata
+  - (?i)meteor
+  - (?i)method
+  - (?i)metric
+  - (?i)micro
+  - (?i)middleman
+  - (?i)migration
+  - (?i)minecraft
+  - (?i)miner
+  - (?i)mini
+  - (?i)minimal
+  - (?i)mirror
+  - (?i)mit\-
+  - (?i)mit\.
+  - (?i)mit_
+  - (?i)mobile
+  - (?i)mocha
+  - (?i)mock
+  - (?i)mod\-
+  - (?i)mod\.
+  - (?i)mod_
+  - (?i)mode
+  - (?i)model
+  - (?i)modern
+  - (?i)modular
+  - (?i)module
+  - (?i)modx
+  - (?i)money
+  - (?i)mongo
+  - (?i)mongodb
+  - (?i)mongoid
+  - (?i)mongoose
+  - (?i)monitor
+  - (?i)monkey
+  - (?i)more
+  - (?i)motion
+  - (?i)moved
+  - (?i)movie
+  - (?i)mozilla
+  - (?i)mqtt
+  - (?i)mule
+  - (?i)multi
+  - (?i)multiple
+  - (?i)music
+  - (?i)mustache
+  - (?i)mvc\-
+  - (?i)mvc\.
+  - (?i)mvc_
+  - (?i)mysql
+  - (?i)nagio
+  - (?i)name
+  - (?i)native
+  - (?i)need
+  - (?i)neo\-
+  - (?i)neo\.
+  - (?i)neo_
+  - (?i)nest
+  - (?i)nested
+  - (?i)net\-
+  - (?i)net\.
+  - (?i)net_
+  - (?i)nette
+  - (?i)network
+  - (?i)new\-
+  - (?i)new\.
+  - (?i)new_
+  - (?i)next
+  - (?i)nginx
+  - (?i)ninja
+  - (?i)nlp\-
+  - (?i)nlp\.
+  - (?i)nlp_
+  - (?i)node
+  - (?i)nodej
+  - (?i)nosql
+  - (?i)not\-
+  - (?i)not\.
+  - (?i)not_
+  - (?i)note
+  - (?i)notebook
+  - (?i)notepad
+  - (?i)notice
+  - (?i)notifier
+  - (?i)now\-
+  - (?i)now\.
+  - (?i)now_
+  - (?i)number
+  - (?i)oauth
+  - (?i)object
+  - (?i)objective
+  - (?i)obsolete
+  - (?i)ocaml
+  - (?i)octopres
+  - (?i)official
+  - (?i)old\-
+  - (?i)old\.
+  - (?i)old_
+  - (?i)onboard
+  - (?i)online
+  - (?i)only
+  - (?i)open
+  - (?i)opencv
+  - (?i)opengl
+  - (?i)openshift
+  - (?i)openwrt
+  - (?i)option
+  - (?i)oracle
+  - (?i)org\-
+  - (?i)org\.
+  - (?i)org_
+  - (?i)origin
+  - (?i)original
+  - (?i)orm\-
+  - (?i)orm\.
+  - (?i)orm_
+  - (?i)osx\-
+  - (?i)osx_
+  - (?i)our\-
+  - (?i)our\.
+  - (?i)our_
+  - (?i)out\-
+  - (?i)out\.
+  - (?i)out_
+  - (?i)output
+  - (?i)over
+  - (?i)overview
+  - (?i)own\-
+  - (?i)own\.
+  - (?i)own_
+  - (?i)pack
+  - (?i)package
+  - (?i)packet
+  - (?i)page
+  - (?i)panel
+  - (?i)paper
+  - (?i)paperclip
+  - (?i)para
+  - (?i)parallax
+  - (?i)parallel
+  - (?i)parse
+  - (?i)parser
+  - (?i)parsing
+  - (?i)particle
+  - (?i)party
+  - (?i)password
+  - (?i)patch
+  - (?i)path
+  - (?i)pattern
+  - (?i)payment
+  - (?i)paypal
+  - (?i)pdf\-
+  - (?i)pdf\.
+  - (?i)pdf_
+  - (?i)pebble
+  - (?i)people
+  - (?i)perl
+  - (?i)personal
+  - (?i)phalcon
+  - (?i)phoenix
+  - (?i)phone
+  - (?i)phonegap
+  - (?i)photo
+  - (?i)php\-
+  - (?i)php\.
+  - (?i)php_
+  - (?i)physic
+  - (?i)picker
+  - (?i)pipeline
+  - (?i)platform
+  - (?i)play
+  - (?i)player
+  - (?i)please
+  - (?i)plu\-
+  - (?i)plu\.
+  - (?i)plu_
+  - (?i)plug\-in
+  - (?i)plugin
+  - (?i)plupload
+  - (?i)png\-
+  - (?i)png\.
+  - (?i)png_
+  - (?i)poker
+  - (?i)polyfill
+  - (?i)polymer
+  - (?i)pool
+  - (?i)pop\-
+  - (?i)pop\.
+  - (?i)pop_
+  - (?i)popcorn
+  - (?i)popup
+  - (?i)port
+  - (?i)portable
+  - (?i)portal
+  - (?i)portfolio
+  - (?i)post
+  - (?i)power
+  - (?i)powered
+  - (?i)powerful
+  - (?i)prelude
+  - (?i)pretty
+  - (?i)preview
+  - (?i)principle
+  - (?i)print
+  - (?i)pro\-
+  - (?i)pro\.
+  - (?i)pro_
+  - (?i)problem
+  - (?i)proc
+  - (?i)product
+  - (?i)profile
+  - (?i)profiler
+  - (?i)program
+  - (?i)progres
+  - (?i)project
+  - (?i)protocol
+  - (?i)prototype
+  - (?i)provider
+  - (?i)proxy
+  - (?i)public
+  - (?i)pull
+  - (?i)puppet
+  - (?i)pure
+  - (?i)purpose
+  - (?i)push
+  - (?i)pusher
+  - (?i)pyramid
+  - (?i)python
+  - (?i)quality
+  - (?i)query
+  - (?i)queue
+  - (?i)quick
+  - (?i)rabbitmq
+  - (?i)rack
+  - (?i)radio
+  - (?i)rail
+  - (?i)railscast
+  - (?i)random
+  - (?i)range
+  - (?i)raspberry
+  - (?i)rdf\-
+  - (?i)rdf\.
+  - (?i)rdf_
+  - (?i)react
+  - (?i)reactive
+  - (?i)read
+  - (?i)reader
+  - (?i)readme
+  - (?i)ready
+  - (?i)real
+  - (?i)real\-time
+  - (?i)reality
+  - (?i)realtime
+  - (?i)recipe
+  - (?i)recorder
+  - (?i)red\-
+  - (?i)red\.
+  - (?i)red_
+  - (?i)reddit
+  - (?i)redi
+  - (?i)redmine
+  - (?i)reference
+  - (?i)refinery
+  - (?i)refresh
+  - (?i)registry
+  - (?i)related
+  - (?i)release
+  - (?i)remote
+  - (?i)rendering
+  - (?i)repo
+  - (?i)report
+  - (?i)request
+  - (?i)require
+  - (?i)required
+  - (?i)requirej
+  - (?i)research
+  - (?i)resource
+  - (?i)response
+  - (?i)resque
+  - (?i)rest
+  - (?i)restful
+  - (?i)resume
+  - (?i)reveal
+  - (?i)reverse
+  - (?i)review
+  - (?i)riak
+  - (?i)rich
+  - (?i)right
+  - (?i)ring
+  - (?i)robot
+  - (?i)role
+  - (?i)room
+  - (?i)router
+  - (?i)routing
+  - (?i)rpc\-
+  - (?i)rpc\.
+  - (?i)rpc_
+  - (?i)rpg\-
+  - (?i)rpg\.
+  - (?i)rpg_
+  - (?i)rspec
+  - (?i)ruby\-
+  - (?i)ruby\.
+  - (?i)ruby_
+  - (?i)rule
+  - (?i)run\-
+  - (?i)run\.
+  - (?i)run_
+  - (?i)runner
+  - (?i)running
+  - (?i)runtime
+  - (?i)rust
+  - (?i)rvm\-
+  - (?i)rvm\.
+  - (?i)rvm_
+  - (?i)salt
+  - (?i)sample
+  - (?i)sandbox
+  - (?i)sas\-
+  - (?i)sas\.
+  - (?i)sas_
+  - (?i)sbt\-
+  - (?i)sbt\.
+  - (?i)sbt_
+  - (?i)scala
+  - (?i)scalable
+  - (?i)scanner
+  - (?i)schema
+  - (?i)scheme
+  - (?i)school
+  - (?i)science
+  - (?i)scraper
+  - (?i)scratch
+  - (?i)screen
+  - (?i)script
+  - (?i)scroll
+  - (?i)scs\-
+  - (?i)scs\.
+  - (?i)scs_
+  - (?i)sdk\-
+  - (?i)sdk\.
+  - (?i)sdk_
+  - (?i)sdl\-
+  - (?i)sdl\.
+  - (?i)sdl_
+  - (?i)search
+  - (?i)secure
+  - (?i)security
+  - (?i)see\-
+  - (?i)see\.
+  - (?i)see_
+  - (?i)seed
+  - (?i)select
+  - (?i)selector
+  - (?i)selenium
+  - (?i)semantic
+  - (?i)sencha
+  - (?i)send
+  - (?i)sentiment
+  - (?i)serie
+  - (?i)server
+  - (?i)service
+  - (?i)session
+  - (?i)set\-
+  - (?i)set\.
+  - (?i)set_
+  - (?i)setting
+  - (?i)setup
+  - (?i)sha1
+  - (?i)sha2
+  - (?i)sha256
+  - (?i)share
+  - (?i)shared
+  - (?i)sharing
+  - (?i)sheet
+  - (?i)shell
+  - (?i)shield
+  - (?i)shipping
+  - (?i)shop
+  - (?i)shopify
+  - (?i)shortener
+  - (?i)should
+  - (?i)show
+  - (?i)showcase
+  - (?i)side
+  - (?i)silex
+  - (?i)simple
+  - (?i)simulator
+  - (?i)single
+  - (?i)site
+  - (?i)skeleton
+  - (?i)sketch
+  - (?i)skin
+  - (?i)slack
+  - (?i)slide
+  - (?i)slider
+  - (?i)slim
+  - (?i)small
+  - (?i)smart
+  - (?i)smtp
+  - (?i)snake
+  - (?i)snapshot
+  - (?i)snippet
+  - (?i)soap
+  - (?i)social
+  - (?i)socket
+  - (?i)software
+  - (?i)solarized
+  - (?i)solr
+  - (?i)solution
+  - (?i)solver
+  - (?i)some
+  - (?i)soon
+  - (?i)source
+  - (?i)space
+  - (?i)spark
+  - (?i)spatial
+  - (?i)spec
+  - (?i)sphinx
+  - (?i)spine
+  - (?i)spotify
+  - (?i)spree
+  - (?i)spring
+  - (?i)sprite
+  - (?i)sql\-
+  - (?i)sql\.
+  - (?i)sql_
+  - (?i)sqlite
+  - (?i)ssh\-
+  - (?i)ssh\.
+  - (?i)ssh_
+  - (?i)stack
+  - (?i)staging
+  - (?i)standard
+  - (?i)stanford
+  - (?i)start
+  - (?i)started
+  - (?i)starter
+  - (?i)startup
+  - (?i)stat
+  - (?i)statamic
+  - (?i)state
+  - (?i)static
+  - (?i)statistic
+  - (?i)statsd
+  - (?i)statu
+  - (?i)steam
+  - (?i)step
+  - (?i)still
+  - (?i)stm\-
+  - (?i)stm\.
+  - (?i)stm_
+  - (?i)storage
+  - (?i)store
+  - (?i)storm
+  - (?i)story
+  - (?i)strategy
+  - (?i)stream
+  - (?i)streaming
+  - (?i)string
+  - (?i)stripe
+  - (?i)structure
+  - (?i)studio
+  - (?i)study
+  - (?i)stuff
+  - (?i)style
+  - (?i)sublime
+  - (?i)sugar
+  - (?i)suite
+  - (?i)summary
+  - (?i)super
+  - (?i)support
+  - (?i)supported
+  - (?i)svg\-
+  - (?i)svg\.
+  - (?i)svg_
+  - (?i)svn\-
+  - (?i)svn\.
+  - (?i)svn_
+  - (?i)swagger
+  - (?i)swift
+  - (?i)switch
+  - (?i)switcher
+  - (?i)symfony
+  - (?i)symphony
+  - (?i)sync
+  - (?i)synopsi
+  - (?i)syntax
+  - (?i)system
+  - (?i)tab\-
+  - (?i)tab\.
+  - (?i)tab_
+  - (?i)table
+  - (?i)tag\-
+  - (?i)tag\.
+  - (?i)tag_
+  - (?i)talk
+  - (?i)target
+  - (?i)task
+  - (?i)tcp\-
+  - (?i)tcp\.
+  - (?i)tcp_
+  - (?i)tdd\-
+  - (?i)tdd\.
+  - (?i)tdd_
+  - (?i)team
+  - (?i)tech
+  - (?i)template
+  - (?i)term
+  - (?i)terminal
+  - (?i)testing
+  - (?i)tetri
+  - (?i)text
+  - (?i)textmate
+  - (?i)theme
+  - (?i)theory
+  - (?i)three
+  - (?i)thrift
+  - (?i)time
+  - (?i)timeline
+  - (?i)timer
+  - (?i)tiny
+  - (?i)tinymce
+  - (?i)tip\-
+  - (?i)tip\.
+  - (?i)tip_
+  - (?i)title
+  - (?i)todo
+  - (?i)todomvc
+  - (?i)token
+  - (?i)tool
+  - (?i)toolbox
+  - (?i)toolkit
+  - (?i)top\-
+  - (?i)top\.
+  - (?i)top_
+  - (?i)tornado
+  - (?i)touch
+  - (?i)tower
+  - (?i)tracker
+  - (?i)tracking
+  - (?i)traffic
+  - (?i)training
+  - (?i)transfer
+  - (?i)translate
+  - (?i)transport
+  - (?i)tree
+  - (?i)trello
+  - (?i)try\-
+  - (?i)try\.
+  - (?i)try_
+  - (?i)tumblr
+  - (?i)tut\-
+  - (?i)tut\.
+  - (?i)tut_
+  - (?i)tutorial
+  - (?i)tweet
+  - (?i)twig
+  - (?i)twitter
+  - (?i)type
+  - (?i)typo
+  - (?i)ubuntu
+  - (?i)uiview
+  - (?i)ultimate
+  - (?i)under
+  - (?i)unit
+  - (?i)unity
+  - (?i)universal
+  - (?i)unix
+  - (?i)update
+  - (?i)updated
+  - (?i)upgrade
+  - (?i)upload
+  - (?i)uploader
+  - (?i)uri\-
+  - (?i)uri\.
+  - (?i)uri_
+  - (?i)url\-
+  - (?i)url\.
+  - (?i)url_
+  - (?i)usage
+  - (?i)usb\-
+  - (?i)usb\.
+  - (?i)usb_
+  - (?i)use\-
+  - (?i)use\.
+  - (?i)use_
+  - (?i)used
+  - (?i)useful
+  - (?i)user
+  - (?i)using
+  - (?i)util
+  - (?i)utilitie
+  - (?i)utility
+  - (?i)vagrant
+  - (?i)validator
+  - (?i)value
+  - (?i)variou
+  - (?i)varnish
+  - (?i)version
+  - (?i)via\-
+  - (?i)via\.
+  - (?i)via_
+  - (?i)video
+  - (?i)view
+  - (?i)viewer
+  - (?i)vim\-
+  - (?i)vim\.
+  - (?i)vim_
+  - (?i)vimrc
+  - (?i)virtual
+  - (?i)vision
+  - (?i)visual
+  - (?i)vpn
+  - (?i)want
+  - (?i)warning
+  - (?i)watch
+  - (?i)watcher
+  - (?i)wave
+  - (?i)way\-
+  - (?i)way\.
+  - (?i)way_
+  - (?i)weather
+  - (?i)web\-
+  - (?i)web_
+  - (?i)webapp
+  - (?i)webgl
+  - (?i)webhook
+  - (?i)webkit
+  - (?i)webrtc
+  - (?i)website
+  - (?i)websocket
+  - (?i)welcome
+  - (?i)what
+  - (?i)what'
+  - (?i)when
+  - (?i)where
+  - (?i)which
+  - (?i)why\-
+  - (?i)why\.
+  - (?i)why_
+  - (?i)widget
+  - (?i)wifi
+  - (?i)wiki
+  - (?i)win\-
+  - (?i)win\.
+  - (?i)win_
+  - (?i)window
+  - (?i)wip\-
+  - (?i)wip\.
+  - (?i)wip_
+  - (?i)within
+  - (?i)without
+  - (?i)wizard
+  - (?i)word
+  - (?i)wordpres
+  - (?i)work
+  - (?i)worker
+  - (?i)workflow
+  - (?i)working
+  - (?i)workshop
+  - (?i)world
+  - (?i)wrapper
+  - (?i)write
+  - (?i)writer
+  - (?i)writing
+  - (?i)written
+  - (?i)www\-
+  - (?i)www\.
+  - (?i)www_
+  - (?i)xamarin
+  - (?i)xcode
+  - (?i)xml\-
+  - (?i)xml\.
+  - (?i)xml_
+  - (?i)xmpp
+  - (?i)xxxxxx
+  - (?i)yahoo
+  - (?i)yaml
+  - (?i)yandex
+  - (?i)yeoman
+  - (?i)yet\-
+  - (?i)yet\.
+  - (?i)yet_
+  - (?i)yii\-
+  - (?i)yii\.
+  - (?i)yii_
+  - (?i)youtube
+  - (?i)yui\-
+  - (?i)yui\.
+  - (?i)yui_
+  - (?i)zend
+  - (?i)zero
+  - (?i)zip\-
+  - (?i)zip\.
+  - (?i)zip_
+  - (?i)zsh\-
+  - (?i)zsh\.
+  - (?i)zsh_
+  - --mount=type=secret,
+  - import[ \t]+{[ \t\w,]+}[ \t]+from[ \t]+['"][^'"]+['"]
+  - LICENSE[^=]*=\s*"[^"]+
+  - LIC_FILES_CHKSUM[^=]*=\s*"[^"]+
+  - SRC[^=]*=\s*"[a-zA-Z0-9]+
+  metadata:
+    source: gitleaks
+    gitleaks_id: generic-api-key
+    entropy_floor: 3.5
+    keywords:
+    - access
+    - api
+    - auth
+    - key
+    - credential
+    - creds
+    - passwd
+    - password
+    - secret
+    - token
+- id: gitleaks_github-app-token
+  name: |-
+    Identified a GitHub App Token, which may compromise GitHub application integrations and source code security.
+  type: github_app_token
+  severity: high
+  pattern: (?:ghu|ghs)_[0-9a-zA-Z]{36}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: github-app-token
+    entropy_floor: 3
+    keywords:
+    - ghu_
+    - ghs_
+- id: gitleaks_github-fine-grained-pat
+  name: |-
+    Found a GitHub Fine-Grained Personal Access Token, risking unauthorized repository access and code manipulation.
+  type: github_fine_grained_pat
+  severity: high
+  pattern: github_pat_\w{82}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: github-fine-grained-pat
+    entropy_floor: 3
+    keywords:
+    - github_pat_
+- id: gitleaks_github-oauth
+  name: |-
+    Discovered a GitHub OAuth Access Token, posing a risk of compromised GitHub account integrations and data leaks.
+  type: github_oauth
+  severity: high
+  pattern: gho_[0-9a-zA-Z]{36}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: github-oauth
+    entropy_floor: 3
+    keywords:
+    - gho_
+- id: gitleaks_github-pat
+  name: |-
+    Uncovered a GitHub Personal Access Token, potentially leading to unauthorized repository access and sensitive content ex
+  type: github_pat
+  severity: high
+  pattern: ghp_[0-9a-zA-Z]{36}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: github-pat
+    entropy_floor: 3
+    keywords:
+    - ghp_
+- id: gitleaks_github-refresh-token
+  name: |-
+    Detected a GitHub Refresh Token, which could allow prolonged unauthorized access to GitHub services.
+  type: github_refresh_token
+  severity: high
+  pattern: ghr_[0-9a-zA-Z]{36}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: github-refresh-token
+    entropy_floor: 3
+    keywords:
+    - ghr_
+- id: gitleaks_gitlab-cicd-job-token
+  name: "Identified a GitLab CI/CD Job Token, potential access to projects and some APIs on behalf of a user while the CI job is "
+  type: gitlab_cicd_job_token
+  severity: high
+  pattern: glcbt-[0-9a-zA-Z]{1,5}_[0-9a-zA-Z_-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-cicd-job-token
+    entropy_floor: 3
+    keywords:
+    - glcbt-
+- id: gitleaks_gitlab-deploy-token
+  name: |-
+    Identified a GitLab Deploy Token, risking access to repositories, packages and containers with write access.
+  type: gitlab_deploy_token
+  severity: high
+  pattern: gldt-[0-9a-zA-Z_\-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-deploy-token
+    entropy_floor: 3
+    keywords:
+    - gldt-
+- id: gitleaks_gitlab-feature-flag-client-token
+  name: |-
+    Identified a GitLab feature flag client token, risks exposing user lists and features flags used by an application.
+  type: gitlab_feature_flag_client_token
+  severity: high
+  pattern: glffct-[0-9a-zA-Z_\-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-feature-flag-client-token
+    entropy_floor: 3
+    keywords:
+    - glffct-
+- id: gitleaks_gitlab-feed-token
+  name: Identified a GitLab feed token, risking exposure of user data.
+  type: gitlab_feed_token
+  severity: high
+  pattern: glft-[0-9a-zA-Z_\-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-feed-token
+    entropy_floor: 3
+    keywords:
+    - glft-
+- id: gitleaks_gitlab-incoming-mail-token
+  name: |-
+    Identified a GitLab incoming mail token, risking manipulation of data sent by mail.
+  type: gitlab_incoming_mail_token
+  severity: high
+  pattern: glimt-[0-9a-zA-Z_\-]{25}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-incoming-mail-token
+    entropy_floor: 3
+    keywords:
+    - glimt-
+- id: gitleaks_gitlab-kubernetes-agent-token
+  name: |-
+    Identified a GitLab Kubernetes Agent token, risking access to repos and registry of projects connected via agent.
+  type: gitlab_kubernetes_agent_token
+  severity: high
+  pattern: glagent-[0-9a-zA-Z_\-]{50}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-kubernetes-agent-token
+    entropy_floor: 3
+    keywords:
+    - glagent-
+- id: gitleaks_gitlab-oauth-app-secret
+  name: |-
+    Identified a GitLab OIDC Application Secret, risking access to apps using GitLab as authentication provider.
+  type: gitlab_oauth_app_secret
+  severity: high
+  pattern: gloas-[0-9a-zA-Z_\-]{64}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-oauth-app-secret
+    entropy_floor: 3
+    keywords:
+    - gloas-
+- id: gitleaks_gitlab-pat
+  name: |-
+    Identified a GitLab Personal Access Token, risking unauthorized access to GitLab repositories and codebase exposure.
+  type: gitlab_pat
+  severity: high
+  pattern: glpat-[\w-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-pat
+    entropy_floor: 3
+    keywords:
+    - glpat-
+- id: gitleaks_gitlab-pat-routable
+  name: |-
+    Identified a GitLab Personal Access Token (routable), risking unauthorized access to GitLab repositories and codebase ex
+  type: gitlab_pat_routable
+  severity: high
+  pattern: \bglpat-[0-9a-zA-Z_-]{27,300}\.[0-9a-z]{2}[0-9a-z]{7}\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-pat-routable
+    entropy_floor: 4
+    keywords:
+    - glpat-
+- id: gitleaks_gitlab-ptt
+  name: |-
+    Found a GitLab Pipeline Trigger Token, potentially compromising continuous integration workflows and project security.
+  type: gitlab_ptt
+  severity: high
+  pattern: glptt-[0-9a-f]{40}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-ptt
+    entropy_floor: 3
+    keywords:
+    - glptt-
+- id: gitleaks_gitlab-rrt
+  name: |-
+    Discovered a GitLab Runner Registration Token, posing a risk to CI/CD pipeline integrity and unauthorized access.
+  type: gitlab_rrt
+  severity: high
+  pattern: GR1348941[\w-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-rrt
+    entropy_floor: 3
+    keywords:
+    - gr1348941
+- id: gitleaks_gitlab-runner-authentication-token
+  name: |-
+    Discovered a GitLab Runner Authentication Token, posing a risk to CI/CD pipeline integrity and unauthorized access.
+  type: gitlab_runner_authentication_token
+  severity: high
+  pattern: glrt-[0-9a-zA-Z_\-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-runner-authentication-token
+    entropy_floor: 3
+    keywords:
+    - glrt-
+- id: gitleaks_gitlab-runner-authentication-token-routable
+  name: |-
+    Discovered a GitLab Runner Authentication Token (Routable), posing a risk to CI/CD pipeline integrity and unauthorized a
+  type: gitlab_runner_authentication_token_routable
+  severity: high
+  pattern: \bglrt-t\d_[0-9a-zA-Z_\-]{27,300}\.[0-9a-z]{2}[0-9a-z]{7}\b
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-runner-authentication-token-routable
+    entropy_floor: 4
+    keywords:
+    - glrt-
+- id: gitleaks_gitlab-scim-token
+  name: |-
+    Discovered a GitLab SCIM Token, posing a risk to unauthorized access for a organization or instance.
+  type: gitlab_scim_token
+  severity: high
+  pattern: glsoat-[0-9a-zA-Z_\-]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-scim-token
+    entropy_floor: 3
+    keywords:
+    - glsoat-
+- id: gitleaks_gitlab-session-cookie
+  name: |-
+    Discovered a GitLab Session Cookie, posing a risk to unauthorized access to a user account.
+  type: gitlab_session_cookie
+  severity: high
+  pattern: _gitlab_session=[0-9a-z]{32}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitlab-session-cookie
+    entropy_floor: 3
+    keywords:
+    - _gitlab_session=
+- id: gitleaks_gitter-access-token
+  name: |-
+    Uncovered a Gitter Access Token, which may lead to unauthorized access to chat and communication services.
+  type: gitter_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:gitter)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9_-]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gitter-access-token
+    keywords:
+    - gitter
+- id: gitleaks_gocardless-api-token
+  name: |-
+    Detected a GoCardless API token, potentially risking unauthorized direct debit payment operations and financial data exp
+  type: gocardless_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:gocardless)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(live_[a-z0-9\-_=]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: gocardless-api-token
+    keywords:
+    - live_
+    - gocardless
+- id: gitleaks_grafana-api-key
+  name: |-
+    Identified a Grafana API key, which could compromise monitoring dashboards and sensitive data analytics.
+  type: grafana_api_key
+  severity: high
+  pattern: (?i)\b(eyJrIjoi[A-Za-z0-9]{70,400}={0,3})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: grafana-api-key
+    entropy_floor: 3
+    keywords:
+    - eyjrijoi
+- id: gitleaks_grafana-cloud-api-token
+  name: |-
+    Found a Grafana cloud API token, risking unauthorized access to cloud-based monitoring services and data exposure.
+  type: grafana_cloud_api_token
+  severity: high
+  pattern: (?i)\b(glc_[A-Za-z0-9+/]{32,400}={0,3})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: grafana-cloud-api-token
+    entropy_floor: 3
+    keywords:
+    - glc_
+- id: gitleaks_grafana-service-account-token
+  name: |-
+    Discovered a Grafana service account token, posing a risk of compromised monitoring services and data integrity.
+  type: grafana_service_account_token
+  severity: high
+  pattern: (?i)\b(glsa_[A-Za-z0-9]{32}_[A-Fa-f0-9]{8})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: grafana-service-account-token
+    entropy_floor: 3
+    keywords:
+    - glsa_
+- id: gitleaks_harness-api-key
+  name: |-
+    Identified a Harness Access Token (PAT or SAT), risking unauthorized access to a Harness account.
+  type: harness_api_key
+  severity: high
+  pattern: (?:pat|sat)\.[a-zA-Z0-9_-]{22}\.[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{20}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: harness-api-key
+    keywords:
+    - pat.
+    - sat.
+- id: gitleaks_hashicorp-tf-api-token
+  name: |-
+    Uncovered a HashiCorp Terraform user/org API token, which may lead to unauthorized infrastructure management and securit
+  type: hashicorp_tf_api_token
+  severity: high
+  pattern: (?i)[a-z0-9]{14}\.(?-i:atlasv1)\.[a-z0-9\-_=]{60,70}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: hashicorp-tf-api-token
+    entropy_floor: 3.5
+    keywords:
+    - atlasv1
+- id: gitleaks_hashicorp-tf-password
+  name: |-
+    Identified a HashiCorp Terraform password field, risking unauthorized infrastructure configuration and security breaches
+  type: hashicorp_tf_password
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:administrator_login_password|password)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}("[a-z0-9=_\-]{8,20}")(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: hashicorp-tf-password
+    entropy_floor: 2
+    keywords:
+    - administrator_login_password
+    - password
+- id: gitleaks_heroku-api-key
+  name: |-
+    Detected a Heroku API Key, potentially compromising cloud application deployments and operational security.
+  type: heroku_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:heroku)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: heroku-api-key
+    keywords:
+    - heroku
+- id: gitleaks_heroku-api-key-v2
+  name: |-
+    Detected a Heroku API Key, potentially compromising cloud application deployments and operational security.
+  type: heroku_api_key_v2
+  severity: high
+  pattern: \b((HRKU-AA[0-9a-zA-Z_-]{58}))(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: heroku-api-key-v2
+    entropy_floor: 4
+    keywords:
+    - hrku-aa
+- id: gitleaks_hubspot-api-key
+  name: |-
+    Found a HubSpot API Token, posing a risk to CRM data integrity and unauthorized marketing operations.
+  type: hubspot_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:hubspot)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: hubspot-api-key
+    keywords:
+    - hubspot
+- id: gitleaks_huggingface-access-token
+  name: |-
+    Discovered a Hugging Face Access token, which could lead to unauthorized access to AI models and sensitive data.
+  type: huggingface_access_token
+  severity: medium
+  pattern: \b(hf_(?i:[a-z]{34}))(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: huggingface-access-token
+    entropy_floor: 2
+    keywords:
+    - hf_
+- id: gitleaks_huggingface-organization-api-token
+  name: |-
+    Uncovered a Hugging Face Organization API token, potentially compromising AI organization accounts and associated data.
+  type: huggingface_organization_api_token
+  severity: high
+  pattern: \b(api_org_(?i:[a-z]{34}))(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: huggingface-organization-api-token
+    entropy_floor: 2
+    keywords:
+    - api_org_
+- id: gitleaks_infracost-api-token
+  name: |-
+    Detected an Infracost API Token, risking unauthorized access to cloud cost estimation tools and financial data.
+  type: infracost_api_token
+  severity: high
+  pattern: \b(ico-[a-zA-Z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: infracost-api-token
+    entropy_floor: 3
+    keywords:
+    - ico-
+- id: gitleaks_intercom-api-key
+  name: |-
+    Identified an Intercom API Token, which could compromise customer communication channels and data privacy.
+  type: intercom_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:intercom)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{60})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: intercom-api-key
+    keywords:
+    - intercom
+- id: gitleaks_intra42-client-secret
+  name: |-
+    Found a Intra42 client secret, which could lead to unauthorized access to the 42School API and sensitive data.
+  type: intra42_client_secret
+  severity: high
+  pattern: (?i)\b(s-s4t2(?:ud|af)-[abcdef0123456789]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: intra42-client-secret
+    entropy_floor: 3
+    keywords:
+    - intra
+    - s-s4t2ud-
+    - s-s4t2af-
+- id: gitleaks_jfrog-api-key
+  name: |-
+    Found a JFrog API Key, posing a risk of unauthorized access to software artifact repositories and build pipelines.
+  type: jfrog_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:jfrog|artifactory|bintray|xray)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{73})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: jfrog-api-key
+    keywords:
+    - jfrog
+    - artifactory
+    - bintray
+    - xray
+- id: gitleaks_jfrog-identity-token
+  name: |-
+    Discovered a JFrog Identity Token, potentially compromising access to JFrog services and sensitive software artifacts.
+  type: jfrog_identity_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:jfrog|artifactory|bintray|xray)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: jfrog-identity-token
+    keywords:
+    - jfrog
+    - artifactory
+    - bintray
+    - xray
+- id: gitleaks_jwt
+  name: |-
+    Uncovered a JSON Web Token, which may lead to unauthorized access to web applications and sensitive user data.
+  type: jwt
+  severity: medium
+  pattern: |-
+    \b(ey[a-zA-Z0-9]{17,}\.ey[a-zA-Z0-9\/\\_-]{17,}\.(?:[a-zA-Z0-9\/\\_-]{10,}={0,2})?)(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: jwt
+    entropy_floor: 3
+    keywords:
+    - ey
+- id: gitleaks_jwt-base64
+  name: |-
+    Detected a Base64-encoded JSON Web Token, posing a risk of exposing encoded authentication and data exchange information
+  type: jwt_base64
+  severity: high
+  pattern: |-
+    \bZXlK(?:(?P<alg>aGJHY2lPaU)|(?P<apu>aGNIVWlPaU)|(?P<apv>aGNIWWlPaU)|(?P<aud>aGRXUWlPaU)|(?P<b64>aU5qUWlP)|(?P<crit>amNtbDBJanBi)|(?P<cty>amRIa2lPaU)|(?P<epk>bGNHc2lPbn)|(?P<enc>bGJtTWlPaU)|(?P<jku>cWEzVWlPaU)|(?P<jwk>cWQyc2lPb)|(?P<iss>cGMzTWlPaU)|(?P<iv>cGRpSTZJ)|(?P<kid>cmFXUWlP)|(?P<key_ops>clpYbGZiM0J6SWpwY)|(?P<kty>cmRIa2lPaUp)|(?P<nonce>dWIyNWpaU0k2)|(?P<p2c>d01tTWlP)|(?P<p2s>d01uTWlPaU)|(?P<ppt>d2NIUWlPaU)|(?P<sub>emRXSWlPaU)|(?P<svt>emRuUWlP)|(?P<tag>MFlXY2lPaU)|(?P<typ>MGVYQWlPaUp)|(?P<url>MWNtd2l)|(?P<use>MWMyVWlPaUp)|(?P<ver>MlpYSWlPaU)|(?P<version>MlpYSnphVzl1SWpv)|(?P<x>NElqb2)|(?P<x5c>NE5XTWlP)|(?P<x5t>NE5YUWlPaU)|(?P<x5ts256>NE5YUWpVekkxTmlJNkl)|(?P<x5u>NE5YVWlPaU)|(?P<zip>NmFYQWlPaU))[a-zA-Z0-9\/\\_+\-\r\n]{40,}={0,2}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: jwt-base64
+    entropy_floor: 2
+    keywords:
+    - zxlk
+- id: gitleaks_kraken-access-token
+  name: |-
+    Identified a Kraken Access Token, potentially compromising cryptocurrency trading accounts and financial security.
+  type: kraken_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:kraken)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9\/=_\+\-]{80,90})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: kraken-access-token
+    keywords:
+    - kraken
+- id: gitleaks_kubernetes-secret-yaml
+  name: |-
+    Possible Kubernetes Secret detected, posing a risk of leaking credentials/tokens from your deployments
+  type: kubernetes_secret_yaml
+  severity: high
+  pattern: |-
+    (?i)(?:\bkind:[ \t]*["']?\bsecret\b["']?(?s:.){0,200}?\bdata:(?s:.){0,100}?\s+([\w.-]+:(?:[ \t]*(?:\||>[-+]?)\s+)?[ \t]*(?:["']?[a-z0-9+/]{10,}={0,3}["']?|\{\{[ \t\w"|$:=,.-]+}}|""|''))|\bdata:(?s:.){0,100}?\s+([\w.-]+:(?:[ \t]*(?:\||>[-+]?)\s+)?[ \t]*(?:["']?[a-z0-9+/]{10,}={0,3}["']?|\{\{[ \t\w"|$:=,.-]+}}|""|''))(?s:.){0,200}?\bkind:[ \t]*["']?\bsecret\b["']?)
+  exclude_patterns:
+  - '[\w.-]+:(?:[ \t]*(?:\||>[-+]?)\s+)?[ \t]*(?:\{\{[ \t\w"|$:=,.-]+}}|""|'''')'
+  - (kind:(?s:.)+\n---\n(?s:.)+\bdata:|data:(?s:.)+\n---\n(?s:.)+\bkind:)
+  metadata:
+    source: gitleaks
+    gitleaks_id: kubernetes-secret-yaml
+    keywords:
+    - secret
+- id: gitleaks_kucoin-access-token
+  name: |-
+    Found a Kucoin Access Token, risking unauthorized access to cryptocurrency exchange services and transactions.
+  type: kucoin_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:kucoin)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{24})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: kucoin-access-token
+    keywords:
+    - kucoin
+- id: gitleaks_kucoin-secret-key
+  name: |-
+    Discovered a Kucoin Secret Key, which could lead to compromised cryptocurrency operations and financial data breaches.
+  type: kucoin_secret_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:kucoin)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: kucoin-secret-key
+    keywords:
+    - kucoin
+- id: gitleaks_launchdarkly-access-token
+  name: |-
+    Uncovered a Launchdarkly Access Token, potentially compromising feature flag management and application functionality.
+  type: launchdarkly_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:launchdarkly)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: launchdarkly-access-token
+    keywords:
+    - launchdarkly
+- id: gitleaks_linear-api-key
+  name: |-
+    Detected a Linear API Token, posing a risk to project management tools and sensitive task data.
+  type: linear_api_key
+  severity: high
+  pattern: (?i)lin_api_[a-z0-9]{40}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: linear-api-key
+    entropy_floor: 2
+    keywords:
+    - lin_api_
+- id: gitleaks_linear-client-secret
+  name: |-
+    Identified a Linear Client Secret, which may compromise secure integrations and sensitive project management data.
+  type: linear_client_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:linear)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: linear-client-secret
+    entropy_floor: 2
+    keywords:
+    - linear
+- id: gitleaks_linkedin-client-id
+  name: |-
+    Found a LinkedIn Client ID, risking unauthorized access to LinkedIn integrations and professional data exposure.
+  type: linkedin_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:linked[_-]?in)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{14})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: linkedin-client-id
+    entropy_floor: 2
+    keywords:
+    - linkedin
+    - linked_in
+    - linked-in
+- id: gitleaks_linkedin-client-secret
+  name: |-
+    Discovered a LinkedIn Client secret, potentially compromising LinkedIn application integrations and user data.
+  type: linkedin_client_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:linked[_-]?in)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{16})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: linkedin-client-secret
+    entropy_floor: 2
+    keywords:
+    - linkedin
+    - linked_in
+    - linked-in
+- id: gitleaks_lob-api-key
+  name: |-
+    Uncovered a Lob API Key, which could lead to unauthorized access to mailing and address verification services.
+  type: lob_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:lob)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}((live|test)_[a-f0-9]{35})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: lob-api-key
+    keywords:
+    - test_
+    - live_
+- id: gitleaks_lob-pub-api-key
+  name: |-
+    Detected a Lob Publishable API Key, posing a risk of exposing mail and print service integrations.
+  type: lob_pub_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:lob)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}((test|live)_pub_[a-f0-9]{31})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: lob-pub-api-key
+    keywords:
+    - test_pub
+    - live_pub
+    - _pub
+- id: gitleaks_looker-client-id
+  name: |-
+    Found a Looker Client ID, risking unauthorized access to a Looker account and exposing sensitive data.
+  type: looker_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:looker)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{20})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: looker-client-id
+    keywords:
+    - looker
+- id: gitleaks_looker-client-secret
+  name: |-
+    Found a Looker Client Secret, risking unauthorized access to a Looker account and exposing sensitive data.
+  type: looker_client_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:looker)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{24})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: looker-client-secret
+    keywords:
+    - looker
+- id: gitleaks_mailchimp-api-key
+  name: |-
+    Identified a Mailchimp API key, potentially compromising email marketing campaigns and subscriber data.
+  type: mailchimp_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:MailchimpSDK.initialize|mailchimp)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{32}-us\d\d)(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: mailchimp-api-key
+    keywords:
+    - mailchimp
+- id: gitleaks_mailgun-private-api-token
+  name: |-
+    Found a Mailgun private API token, risking unauthorized email service operations and data breaches.
+  type: mailgun_private_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:mailgun)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(key-[a-f0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: mailgun-private-api-token
+    keywords:
+    - mailgun
+- id: gitleaks_mailgun-pub-key
+  name: |-
+    Discovered a Mailgun public validation key, which could expose email verification processes and associated data.
+  type: mailgun_pub_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:mailgun)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(pubkey-[a-f0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: mailgun-pub-key
+    keywords:
+    - mailgun
+- id: gitleaks_mailgun-signing-key
+  name: |-
+    Uncovered a Mailgun webhook signing key, potentially compromising email automation and data integrity.
+  type: mailgun_signing_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:mailgun)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-h0-9]{32}-[a-h0-9]{8}-[a-h0-9]{8})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: mailgun-signing-key
+    keywords:
+    - mailgun
+- id: gitleaks_mapbox-api-token
+  name: |-
+    Detected a MapBox API token, posing a risk to geospatial services and sensitive location data exposure.
+  type: mapbox_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:mapbox)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(pk\.[a-z0-9]{60}\.[a-z0-9]{22})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: mapbox-api-token
+    keywords:
+    - mapbox
+- id: gitleaks_mattermost-access-token
+  name: |-
+    Identified a Mattermost Access Token, which may compromise team communication channels and data privacy.
+  type: mattermost_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:mattermost)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{26})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: mattermost-access-token
+    keywords:
+    - mattermost
+- id: gitleaks_maxmind-license-key
+  name: Discovered a potential MaxMind license key.
+  type: maxmind_license_key
+  severity: high
+  pattern: \b([A-Za-z0-9]{6}_[A-Za-z0-9]{29}_mmk)(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: maxmind-license-key
+    entropy_floor: 4
+    keywords:
+    - _mmk
+- id: gitleaks_messagebird-api-token
+  name: |-
+    Found a MessageBird API token, risking unauthorized access to communication platforms and message data.
+  type: messagebird_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:message[_-]?bird)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{25})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: messagebird-api-token
+    keywords:
+    - messagebird
+    - message-bird
+    - message_bird
+- id: gitleaks_messagebird-client-id
+  name: |-
+    Discovered a MessageBird client ID, potentially compromising API integrations and sensitive communication data.
+  type: messagebird_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:message[_-]?bird)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: messagebird-client-id
+    keywords:
+    - messagebird
+    - message-bird
+    - message_bird
+- id: gitleaks_microsoft-teams-webhook
+  name: |-
+    Uncovered a Microsoft Teams Webhook, which could lead to unauthorized access to team collaboration tools and data leaks.
+  type: microsoft_teams_webhook
+  severity: high
+  pattern: |-
+    https://[a-z0-9]+\.webhook\.office\.com/webhookb2/[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}@[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}/IncomingWebhook/[a-z0-9]{32}/[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: microsoft-teams-webhook
+    keywords:
+    - webhook.office.com
+    - webhookb2
+    - incomingwebhook
+- id: gitleaks_netlify-access-token
+  name: |-
+    Detected a Netlify Access Token, potentially compromising web hosting services and site management.
+  type: netlify_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:netlify)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{40,46})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: netlify-access-token
+    keywords:
+    - netlify
+- id: gitleaks_new-relic-browser-api-token
+  name: |-
+    Identified a New Relic ingest browser API token, risking unauthorized access to application performance data and analyti
+  type: new_relic_browser_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:new-relic|newrelic|new_relic)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(NRJS-[a-f0-9]{19})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: new-relic-browser-api-token
+    keywords:
+    - nrjs-
+- id: gitleaks_new-relic-insert-key
+  name: |-
+    Discovered a New Relic insight insert key, compromising data injection into the platform.
+  type: new_relic_insert_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:new-relic|newrelic|new_relic)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(NRII-[a-z0-9-]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: new-relic-insert-key
+    keywords:
+    - nrii-
+- id: gitleaks_new-relic-user-api-id
+  name: |-
+    Found a New Relic user API ID, posing a risk to application monitoring services and data integrity.
+  type: new_relic_user_api_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:new-relic|newrelic|new_relic)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: new-relic-user-api-id
+    keywords:
+    - new-relic
+    - newrelic
+    - new_relic
+- id: gitleaks_new-relic-user-api-key
+  name: |-
+    Discovered a New Relic user API Key, which could lead to compromised application insights and performance monitoring.
+  type: new_relic_user_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:new-relic|newrelic|new_relic)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(NRAK-[a-z0-9]{27})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: new-relic-user-api-key
+    keywords:
+    - nrak
+- id: gitleaks_notion-api-token
+  name: Notion API token
+  type: notion_api_token
+  severity: high
+  pattern: \b(ntn_[0-9]{11}[A-Za-z0-9]{32}[A-Za-z0-9]{3})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: notion-api-token
+    entropy_floor: 4
+    keywords:
+    - ntn_
+- id: gitleaks_npm-access-token
+  name: |-
+    Uncovered an npm access token, potentially compromising package management and code repository access.
+  type: npm_access_token
+  severity: high
+  pattern: (?i)\b(npm_[a-z0-9]{36})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: npm-access-token
+    entropy_floor: 2
+    keywords:
+    - npm_
+- id: gitleaks_nuget-config-password
+  name: |-
+    Identified a password within a Nuget config file, potentially compromising package management access.
+  type: nuget_config_password
+  severity: high
+  pattern: (?i)<add key=\"(?:(?:ClearText)?Password)\"\s*value=\"(.{8,})\"\s*/>
+  exclude_patterns:
+  - 33f!!lloppa
+  - hal\+9ooo_da!sY
+  - ^\%\S.*\%$
+  metadata:
+    source: gitleaks
+    gitleaks_id: nuget-config-password
+    entropy_floor: 1
+    keywords:
+    - <add key=
+- id: gitleaks_nytimes-access-token
+  name: |-
+    Detected a Nytimes Access Token, risking unauthorized access to New York Times APIs and content services.
+  type: nytimes_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:nytimes|new-york-times,|newyorktimes)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9=_\-]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: nytimes-access-token
+    keywords:
+    - nytimes
+    - new-york-times
+    - newyorktimes
+- id: gitleaks_octopus-deploy-api-key
+  name: |-
+    Discovered a potential Octopus Deploy API key, risking application deployments and operational security.
+  type: octopus_deploy_api_key
+  severity: high
+  pattern: \b(API-[A-Z0-9]{26})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: octopus-deploy-api-key
+    entropy_floor: 3
+    keywords:
+    - api-
+- id: gitleaks_okta-access-token
+  name: |-
+    Identified an Okta Access Token, which may compromise identity management services and user authentication data.
+  type: okta_access_token
+  severity: high
+  pattern: |-
+    [\w.-]{0,50}?(?i:[\w.-]{0,50}?(?:(?-i:[Oo]kta|OKTA))(?:[ \t\w.-]{0,20})[\s'"]{0,3})(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(00[\w=\-]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: okta-access-token
+    entropy_floor: 4
+    keywords:
+    - okta
+- id: gitleaks_openai-api-key
+  name: |-
+    Found an OpenAI API Key, posing a risk of unauthorized access to AI services and data manipulation.
+  type: openai_api_key
+  severity: high
+  pattern: |-
+    \b(sk-(?:proj|svcacct|admin)-(?:[A-Za-z0-9_-]{74}|[A-Za-z0-9_-]{58})T3BlbkFJ(?:[A-Za-z0-9_-]{74}|[A-Za-z0-9_-]{58})\b|sk-[a-zA-Z0-9]{20}T3BlbkFJ[a-zA-Z0-9]{20})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: openai-api-key
+    entropy_floor: 3
+    keywords:
+    - t3blbkfj
+- id: gitleaks_openshift-user-token
+  name: |-
+    Found an OpenShift user token, potentially compromising an OpenShift/Kubernetes cluster.
+  type: openshift_user_token
+  severity: high
+  pattern: \b(sha256~[\w-]{43})(?:[^\w-]|\Z)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: openshift-user-token
+    entropy_floor: 3.5
+    keywords:
+    - sha256~
+- id: gitleaks_perplexity-api-key
+  name: |-
+    Detected a Perplexity API key, which could lead to unauthorized access to Perplexity AI services and data exposure.
+  type: perplexity_api_key
+  severity: high
+  pattern: \b(pplx-[a-zA-Z0-9]{48})(?:[\x60'"\s;]|\\[nr]|$|\b)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: perplexity-api-key
+    entropy_floor: 4
+    keywords:
+    - pplx-
+- id: gitleaks_plaid-api-token
+  name: |-
+    Discovered a Plaid API Token, potentially compromising financial data aggregation and banking services.
+  type: plaid_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:plaid)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(access-(?:sandbox|development|production)-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: plaid-api-token
+    keywords:
+    - plaid
+- id: gitleaks_plaid-client-id
+  name: |-
+    Uncovered a Plaid Client ID, which could lead to unauthorized financial service integrations and data breaches.
+  type: plaid_client_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:plaid)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{24})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: plaid-client-id
+    entropy_floor: 3.5
+    keywords:
+    - plaid
+- id: gitleaks_plaid-secret-key
+  name: |-
+    Detected a Plaid Secret key, risking unauthorized access to financial accounts and sensitive transaction data.
+  type: plaid_secret_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:plaid)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{30})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: plaid-secret-key
+    entropy_floor: 3.5
+    keywords:
+    - plaid
+- id: gitleaks_planetscale-api-token
+  name: |-
+    Identified a PlanetScale API token, potentially compromising database management and operations.
+  type: planetscale_api_token
+  severity: high
+  pattern: (?i)\b(pscale_tkn_[\w=\.-]{32,64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: planetscale-api-token
+    entropy_floor: 3
+    keywords:
+    - pscale_tkn_
+- id: gitleaks_planetscale-oauth-token
+  name: |-
+    Found a PlanetScale OAuth token, posing a risk to database access control and sensitive data integrity.
+  type: planetscale_oauth_token
+  severity: high
+  pattern: \b(pscale_oauth_[\w=\.-]{32,64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: planetscale-oauth-token
+    entropy_floor: 3
+    keywords:
+    - pscale_oauth_
+- id: gitleaks_planetscale-password
+  name: |-
+    Discovered a PlanetScale password, which could lead to unauthorized database operations and data breaches.
+  type: planetscale_password
+  severity: high
+  pattern: (?i)\b(pscale_pw_[\w=\.-]{32,64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: planetscale-password
+    entropy_floor: 3
+    keywords:
+    - pscale_pw_
+- id: gitleaks_postman-api-token
+  name: |-
+    Uncovered a Postman API token, potentially compromising API testing and development workflows.
+  type: postman_api_token
+  severity: high
+  pattern: (?i)\b(PMAK-[a-f0-9]{24}\-[a-f0-9]{34})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: postman-api-token
+    entropy_floor: 3
+    keywords:
+    - pmak-
+- id: gitleaks_prefect-api-token
+  name: |-
+    Detected a Prefect API token, risking unauthorized access to workflow management and automation services.
+  type: prefect_api_token
+  severity: high
+  pattern: \b(pnu_[a-zA-Z0-9]{36})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: prefect-api-token
+    entropy_floor: 2
+    keywords:
+    - pnu_
+- id: gitleaks_private-key
+  name: |-
+    Identified a Private Key, which may compromise cryptographic security and sensitive data encryption.
+  type: private_key
+  severity: high
+  pattern: |-
+    (?i)-----BEGIN[ A-Z0-9_-]{0,100}PRIVATE KEY(?: BLOCK)?-----[\s\S-]{64,}?KEY(?: BLOCK)?-----
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: private-key
+    keywords:
+    - '-----begin'
+- id: gitleaks_privateai-api-token
+  name: |-
+    Identified a PrivateAI Token, posing a risk of unauthorized access to AI services and data manipulation.
+  type: privateai_api_token
+  severity: high
+  pattern: |-
+    [\w.-]{0,50}?(?i:[\w.-]{0,50}?(?:private[_-]?ai)(?:[ \t\w.-]{0,20})[\s'"]{0,3})(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{32})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: privateai-api-token
+    entropy_floor: 3
+    keywords:
+    - privateai
+    - private_ai
+    - private-ai
+- id: gitleaks_pulumi-api-token
+  name: |-
+    Found a Pulumi API token, posing a risk to infrastructure as code services and cloud resource management.
+  type: pulumi_api_token
+  severity: high
+  pattern: \b(pul-[a-f0-9]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: pulumi-api-token
+    entropy_floor: 2
+    keywords:
+    - pul-
+- id: gitleaks_pypi-upload-token
+  name: |-
+    Discovered a PyPI upload token, potentially compromising Python package distribution and repository integrity.
+  type: pypi_upload_token
+  severity: high
+  pattern: pypi-AgEIcHlwaS5vcmc[\w-]{50,1000}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: pypi-upload-token
+    entropy_floor: 3
+    keywords:
+    - pypi-ageichlwas5vcmc
+- id: gitleaks_rapidapi-access-token
+  name: |-
+    Uncovered a RapidAPI Access Token, which could lead to unauthorized access to various APIs and data services.
+  type: rapidapi_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:rapidapi)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9_-]{50})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: rapidapi-access-token
+    keywords:
+    - rapidapi
+- id: gitleaks_readme-api-token
+  name: |-
+    Detected a Readme API token, risking unauthorized documentation management and content exposure.
+  type: readme_api_token
+  severity: high
+  pattern: \b(rdme_[a-z0-9]{70})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: readme-api-token
+    entropy_floor: 2
+    keywords:
+    - rdme_
+- id: gitleaks_rubygems-api-token
+  name: |-
+    Identified a Rubygem API token, potentially compromising Ruby library distribution and package management.
+  type: rubygems_api_token
+  severity: high
+  pattern: \b(rubygems_[a-f0-9]{48})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: rubygems-api-token
+    entropy_floor: 2
+    keywords:
+    - rubygems_
+- id: gitleaks_scalingo-api-token
+  name: |-
+    Found a Scalingo API token, posing a risk to cloud platform services and application deployment security.
+  type: scalingo_api_token
+  severity: high
+  pattern: \b(tk-us-[\w-]{48})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: scalingo-api-token
+    entropy_floor: 2
+    keywords:
+    - tk-us-
+- id: gitleaks_sendbird-access-id
+  name: |-
+    Discovered a Sendbird Access ID, which could compromise chat and messaging platform integrations.
+  type: sendbird_access_id
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:sendbird)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sendbird-access-id
+    keywords:
+    - sendbird
+- id: gitleaks_sendbird-access-token
+  name: |-
+    Uncovered a Sendbird Access Token, potentially risking unauthorized access to communication services and user data.
+  type: sendbird_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:sendbird)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sendbird-access-token
+    keywords:
+    - sendbird
+- id: gitleaks_sendgrid-api-token
+  name: |-
+    Detected a SendGrid API token, posing a risk of unauthorized email service operations and data exposure.
+  type: sendgrid_api_token
+  severity: medium
+  pattern: (?i)\b(SG\.[a-z0-9=_\-\.]{66})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sendgrid-api-token
+    entropy_floor: 2
+    keywords:
+    - sg.
+- id: gitleaks_sendinblue-api-token
+  name: |-
+    Identified a Sendinblue API token, which may compromise email marketing services and subscriber data privacy.
+  type: sendinblue_api_token
+  severity: high
+  pattern: (?i)\b(xkeysib-[a-f0-9]{64}\-[a-z0-9]{16})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sendinblue-api-token
+    entropy_floor: 2
+    keywords:
+    - xkeysib-
+- id: gitleaks_sentry-access-token
+  name: |-
+    Found a Sentry.io Access Token (old format), risking unauthorized access to error tracking services and sensitive applic
+  type: sentry_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:sentry)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sentry-access-token
+    entropy_floor: 3
+    keywords:
+    - sentry
+- id: gitleaks_sentry-org-token
+  name: |-
+    Found a Sentry.io Organization Token, risking unauthorized access to error tracking services and sensitive application d
+  type: sentry_org_token
+  severity: high
+  pattern: |-
+    \bsntrys_eyJpYXQiO[a-zA-Z0-9+/]{10,200}(?:LCJyZWdpb25fdXJs|InJlZ2lvbl91cmwi|cmVnaW9uX3VybCI6)[a-zA-Z0-9+/]{10,200}={0,2}_[a-zA-Z0-9+/]{43}(?:[^a-zA-Z0-9+/]|\Z)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sentry-org-token
+    entropy_floor: 4.5
+    keywords:
+    - sntrys_eyjpyxqio
+- id: gitleaks_sentry-user-token
+  name: |-
+    Found a Sentry.io User Token, risking unauthorized access to error tracking services and sensitive application data.
+  type: sentry_user_token
+  severity: high
+  pattern: \b(sntryu_[a-f0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sentry-user-token
+    entropy_floor: 3.5
+    keywords:
+    - sntryu_
+- id: gitleaks_settlemint-application-access-token
+  name: Found a Settlemint Application Access Token.
+  type: settlemint_application_access_token
+  severity: high
+  pattern: \b(sm_aat_[a-zA-Z0-9]{16})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: settlemint-application-access-token
+    entropy_floor: 3
+    keywords:
+    - sm_aat
+- id: gitleaks_settlemint-personal-access-token
+  name: Found a Settlemint Personal Access Token.
+  type: settlemint_personal_access_token
+  severity: high
+  pattern: \b(sm_pat_[a-zA-Z0-9]{16})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: settlemint-personal-access-token
+    entropy_floor: 3
+    keywords:
+    - sm_pat
+- id: gitleaks_settlemint-service-access-token
+  name: Found a Settlemint Service Access Token.
+  type: settlemint_service_access_token
+  severity: high
+  pattern: \b(sm_sat_[a-zA-Z0-9]{16})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: settlemint-service-access-token
+    entropy_floor: 3
+    keywords:
+    - sm_sat
+- id: gitleaks_shippo-api-token
+  name: |-
+    Discovered a Shippo API token, potentially compromising shipping services and customer order data.
+  type: shippo_api_token
+  severity: high
+  pattern: \b(shippo_(?:live|test)_[a-fA-F0-9]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: shippo-api-token
+    entropy_floor: 2
+    keywords:
+    - shippo_
+- id: gitleaks_shopify-access-token
+  name: |-
+    Uncovered a Shopify access token, which could lead to unauthorized e-commerce platform access and data breaches.
+  type: shopify_access_token
+  severity: high
+  pattern: shpat_[a-fA-F0-9]{32}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: shopify-access-token
+    entropy_floor: 2
+    keywords:
+    - shpat_
+- id: gitleaks_shopify-custom-access-token
+  name: |-
+    Detected a Shopify custom access token, potentially compromising custom app integrations and e-commerce data security.
+  type: shopify_custom_access_token
+  severity: high
+  pattern: shpca_[a-fA-F0-9]{32}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: shopify-custom-access-token
+    entropy_floor: 2
+    keywords:
+    - shpca_
+- id: gitleaks_shopify-private-app-access-token
+  name: |-
+    Identified a Shopify private app access token, risking unauthorized access to private app data and store operations.
+  type: shopify_private_app_access_token
+  severity: high
+  pattern: shppa_[a-fA-F0-9]{32}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: shopify-private-app-access-token
+    entropy_floor: 2
+    keywords:
+    - shppa_
+- id: gitleaks_shopify-shared-secret
+  name: |-
+    Found a Shopify shared secret, posing a risk to application authentication and e-commerce platform security.
+  type: shopify_shared_secret
+  severity: high
+  pattern: shpss_[a-fA-F0-9]{32}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: shopify-shared-secret
+    entropy_floor: 2
+    keywords:
+    - shpss_
+- id: gitleaks_sidekiq-secret
+  name: |-
+    Discovered a Sidekiq Secret, which could lead to compromised background job processing and application data breaches.
+  type: sidekiq_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:BUNDLE_ENTERPRISE__CONTRIBSYS__COM|BUNDLE_GEMS__CONTRIBSYS__COM)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-f0-9]{8}:[a-f0-9]{8})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sidekiq-secret
+    keywords:
+    - bundle_enterprise__contribsys__com
+    - bundle_gems__contribsys__com
+- id: gitleaks_sidekiq-sensitive-url
+  name: |-
+    Uncovered a Sidekiq Sensitive URL, potentially exposing internal job queues and sensitive operation details.
+  type: sidekiq_sensitive_url
+  severity: high
+  pattern: |-
+    (?i)\bhttps?://([a-f0-9]{8}:[a-f0-9]{8})@(?:gems.contribsys.com|enterprise.contribsys.com)(?:[\/|\#|\?|:]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sidekiq-sensitive-url
+    keywords:
+    - gems.contribsys.com
+    - enterprise.contribsys.com
+- id: gitleaks_slack-app-token
+  name: |-
+    Detected a Slack App-level token, risking unauthorized access to Slack applications and workspace data.
+  type: slack_app_token
+  severity: high
+  pattern: (?i)xapp-\d-[A-Z0-9]+-\d+-[a-z0-9]+
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-app-token
+    entropy_floor: 2
+    keywords:
+    - xapp
+- id: gitleaks_slack-bot-token
+  name: |-
+    Identified a Slack Bot token, which may compromise bot integrations and communication channel security.
+  type: slack_bot_token
+  severity: high
+  pattern: xoxb-[0-9]{10,13}-[0-9]{10,13}[a-zA-Z0-9-]*
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-bot-token
+    entropy_floor: 3
+    keywords:
+    - xoxb
+- id: gitleaks_slack-config-access-token
+  name: |-
+    Found a Slack Configuration access token, posing a risk to workspace configuration and sensitive data access.
+  type: slack_config_access_token
+  severity: high
+  pattern: (?i)xoxe.xox[bp]-\d-[A-Z0-9]{163,166}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-config-access-token
+    entropy_floor: 2
+    keywords:
+    - xoxe.xoxb-
+    - xoxe.xoxp-
+- id: gitleaks_slack-config-refresh-token
+  name: |-
+    Discovered a Slack Configuration refresh token, potentially allowing prolonged unauthorized access to configuration sett
+  type: slack_config_refresh_token
+  severity: high
+  pattern: (?i)xoxe-\d-[A-Z0-9]{146}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-config-refresh-token
+    entropy_floor: 2
+    keywords:
+    - xoxe-
+- id: gitleaks_slack-legacy-bot-token
+  name: |-
+    Uncovered a Slack Legacy bot token, which could lead to compromised legacy bot operations and data exposure.
+  type: slack_legacy_bot_token
+  severity: high
+  pattern: xoxb-[0-9]{8,14}-[a-zA-Z0-9]{18,26}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-legacy-bot-token
+    entropy_floor: 2
+    keywords:
+    - xoxb
+- id: gitleaks_slack-legacy-token
+  name: |-
+    Detected a Slack Legacy token, risking unauthorized access to older Slack integrations and user data.
+  type: slack_legacy_token
+  severity: high
+  pattern: xox[os]-\d+-\d+-\d+-[a-fA-F\d]+
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-legacy-token
+    entropy_floor: 2
+    keywords:
+    - xoxo
+    - xoxs
+- id: gitleaks_slack-legacy-workspace-token
+  name: |-
+    Identified a Slack Legacy Workspace token, potentially compromising access to workspace data and legacy features.
+  type: slack_legacy_workspace_token
+  severity: high
+  pattern: xox[ar]-(?:\d-)?[0-9a-zA-Z]{8,48}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-legacy-workspace-token
+    entropy_floor: 2
+    keywords:
+    - xoxa
+    - xoxr
+- id: gitleaks_slack-user-token
+  name: |-
+    Found a Slack User token, posing a risk of unauthorized user impersonation and data access within Slack workspaces.
+  type: slack_user_token
+  severity: high
+  pattern: xox[pe](?:-[0-9]{10,13}){3}-[a-zA-Z0-9-]{28,34}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-user-token
+    entropy_floor: 2
+    keywords:
+    - xoxp-
+    - xoxe-
+- id: gitleaks_slack-webhook-url
+  name: |-
+    Discovered a Slack Webhook, which could lead to unauthorized message posting and data leakage in Slack channels.
+  type: slack_webhook_url
+  severity: high
+  pattern: |-
+    (?:https?://)?hooks.slack.com/(?:services|workflows|triggers)/[A-Za-z0-9+/]{43,56}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: slack-webhook-url
+    keywords:
+    - hooks.slack.com
+- id: gitleaks_snyk-api-token
+  name: |-
+    Uncovered a Snyk API token, potentially compromising software vulnerability scanning and code security.
+  type: snyk_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:snyk[_.-]?(?:(?:api|oauth)[_.-]?)?(?:key|token))(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: snyk-api-token
+    keywords:
+    - snyk
+- id: gitleaks_sonar-api-token
+  name: |-
+    Uncovered a Sonar API token, potentially compromising software vulnerability scanning and code security.
+  type: sonar_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:sonar[_.-]?(login|token))(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}((?:squ_|sqp_|sqa_)?[a-z0-9=_\-]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sonar-api-token
+    keywords:
+    - sonar
+- id: gitleaks_sourcegraph-access-token
+  name: Sourcegraph is a code search and navigation engine.
+  type: sourcegraph_access_token
+  severity: high
+  pattern: |-
+    (?i)\b(\b(sgp_(?:[a-fA-F0-9]{16}|local)_[a-fA-F0-9]{40}|sgp_[a-fA-F0-9]{40}|[a-fA-F0-9]{40})\b)(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sourcegraph-access-token
+    entropy_floor: 3
+    keywords:
+    - sgp_
+    - sourcegraph
+- id: gitleaks_square-access-token
+  name: |-
+    Detected a Square Access Token, risking unauthorized payment processing and financial transaction exposure.
+  type: square_access_token
+  severity: high
+  pattern: \b((?:EAAA|sq0atp-)[\w-]{22,60})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: square-access-token
+    entropy_floor: 2
+    keywords:
+    - sq0atp-
+    - eaaa
+- id: gitleaks_squarespace-access-token
+  name: |-
+    Identified a Squarespace Access Token, which may compromise website management and content control on Squarespace.
+  type: squarespace_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:squarespace)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: squarespace-access-token
+    keywords:
+    - squarespace
+- id: gitleaks_stripe-access-token
+  name: |-
+    Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data.
+  type: stripe_access_token
+  severity: high
+  pattern: \b((?:sk|rk)_(?:test|live|prod)_[a-zA-Z0-9]{10,99})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: stripe-access-token
+    entropy_floor: 2
+    keywords:
+    - sk_test
+    - sk_live
+    - sk_prod
+    - rk_test
+    - rk_live
+    - rk_prod
+- id: gitleaks_sumologic-access-id
+  name: |-
+    Discovered a SumoLogic Access ID, potentially compromising log management services and data analytics integrity.
+  type: sumologic_access_id
+  severity: high
+  pattern: |-
+    [\w.-]{0,50}?(?i:[\w.-]{0,50}?(?:(?-i:[Ss]umo|SUMO))(?:[ \t\w.-]{0,20})[\s'"]{0,3})(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(su[a-zA-Z0-9]{12})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sumologic-access-id
+    entropy_floor: 3
+    keywords:
+    - sumo
+- id: gitleaks_sumologic-access-token
+  name: |-
+    Uncovered a SumoLogic Access Token, which could lead to unauthorized access to log data and analytics insights.
+  type: sumologic_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:(?-i:[Ss]umo|SUMO))(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{64})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: sumologic-access-token
+    entropy_floor: 3
+    keywords:
+    - sumo
+- id: gitleaks_telegram-bot-api-token
+  name: |-
+    Detected a Telegram Bot API Token, risking unauthorized bot operations and message interception on Telegram.
+  type: telegram_bot_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:telegr)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9]{5,16}:(?-i:A)[a-z0-9_\-]{34})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: telegram-bot-api-token
+    keywords:
+    - telegr
+- id: gitleaks_travisci-access-token
+  name: |-
+    Identified a Travis CI Access Token, potentially compromising continuous integration services and codebase security.
+  type: travisci_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:travis)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{22})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: travisci-access-token
+    keywords:
+    - travis
+- id: gitleaks_twilio-api-key
+  name: |-
+    Found a Twilio API Key, posing a risk to communication services and sensitive customer interaction data.
+  type: twilio_api_key
+  severity: medium
+  pattern: SK[0-9a-fA-F]{32}
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: twilio-api-key
+    entropy_floor: 3
+    keywords:
+    - sk
+- id: gitleaks_twitch-api-token
+  name: |-
+    Discovered a Twitch API token, which could compromise streaming services and account integrations.
+  type: twitch_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:twitch)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{30})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: twitch-api-token
+    keywords:
+    - twitch
+- id: gitleaks_twitter-access-secret
+  name: |-
+    Uncovered a Twitter Access Secret, potentially risking unauthorized Twitter integrations and data breaches.
+  type: twitter_access_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:twitter)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{45})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: twitter-access-secret
+    keywords:
+    - twitter
+- id: gitleaks_twitter-access-token
+  name: |-
+    Detected a Twitter Access Token, posing a risk of unauthorized account operations and social media data exposure.
+  type: twitter_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:twitter)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([0-9]{15,25}-[a-zA-Z0-9]{20,40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: twitter-access-token
+    keywords:
+    - twitter
+- id: gitleaks_twitter-api-key
+  name: |-
+    Identified a Twitter API Key, which may compromise Twitter application integrations and user data security.
+  type: twitter_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:twitter)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{25})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: twitter-api-key
+    keywords:
+    - twitter
+- id: gitleaks_twitter-api-secret
+  name: |-
+    Found a Twitter API Secret, risking the security of Twitter app integrations and sensitive data access.
+  type: twitter_api_secret
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:twitter)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{50})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: twitter-api-secret
+    keywords:
+    - twitter
+- id: gitleaks_twitter-bearer-token
+  name: |-
+    Discovered a Twitter Bearer Token, potentially compromising API access and data retrieval from Twitter.
+  type: twitter_bearer_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:twitter)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(A{22}[a-zA-Z0-9%]{80,100})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: twitter-bearer-token
+    keywords:
+    - twitter
+- id: gitleaks_typeform-api-token
+  name: |-
+    Uncovered a Typeform API token, which could lead to unauthorized survey management and data collection.
+  type: typeform_api_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:typeform)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(tfp_[a-z0-9\-_\.=]{59})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: typeform-api-token
+    keywords:
+    - tfp_
+- id: gitleaks_vault-batch-token
+  name: |-
+    Detected a Vault Batch Token, risking unauthorized access to secret management services and sensitive data.
+  type: vault_batch_token
+  severity: high
+  pattern: \b(hvb\.[\w-]{138,300})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: vault-batch-token
+    entropy_floor: 4
+    keywords:
+    - hvb.
+- id: gitleaks_vault-service-token
+  name: |-
+    Identified a Vault Service Token, potentially compromising infrastructure security and access to sensitive credentials.
+  type: vault_service_token
+  severity: high
+  pattern: \b((?:hvs\.[\w-]{90,120}|s\.(?i:[a-z0-9]{24})))(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns:
+  - s\.[A-Za-z]{24}
+  metadata:
+    source: gitleaks
+    gitleaks_id: vault-service-token
+    entropy_floor: 3.5
+    keywords:
+    - hvs.
+    - s.
+- id: gitleaks_yandex-access-token
+  name: |-
+    Found a Yandex Access Token, posing a risk to Yandex service integrations and user data privacy.
+  type: yandex_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:yandex)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(t1\.[A-Z0-9a-z_-]+[=]{0,2}\.[A-Z0-9a-z_-]{86}[=]{0,2})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: yandex-access-token
+    keywords:
+    - yandex
+- id: gitleaks_yandex-api-key
+  name: |-
+    Discovered a Yandex API Key, which could lead to unauthorized access to Yandex services and data manipulation.
+  type: yandex_api_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:yandex)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(AQVN[A-Za-z0-9_\-]{35,38})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: yandex-api-key
+    keywords:
+    - yandex
+- id: gitleaks_yandex-aws-access-token
+  name: |-
+    Uncovered a Yandex AWS Access Token, potentially compromising cloud resource access and data security on Yandex Cloud.
+  type: yandex_aws_access_token
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:yandex)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}(YC[a-zA-Z0-9_\-]{38})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: yandex-aws-access-token
+    keywords:
+    - yandex
+- id: gitleaks_zendesk-secret-key
+  name: |-
+    Detected a Zendesk Secret Key, risking unauthorized access to customer support services and sensitive ticketing data.
+  type: zendesk_secret_key
+  severity: high
+  pattern: |-
+    (?i)[\w.-]{0,50}?(?:zendesk)(?:[ \t\w.-]{0,20})[\s'"]{0,3}(?:=|>|:{1,3}=|\|\||:|=>|\?=|,)[\x60'"\s=]{0,5}([a-z0-9]{40})(?:[\x60'"\s;]|\\[nr]|$)
+  exclude_patterns: []
+  metadata:
+    source: gitleaks
+    gitleaks_id: zendesk-secret-key
+    keywords:
+    - zendesk

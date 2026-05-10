@@ -119,6 +119,11 @@ class RecursiveCrawler:
         fp = self.fingerprints.next()
         cmd.extend(["-H", f"User-Agent: {fp.user_agent}"])
 
+        # Hard ceiling so a stuck katana subprocess can't freeze the demo.
+        # 30s per expected page, capped at 10 minutes.
+        max_runtime = min(600, max(30, self.max_pages // 5))
+
+        proc: Optional[asyncio.subprocess.Process] = None
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -126,14 +131,34 @@ class RecursiveCrawler:
                 stderr=asyncio.subprocess.PIPE,
             )
 
-            async for line in proc.stdout:
+            start = asyncio.get_event_loop().time()
+
+            while True:
                 if self._stop:
                     proc.terminate()
                     break
 
-                url = line.decode().strip()
+                # Per-line read timeout so a hung katana doesn't block forever.
+                try:
+                    line = await asyncio.wait_for(proc.stdout.readline(), timeout=15.0)
+                except asyncio.TimeoutError:
+                    if asyncio.get_event_loop().time() - start > max_runtime:
+                        if not self.config.quiet:
+                            print(f"[crawl] katana exceeded {max_runtime}s, terminating")
+                        proc.terminate()
+                        break
+                    continue
+
+                if not line:  # EOF
+                    break
+
+                url = line.decode(errors="ignore").strip()
                 if not url or url in self.visited:
                     continue
+
+                if self.stats["pages_crawled"] >= self.max_pages:
+                    proc.terminate()
+                    break
 
                 self.visited.add(url)
                 self.stats["urls_found"] += 1
@@ -148,7 +173,11 @@ class RecursiveCrawler:
                 await self.url_queue.put(url)
                 yield result
 
-            await proc.wait()
+            try:
+                await asyncio.wait_for(proc.wait(), timeout=5.0)
+            except asyncio.TimeoutError:
+                proc.kill()
+                await proc.wait()
 
         except FileNotFoundError:
             # katana binary vanished mid-run, fall back
@@ -159,6 +188,12 @@ class RecursiveCrawler:
         except Exception as e:
             if not self.config.quiet:
                 print(f"[crawl] katana error: {e}")
+            if proc is not None and proc.returncode is None:
+                try:
+                    proc.kill()
+                    await proc.wait()
+                except Exception:
+                    pass
 
     # ── built-in BFS backend ───────────────────────────────────────
 
